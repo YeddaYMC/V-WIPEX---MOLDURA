@@ -4,11 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Câmera #V_WIPEX - IFPR Pinhais</title>
-    <!-- Fonte -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <!-- CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -26,17 +24,16 @@
         </div>
     </div>
 
-    <!-- App Viewport (100% Tela Cheia sem Scroll) -->
+    <!-- App Viewport -->
     <div class="app-viewport">
         
-        <!-- UI Superior (Cabeçalho + Botões dos 3 Filtros) -->
+        <!-- UI Superior (Título + 3 Filtros) -->
         <div class="top-ui">
             <header class="header">
                 <h1 class="title">Câmera #V_WIPEX</h1>
                 <p class="subtitle">IFPR Campus Pinhais</p>
             </header>
 
-            <!-- Seletor dos 3 Filtros -->
             <div class="preset-selector">
                 <button class="btn-preset active" data-preset="clean">1. Clean & Lift</button>
                 <button class="btn-preset" data-preset="cyber">2. Cyberpunk</button>
@@ -44,21 +41,18 @@
             </div>
         </div>
 
-        <!-- Camada de Câmera e Molduras -->
+        <!-- Camada da Câmera -->
         <div class="camera-layer" id="viewport">
             <video id="webcam" autoplay playsinline class="video-feed"></video>
             <img id="user-image" class="user-image-feed" alt="Foto importada" style="display: none;">
             
-            <!-- Overlay SVG Dinâmico -->
             <div class="frame-overlay" id="svg-frame">
-                <svg viewBox="0 0 1080 1920" class="svg-element" id="svg-element" preserveAspectRatio="xMidYMid slice">
-                    <!-- O conteúdo gráfico do SVG é renderizado pelo script.js -->
-                </svg>
+                <svg viewBox="0 0 1080 1920" class="svg-element" id="svg-element" preserveAspectRatio="xMidYMid slice"></svg>
             </div>
             <img id="custom-frame-img" class="custom-frame-overlay" alt="Moldura personalizada" style="display: none;">
         </div>
 
-        <!-- UI Inferior (Controles de Captura e Galeria) -->
+        <!-- UI Inferior -->
         <div class="bottom-ui">
             <div class="button-group">
                 <button id="btn-capture" class="btn btn-primary">📸 Tirar Foto</button>
@@ -78,10 +72,9 @@
             </div>
         </div>
 
-        <!-- Canvas Escondido para Processamento -->
         <canvas id="export-canvas" width="1080" height="1920" style="display: none;"></canvas>
 
-        <!-- Modal de Prévia -->
+        <!-- Modal Prévia -->
         <div id="preview-modal" class="modal" style="display: none;">
             <div class="modal-content">
                 <h2 class="modal-title">Foto Pronta! 🎉</h2>
@@ -98,7 +91,6 @@
 
     </div>
 
-    <!-- JS Principal -->
     <script src="script.js"></script>
 </body>
 </html>
