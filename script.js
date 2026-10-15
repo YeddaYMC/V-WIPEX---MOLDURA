@@ -37,26 +37,22 @@ const presetsSVG = {
             </linearGradient>
         </defs>
 
-        <!-- Cantoneiras Neon -->
         <path d="M 60,180 L 60,60 L 180,60" stroke="url(#neon-grad)" stroke-width="14" fill="none" stroke-linecap="round" />
         <path d="M 1020,180 L 1020,60 L 900,60" stroke="url(#neon-grad)" stroke-width="14" fill="none" stroke-linecap="round" />
         <path d="M 60,1740 L 60,1860 L 180,1860" stroke="url(#neon-grad)" stroke-width="14" fill="none" stroke-linecap="round" />
         <path d="M 1020,1740 L 1020,1860 L 900,1860" stroke="url(#neon-grad)" stroke-width="14" fill="none" stroke-linecap="round" />
 
-        <!-- Badge AO VIVO (Esq) -->
         <g transform="translate(80, 100)">
             <rect width="160" height="46" rx="23" fill="rgba(239, 68, 68, 0.9)" />
             <circle cx="28" cy="23" r="7" fill="#ffffff" />
             <text x="48" y="29" fill="#ffffff" font-family="Inter, sans-serif" font-size="18" font-weight="900" letter-spacing="1">AO VIVO</text>
         </g>
 
-        <!-- Geo Location Badge (Dir) -->
         <g transform="translate(680, 100)">
             <rect width="320" height="46" rx="23" fill="rgba(15, 23, 42, 0.85)" stroke="#22c55e" stroke-width="2" />
             <text x="160" y="29" fill="#ffffff" font-family="Inter, sans-serif" font-size="18" font-weight="700" text-anchor="middle">📍 IFPR Campus Pinhais</text>
         </g>
 
-        <!-- Logo IFPR e Capelo Topo -->
         <g transform="translate(540, 200)" text-anchor="middle">
             <g transform="translate(-160, -25)">
                 <rect x="0" y="0" width="22" height="22" rx="4" fill="#22c55e" />
@@ -75,7 +71,6 @@ const presetsSVG = {
             <text y="75" fill="#ffffff" font-family="Inter, sans-serif" font-size="28" font-weight="700" letter-spacing="4">CAMPUS PINHAIS</text>
         </g>
 
-        <!-- Rodapé Base -->
         <g transform="translate(540, 1700)" text-anchor="middle">
             <rect x="-440" y="-70" width="880" height="95" rx="45" fill="rgba(15, 23, 42, 0.92)" stroke="url(#neon-grad)" stroke-width="3" />
             <text y="-22" fill="#4ade80" font-family="Inter, sans-serif" font-size="24" font-weight="900" letter-spacing="1">#ifpr.oficial  #ifprpinhaisoficial</text>
@@ -113,12 +108,12 @@ const presetsSVG = {
     `
 };
 
-// Inicialização
+// Carregamento Inicial
 window.addEventListener('DOMContentLoaded', () => {
     renderPreset('cyber');
 });
 
-// Ação de Liberar Câmera no Celular
+// Ação do Botão da Tela de Permissão
 btnGrantPermission.addEventListener('click', async () => {
     const success = await initCamera();
     if (success) {
@@ -168,7 +163,7 @@ async function initCamera() {
         return true;
     } catch (err) {
         console.error('Erro ao acessar câmera:', err);
-        alert('Não foi possível acessar a câmera. Você pode selecionar uma foto da galeria.');
+        alert('Não foi possível acessar a câmera. Tente usar uma foto da galeria.');
         return false;
     }
 }
