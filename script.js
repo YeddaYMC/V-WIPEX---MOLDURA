@@ -1,4 +1,4 @@
-// Referencias Elementos DOM
+// Referências DOM
 const video = document.getElementById('webcam');
 const userImage = document.getElementById('user-image');
 const svgFrame = document.getElementById('svg-frame');
@@ -21,99 +21,75 @@ const previewImage = document.getElementById('preview-image');
 const btnDownload = document.getElementById('btn-download');
 const btnCloseModal = document.getElementById('btn-close-modal');
 
-// Variaveis Estado
 let currentStream = null;
 let facingMode = 'user';
 let isUsingUserImage = false;
-let currentPreset = 'cyber';
+let currentPreset = 'clean';
 
-// Templates SVG com Hashtags Corrigidas
+// Templates SVG com os 3 Novos Estilos e Hashtags Corrigidas
 const presetsSVG = {
+    clean: `
+        <!-- Estilo 1: Clean & Lift (Elegante com Capelo e Foco no Rosto) -->
+        <g transform="translate(540, 110)" text-anchor="middle">
+            <rect x="-190" y="-30" width="380" height="55" rx="27" fill="rgba(15, 23, 42, 0.85)" stroke="#4ade80" stroke-width="2" />
+            <text y="7" fill="#ffffff" font-family="Inter, sans-serif" font-size="20" font-weight="700">✨ IFPR PINHAIS • LIFT</text>
+        </g>
+        <g transform="translate(540, 1730)" text-anchor="middle">
+            <rect x="-440" y="-55" width="880" height="90" rx="45" fill="rgba(15, 23, 42, 0.9)" stroke="#22c55e" stroke-width="3" />
+            <text y="-14" fill="#4ade80" font-family="Inter, sans-serif" font-size="23" font-weight="900" letter-spacing="1">#ifpr.oficial  #ifprpinhaisoficial</text>
+            <text y="22" fill="#ffffff" font-family="Inter, sans-serif" font-size="28" font-weight="900" letter-spacing="2">#V_WIPEX</text>
+        </g>
+    `,
+
     cyber: `
+        <!-- Estilo 2: Cyberpunk Neon -->
         <defs>
-            <linearGradient id="neon-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#4ade80" />
-                <stop offset="100%" stop-color="#06b6d4" />
+            <linearGradient id="cyber-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#22c55e" />
+                <stop offset="50%" stop-color="#06b6d4" />
+                <stop offset="100%" stop-color="#3b82f6" />
             </linearGradient>
         </defs>
+        <path d="M 50,150 L 50,50 L 150,50" stroke="url(#cyber-grad)" stroke-width="14" fill="none" stroke-linecap="round" />
+        <path d="M 1030,150 L 1030,50 L 930,50" stroke="url(#cyber-grad)" stroke-width="14" fill="none" stroke-linecap="round" />
+        <path d="M 50,1770 L 50,1870 L 150,1870" stroke="url(#cyber-grad)" stroke-width="14" fill="none" stroke-linecap="round" />
+        <path d="M 1030,1770 L 1030,1870 L 930,1870" stroke="url(#cyber-grad)" stroke-width="14" fill="none" stroke-linecap="round" />
 
-        <path d="M 60,180 L 60,60 L 180,60" stroke="url(#neon-grad)" stroke-width="14" fill="none" stroke-linecap="round" />
-        <path d="M 1020,180 L 1020,60 L 900,60" stroke="url(#neon-grad)" stroke-width="14" fill="none" stroke-linecap="round" />
-        <path d="M 60,1740 L 60,1860 L 180,1860" stroke="url(#neon-grad)" stroke-width="14" fill="none" stroke-linecap="round" />
-        <path d="M 1020,1740 L 1020,1860 L 900,1860" stroke="url(#neon-grad)" stroke-width="14" fill="none" stroke-linecap="round" />
-
-        <g transform="translate(80, 100)">
-            <rect width="160" height="46" rx="23" fill="rgba(239, 68, 68, 0.9)" />
+        <g transform="translate(80, 90)">
+            <rect width="180" height="46" rx="23" fill="rgba(239, 68, 68, 0.9)" />
             <circle cx="28" cy="23" r="7" fill="#ffffff" />
-            <text x="48" y="29" fill="#ffffff" font-family="Inter, sans-serif" font-size="18" font-weight="900" letter-spacing="1">AO VIVO</text>
+            <text x="48" y="29" fill="#ffffff" font-family="Inter, sans-serif" font-size="18" font-weight="900">CYBER LIVE</text>
         </g>
 
-        <g transform="translate(680, 100)">
-            <rect width="320" height="46" rx="23" fill="rgba(15, 23, 42, 0.85)" stroke="#22c55e" stroke-width="2" />
-            <text x="160" y="29" fill="#ffffff" font-family="Inter, sans-serif" font-size="18" font-weight="700" text-anchor="middle">📍 IFPR Campus Pinhais</text>
-        </g>
-
-        <g transform="translate(540, 200)" text-anchor="middle">
-            <g transform="translate(-160, -25)">
-                <rect x="0" y="0" width="22" height="22" rx="4" fill="#22c55e" />
-                <rect x="28" y="0" width="22" height="22" rx="4" fill="#ef4444" />
-                <rect x="0" y="28" width="22" height="22" rx="4" fill="#22c55e" />
-                <rect x="28" y="28" width="22" height="22" rx="4" fill="#22c55e" />
-                <rect x="0" y="56" width="22" height="22" rx="4" fill="#22c55e" />
-                <rect x="28" y="56" width="22" height="22" rx="4" fill="#22c55e" />
-            </g>
-            <g transform="translate(140, 0)">
-                <path d="M -40,-10 L 0,-28 L 40,-10 L 0,8 Z" fill="#15803d" />
-                <path d="M -22,-1 L -22,18 C -22,26 22,26 22,18 L 22,-1" fill="#166534" />
-                <path d="M 0,-10 L 28,8 L 28,24" stroke="#eab308" stroke-width="3" fill="none" />
-                <circle cx="28" cy="26" r="4" fill="#eab308" />
-            </g>
-            <text y="75" fill="#ffffff" font-family="Inter, sans-serif" font-size="28" font-weight="700" letter-spacing="4">CAMPUS PINHAIS</text>
-        </g>
-
-        <g transform="translate(540, 1700)" text-anchor="middle">
-            <rect x="-440" y="-70" width="880" height="95" rx="45" fill="rgba(15, 23, 42, 0.92)" stroke="url(#neon-grad)" stroke-width="3" />
-            <text y="-22" fill="#4ade80" font-family="Inter, sans-serif" font-size="24" font-weight="900" letter-spacing="1">#ifpr.oficial  #ifprpinhaisoficial</text>
-            <text y="18" fill="#ffffff" font-family="Inter, sans-serif" font-size="30" font-weight="900" letter-spacing="2">#V_WIPEX</text>
-            <text y="50" fill="#e2e8f0" font-family="Inter, sans-serif" font-size="18" font-weight="900" letter-spacing="2">Ensino • Pesquisa • Extensão</text>
+        <g transform="translate(540, 1710)" text-anchor="middle">
+            <rect x="-440" y="-65" width="880" height="100" rx="15" fill="rgba(10, 15, 30, 0.95)" stroke="url(#cyber-grad)" stroke-width="4" />
+            <text y="-20" fill="#22c55e" font-family="Inter, sans-serif" font-size="26" font-weight="900" letter-spacing="2">#ifpr.oficial #ifprpinhaisoficial</text>
+            <text y="18" fill="#ffffff" font-family="Inter, sans-serif" font-size="32" font-weight="900" letter-spacing="3">#V_WIPEX</text>
         </g>
     `,
 
-    presenter: `
-        <rect x="40" y="40" width="1000" height="1840" rx="30" fill="none" stroke="#22c55e" stroke-width="6" stroke-dasharray="20 10" />
-
-        <g transform="translate(540, 120)" text-anchor="middle">
-            <rect x="-220" y="-35" width="440" height="70" rx="35" fill="#15803d" />
-            <text y="10" fill="#ffffff" font-family="Inter, sans-serif" font-size="26" font-weight="900">🚀 PROJETO APRESENTADO</text>
+    futuristic: `
+        <!-- Estilo 3: Futurista Sci-Fi -->
+        <rect x="40" y="40" width="1000" height="1840" rx="15" fill="none" stroke="#06b6d4" stroke-width="4" stroke-dasharray="30 15" />
+        <g transform="translate(540, 100)" text-anchor="middle">
+            <rect x="-260" y="-30" width="520" height="60" rx="8" fill="rgba(6, 182, 212, 0.2)" stroke="#06b6d4" stroke-width="2" />
+            <text y="8" fill="#06b6d4" font-family="Inter, sans-serif" font-size="22" font-weight="900" letter-spacing="3">⚡ SYSTEM // V_WIPEX</text>
         </g>
 
-        <g transform="translate(540, 1690)" text-anchor="middle">
-            <rect x="-420" y="-60" width="840" height="110" rx="20" fill="rgba(15, 23, 42, 0.95)" stroke="#22c55e" stroke-width="4" />
-            <text y="-18" fill="#4ade80" font-family="Inter, sans-serif" font-size="28" font-weight="900">FEIRA DE CIÊNCIAS & TECNOLOGIA</text>
-            <text y="16" fill="#ffffff" font-family="Inter, sans-serif" font-size="20" font-weight="700">#V_WIPEX • #ifprpinhaisoficial</text>
-            <text y="40" fill="#94a3b8" font-family="Inter, sans-serif" font-size="16" font-weight="600">#ifpr.oficial</text>
-        </g>
-    `,
-
-    smooth: `
-        <g transform="translate(540, 110)" text-anchor="middle">
-            <rect x="-180" y="-30" width="360" height="60" rx="30" fill="rgba(0,0,0,0.6)" stroke="#4ade80" stroke-width="2" />
-            <text y="8" fill="#ffffff" font-family="Inter, sans-serif" font-size="22" font-weight="700">✨ Glow & Smooth Filter</text>
-        </g>
-
-        <g transform="translate(540, 1760)" text-anchor="middle">
-            <text y="-10" fill="#ffffff" font-family="Inter, sans-serif" font-size="34" font-weight="900" letter-spacing="3">#V_WIPEX</text>
-            <text y="25" fill="#4ade80" font-family="Inter, sans-serif" font-size="18" font-weight="700">#ifpr.oficial #ifprpinhaisoficial</text>
+        <g transform="translate(540, 1720)" text-anchor="middle">
+            <rect x="-440" y="-55" width="880" height="95" rx="10" fill="rgba(15, 23, 42, 0.95)" stroke="#06b6d4" stroke-width="3" />
+            <text y="-14" fill="#06b6d4" font-family="Inter, sans-serif" font-size="24" font-weight="900">#ifpr.oficial #ifprpinhaisoficial</text>
+            <text y="24" fill="#ffffff" font-family="Inter, sans-serif" font-size="28" font-weight="900">#V_WIPEX</text>
         </g>
     `
 };
 
-// Carregamento Inicial
+// Inicialização
 window.addEventListener('DOMContentLoaded', () => {
-    renderPreset('cyber');
+    renderPreset('clean');
 });
 
-// Ação do Botão da Tela de Permissão
+// Ação do Botão de Permissão
 btnGrantPermission.addEventListener('click', async () => {
     const success = await initCamera();
     if (success) {
@@ -121,7 +97,7 @@ btnGrantPermission.addEventListener('click', async () => {
     }
 });
 
-// Troca de Preset de Moldura
+// Troca de Preset
 presetButtons.forEach(btn => {
     btn.addEventListener('click', () => {
         presetButtons.forEach(b => b.classList.remove('active'));
@@ -133,7 +109,7 @@ presetButtons.forEach(btn => {
 
 function renderPreset(presetKey) {
     svgElement.innerHTML = presetsSVG[presetKey];
-    if (presetKey === 'smooth') {
+    if (presetKey === 'clean') {
         viewport.classList.add('skin-smooth');
     } else {
         viewport.classList.remove('skin-smooth');
@@ -168,13 +144,11 @@ async function initCamera() {
     }
 }
 
-// Inverter Câmera
 btnSwitch.addEventListener('click', () => {
     facingMode = facingMode === 'user' ? 'environment' : 'user';
     initCamera();
 });
 
-// Upload Foto Galeria
 uploadPhoto.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -194,7 +168,6 @@ uploadPhoto.addEventListener('change', (e) => {
     }
 });
 
-// Upload Moldura PNG Customizada
 uploadFrame.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -208,7 +181,6 @@ uploadFrame.addEventListener('change', (e) => {
     }
 });
 
-// Capturar e Exportar Foto
 btnCapture.addEventListener('click', () => {
     const ctx = canvas.getContext('2d');
     canvas.width = 1080;
@@ -217,20 +189,18 @@ btnCapture.addEventListener('click', () => {
     const sourceEl = isUsingUserImage ? userImage : video;
     drawCover(ctx, sourceEl, 1080, 1920);
 
-    if (currentPreset === 'smooth') {
+    if (currentPreset === 'clean') {
         applySkinSmoothEffect(ctx, 1080, 1920);
     }
 
     processOverlayAndExport(ctx);
 });
 
-// Suavização de Pele no Canvas
 function applySkinSmoothEffect(ctx, width, height) {
     const imgData = ctx.getImageData(0, 0, width, height);
     const data = imgData.data;
-
-    const brightness = 8;
-    const contrast = 1.04;
+    const brightness = 10;
+    const contrast = 1.05;
 
     for (let i = 0; i < data.length; i += 4) {
         data[i] = Math.min(255, (data[i] - 128) * contrast + 128 + brightness);
@@ -241,7 +211,6 @@ function applySkinSmoothEffect(ctx, width, height) {
     ctx.putImageData(imgData, 0, 0);
 }
 
-// Enquadramento Proporcional
 function drawCover(ctx, img, targetWidth, targetHeight) {
     const imgWidth = img.videoWidth || img.naturalWidth || targetWidth;
     const imgHeight = img.videoHeight || img.naturalHeight || targetHeight;
@@ -266,7 +235,6 @@ function drawCover(ctx, img, targetWidth, targetHeight) {
     ctx.drawImage(img, sx, sy, sw, sh, 0, 0, targetWidth, targetHeight);
 }
 
-// Processar Moldura e Exportar
 function processOverlayAndExport(ctx) {
     if (customFrameImg.style.display !== 'none' && customFrameImg.src) {
         ctx.drawImage(customFrameImg, 0, 0, 1080, 1920);
@@ -287,7 +255,6 @@ function processOverlayAndExport(ctx) {
     }
 }
 
-// Exibir Modal Prévia
 function showPreview() {
     const dataURL = canvas.toDataURL('image/png');
     previewImage.src = dataURL;
@@ -295,7 +262,6 @@ function showPreview() {
     previewModal.style.display = 'flex';
 }
 
-// Fechar Modal
 btnCloseModal.addEventListener('click', () => {
     previewModal.style.display = 'none';
 });
