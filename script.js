@@ -24,7 +24,7 @@ let facingMode = 'user';
 let isUsingUserImage = false;
 let currentPreset = 'cyber';
 
-// Templates SVG para as 3 Variaçoes
+// Templates SVG atualizados com as hashtags corretas (#ifpr.oficial, #ifprpinhaisoficial, #V_WIPEX)
 const presetsSVG = {
     cyber: `
         <defs>
@@ -72,13 +72,12 @@ const presetsSVG = {
             <text y="75" fill="#ffffff" font-family="Inter, sans-serif" font-size="28" font-weight="700" letter-spacing="4">CAMPUS PINHAIS</text>
         </g>
 
-        <!-- Rodapé Base -->
-        <g transform="translate(540, 1720)" text-anchor="middle">
-            <rect x="-340" y="-60" width="680" height="76" rx="38" fill="rgba(15, 23, 42, 0.9)" stroke="url(#neon-grad)" stroke-width="3" />
-            <text y="-10" fill="#ffffff" font-family="Inter, sans-serif" font-size="34" font-weight="900" letter-spacing="2">
-                <tspan fill="#4ade80">#V_Wipex</tspan>  <tspan fill="#ffffff">#IFPRPINHAIS</tspan>
-            </text>
-            <text y="50" fill="#e2e8f0" font-family="Inter, sans-serif" font-size="22" font-weight="900" letter-spacing="3">Ensino • Pesquisa • Extensão</text>
+        <!-- Rodapé Base com Hashtags Corrigidas -->
+        <g transform="translate(540, 1700)" text-anchor="middle">
+            <rect x="-440" y="-70" width="880" height="95" rx="45" fill="rgba(15, 23, 42, 0.92)" stroke="url(#neon-grad)" stroke-width="3" />
+            <text y="-22" fill="#4ade80" font-family="Inter, sans-serif" font-size="24" font-weight="900" letter-spacing="1">#ifpr.oficial  #ifprpinhaisoficial</text>
+            <text y="18" fill="#ffffff" font-family="Inter, sans-serif" font-size="30" font-weight="900" letter-spacing="2">#V_WIPEX</text>
+            <text y="50" fill="#e2e8f0" font-family="Inter, sans-serif" font-size="18" font-weight="900" letter-spacing="2">Ensino • Pesquisa • Extensão</text>
         </g>
     `,
 
@@ -88,14 +87,16 @@ const presetsSVG = {
 
         <!-- Badge Projeto Aprovado Topo -->
         <g transform="translate(540, 120)" text-anchor="middle">
-            <rect x="-220" y="-35" width="440" height="70" rx="35" fill="linear-gradient(135deg, #15803d, #047857)" fill="#15803d" />
+            <rect x="-220" y="-35" width="440" height="70" rx="35" fill="#15803d" />
             <text y="10" fill="#ffffff" font-family="Inter, sans-serif" font-size="26" font-weight="900">🚀 PROJETO APRESENTADO</text>
         </g>
 
-        <g transform="translate(540, 1700)" text-anchor="middle">
-            <rect x="-360" y="-50" width="720" height="100" rx="20" fill="rgba(15, 23, 42, 0.95)" stroke="#22c55e" stroke-width="4" />
-            <text y="-5" fill="#4ade80" font-family="Inter, sans-serif" font-size="32" font-weight="900">FEIRA DE CIÊNCIAS & TECNOLOGIA</text>
-            <text y="32" fill="#ffffff" font-family="Inter, sans-serif" font-size="22" font-weight="700">#V_Wipex • IFPR PINHAIS</text>
+        <!-- Rodapé Apresentador com Hashtags Corrigidas -->
+        <g transform="translate(540, 1690)" text-anchor="middle">
+            <rect x="-420" y="-60" width="840" height="110" rx="20" fill="rgba(15, 23, 42, 0.95)" stroke="#22c55e" stroke-width="4" />
+            <text y="-18" fill="#4ade80" font-family="Inter, sans-serif" font-size="28" font-weight="900">FEIRA DE CIÊNCIAS & TECNOLOGIA</text>
+            <text y="16" fill="#ffffff" font-family="Inter, sans-serif" font-size="20" font-weight="700">#V_WIPEX • #ifprpinhaisoficial</text>
+            <text y="40" fill="#94a3b8" font-family="Inter, sans-serif" font-size="16" font-weight="600">#ifpr.oficial</text>
         </g>
     `,
 
@@ -106,9 +107,10 @@ const presetsSVG = {
             <text y="8" fill="#ffffff" font-family="Inter, sans-serif" font-size="22" font-weight="700">✨ Glow & Smooth Filter</text>
         </g>
 
+        <!-- Rodapé Minimalista -->
         <g transform="translate(540, 1760)" text-anchor="middle">
-            <text y="0" fill="#ffffff" font-family="Inter, sans-serif" font-size="36" font-weight="900" letter-spacing="3">#V_Wipex</text>
-            <text y="40" fill="#4ade80" font-family="Inter, sans-serif" font-size="20" font-weight="700">IFPR CAMPUS PINHAIS</text>
+            <text y="-10" fill="#ffffff" font-family="Inter, sans-serif" font-size="34" font-weight="900" letter-spacing="3">#V_WIPEX</text>
+            <text y="25" fill="#4ade80" font-family="Inter, sans-serif" font-size="18" font-weight="700">#ifpr.oficial #ifprpinhaisoficial</text>
         </g>
     `
 };
@@ -226,7 +228,6 @@ function applySkinSmoothEffect(ctx, width, height) {
     const imgData = ctx.getImageData(0, 0, width, height);
     const data = imgData.data;
 
-    // Leve ajuste de brilho e contraste para uniformizar a pele
     const brightness = 8;
     const contrast = 1.04;
 
