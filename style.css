@@ -34,6 +34,7 @@ html, body {
     height: 100%;
     z-index: 1;
     background-color: #000000;
+    transition: filter 0.3s ease;
 }
 
 .video-feed,
@@ -43,8 +44,21 @@ html, body {
     object-fit: cover;
 }
 
-.camera-layer.skin-smooth {
-    filter: contrast(103%) brightness(106%) saturate(105%) blur(0.2px);
+/* Estilos de Vídeo por Filtro com Correção Natural de Pele embutida no Clean */
+.camera-layer.preset-clean {
+    filter: contrast(104%) brightness(107%) saturate(106%) blur(0.2px);
+}
+
+.camera-layer.preset-cyber {
+    filter: contrast(130%) saturate(180%) hue-rotate(310deg) brightness(95%);
+}
+
+.camera-layer.preset-tech {
+    filter: contrast(125%) saturate(140%) sepia(80%) hue-rotate(85deg) brightness(110%);
+}
+
+.camera-layer.preset-starwars {
+    filter: contrast(140%) brightness(90%) saturate(80%);
 }
 
 .frame-overlay,
@@ -65,11 +79,11 @@ html, body {
 .top-ui {
     position: relative;
     z-index: 10;
-    padding: 10px 12px;
+    padding: 8px 10px;
     background: linear-gradient(180deg, rgba(9, 13, 22, 0.95) 0%, rgba(9, 13, 22, 0.7) 80%, transparent 100%);
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 4px;
 }
 
 .header {
@@ -77,7 +91,7 @@ html, body {
 }
 
 .title {
-    font-size: 1.05rem;
+    font-size: 0.95rem;
     font-weight: 900;
     background: linear-gradient(135deg, #4ade80, #06b6d4);
     -webkit-background-clip: text;
@@ -85,33 +99,32 @@ html, body {
 }
 
 .subtitle {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     color: #94a3b8;
 }
 
 .preset-selector {
     display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    gap: 6px;
+    gap: 4px;
     background-color: rgba(30, 41, 59, 0.95);
     backdrop-filter: blur(6px);
-    padding: 4px;
+    padding: 3px;
     border-radius: 8px;
     border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .btn-preset {
     flex: 1;
-    padding: 6px 4px;
+    padding: 5px 2px;
     border: none;
     border-radius: 6px;
     background-color: transparent;
     color: #cbd5e1;
-    font-size: 0.7rem;
+    font-size: 0.62rem;
     font-weight: 700;
     cursor: pointer;
     text-align: center;
+    white-space: nowrap;
 }
 
 .btn-preset.active {
