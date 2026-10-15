@@ -84,7 +84,7 @@ body {
     transition: filter 0.3s ease;
 }
 
-/* Filtro de Pele Suave (Aplicado no Viewport) */
+/* Filtro de Pele Suave */
 .camera-viewport.skin-smooth {
     filter: contrast(102%) brightness(105%) saturate(108%) blur(0.3px);
 }
