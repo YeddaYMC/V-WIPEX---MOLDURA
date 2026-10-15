@@ -7,6 +7,9 @@ const customFrameImg = document.getElementById('custom-frame-img');
 const viewport = document.getElementById('viewport');
 const canvas = document.getElementById('export-canvas');
 
+const permissionScreen = document.getElementById('permission-screen');
+const btnGrantPermission = document.getElementById('btn-grant-permission');
+
 const btnCapture = document.getElementById('btn-capture');
 const btnSwitch = document.getElementById('btn-switch');
 const uploadPhoto = document.getElementById('upload-photo');
@@ -24,7 +27,7 @@ let facingMode = 'user';
 let isUsingUserImage = false;
 let currentPreset = 'cyber';
 
-// Templates SVG atualizados com as hashtags corretas (#ifpr.oficial, #ifprpinhaisoficial, #V_WIPEX)
+// Templates SVG com Hashtags Corrigidas
 const presetsSVG = {
     cyber: `
         <defs>
@@ -72,7 +75,7 @@ const presetsSVG = {
             <text y="75" fill="#ffffff" font-family="Inter, sans-serif" font-size="28" font-weight="700" letter-spacing="4">CAMPUS PINHAIS</text>
         </g>
 
-        <!-- Rodapé Base com Hashtags Corrigidas -->
+        <!-- Rodapé Base -->
         <g transform="translate(540, 1700)" text-anchor="middle">
             <rect x="-440" y="-70" width="880" height="95" rx="45" fill="rgba(15, 23, 42, 0.92)" stroke="url(#neon-grad)" stroke-width="3" />
             <text y="-22" fill="#4ade80" font-family="Inter, sans-serif" font-size="24" font-weight="900" letter-spacing="1">#ifpr.oficial  #ifprpinhaisoficial</text>
@@ -82,16 +85,13 @@ const presetsSVG = {
     `,
 
     presenter: `
-        <!-- Moldura Apresentador -->
         <rect x="40" y="40" width="1000" height="1840" rx="30" fill="none" stroke="#22c55e" stroke-width="6" stroke-dasharray="20 10" />
 
-        <!-- Badge Projeto Aprovado Topo -->
         <g transform="translate(540, 120)" text-anchor="middle">
             <rect x="-220" y="-35" width="440" height="70" rx="35" fill="#15803d" />
             <text y="10" fill="#ffffff" font-family="Inter, sans-serif" font-size="26" font-weight="900">🚀 PROJETO APRESENTADO</text>
         </g>
 
-        <!-- Rodapé Apresentador com Hashtags Corrigidas -->
         <g transform="translate(540, 1690)" text-anchor="middle">
             <rect x="-420" y="-60" width="840" height="110" rx="20" fill="rgba(15, 23, 42, 0.95)" stroke="#22c55e" stroke-width="4" />
             <text y="-18" fill="#4ade80" font-family="Inter, sans-serif" font-size="28" font-weight="900">FEIRA DE CIÊNCIAS & TECNOLOGIA</text>
@@ -101,13 +101,11 @@ const presetsSVG = {
     `,
 
     smooth: `
-        <!-- Moldura Minimalista para destacar o Rosto -->
         <g transform="translate(540, 110)" text-anchor="middle">
             <rect x="-180" y="-30" width="360" height="60" rx="30" fill="rgba(0,0,0,0.6)" stroke="#4ade80" stroke-width="2" />
             <text y="8" fill="#ffffff" font-family="Inter, sans-serif" font-size="22" font-weight="700">✨ Glow & Smooth Filter</text>
         </g>
 
-        <!-- Rodapé Minimalista -->
         <g transform="translate(540, 1760)" text-anchor="middle">
             <text y="-10" fill="#ffffff" font-family="Inter, sans-serif" font-size="34" font-weight="900" letter-spacing="3">#V_WIPEX</text>
             <text y="25" fill="#4ade80" font-family="Inter, sans-serif" font-size="18" font-weight="700">#ifpr.oficial #ifprpinhaisoficial</text>
@@ -115,10 +113,17 @@ const presetsSVG = {
     `
 };
 
-// Inicializacao
+// Inicialização
 window.addEventListener('DOMContentLoaded', () => {
     renderPreset('cyber');
-    initCamera();
+});
+
+// Ação de Liberar Câmera no Celular
+btnGrantPermission.addEventListener('click', async () => {
+    const success = await initCamera();
+    if (success) {
+        permissionScreen.style.display = 'none';
+    }
 });
 
 // Troca de Preset de Moldura
@@ -140,7 +145,7 @@ function renderPreset(presetKey) {
     }
 }
 
-// Inicializar Camera
+// Inicializar Câmera
 async function initCamera() {
     if (currentStream) {
         currentStream.getTracks().forEach(track => track.stop());
@@ -160,13 +165,15 @@ async function initCamera() {
         video.style.display = 'block';
         userImage.style.display = 'none';
         isUsingUserImage = false;
+        return true;
     } catch (err) {
         console.error('Erro ao acessar câmera:', err);
-        alert('Não foi possível acessar a câmera. Tente usar uma foto da galeria.');
+        alert('Não foi possível acessar a câmera. Você pode selecionar uma foto da galeria.');
+        return false;
     }
 }
 
-// Inverter Camera
+// Inverter Câmera
 btnSwitch.addEventListener('click', () => {
     facingMode = facingMode === 'user' ? 'environment' : 'user';
     initCamera();
@@ -182,6 +189,7 @@ uploadPhoto.addEventListener('change', (e) => {
             userImage.style.display = 'block';
             video.style.display = 'none';
             isUsingUserImage = true;
+            permissionScreen.style.display = 'none';
 
             if (currentStream) {
                 currentStream.getTracks().forEach(track => track.stop());
@@ -211,11 +219,9 @@ btnCapture.addEventListener('click', () => {
     canvas.width = 1080;
     canvas.height = 1920;
 
-    // Desenhar Fundo Foto ou Video
     const sourceEl = isUsingUserImage ? userImage : video;
     drawCover(ctx, sourceEl, 1080, 1920);
 
-    // Aplicar Efeito de Pele Suave no Canvas se o Preset for Smooth
     if (currentPreset === 'smooth') {
         applySkinSmoothEffect(ctx, 1080, 1920);
     }
@@ -223,7 +229,7 @@ btnCapture.addEventListener('click', () => {
     processOverlayAndExport(ctx);
 });
 
-// Suavização Natural de Pele no Canvas
+// Suavização de Pele no Canvas
 function applySkinSmoothEffect(ctx, width, height) {
     const imgData = ctx.getImageData(0, 0, width, height);
     const data = imgData.data;
@@ -232,9 +238,9 @@ function applySkinSmoothEffect(ctx, width, height) {
     const contrast = 1.04;
 
     for (let i = 0; i < data.length; i += 4) {
-        data[i] = Math.min(255, (data[i] - 128) * contrast + 128 + brightness);     // Red
-        data[i+1] = Math.min(255, (data[i+1] - 128) * contrast + 128 + brightness); // Green
-        data[i+2] = Math.min(255, (data[i+2] - 128) * contrast + 128 + brightness); // Blue
+        data[i] = Math.min(255, (data[i] - 128) * contrast + 128 + brightness);
+        data[i+1] = Math.min(255, (data[i+1] - 128) * contrast + 128 + brightness);
+        data[i+2] = Math.min(255, (data[i+2] - 128) * contrast + 128 + brightness);
     }
 
     ctx.putImageData(imgData, 0, 0);
