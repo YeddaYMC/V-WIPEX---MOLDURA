@@ -8,6 +8,7 @@ const canvas = document.getElementById('export-canvas');
 
 const permissionScreen = document.getElementById('permission-screen');
 const btnGrantPermission = document.getElementById('btn-grant-permission');
+const permissionHint = document.querySelector('.permission-hint');
 
 const btnCapture = document.getElementById('btn-capture');
 const btnSwitch = document.getElementById('btn-switch');
@@ -82,13 +83,16 @@ const presetsSVG = {
 
 window.addEventListener('DOMContentLoaded', () => {
     renderPreset('clean');
+    initCamera({ showErrors: false }).then(success => {
+        if (success) {
+            permissionScreen.style.display = 'none';
+        }
+    });
 });
 
 btnGrantPermission.addEventListener('click', async () => {
-    const success = await initCamera();
-    if (success) {
-        permissionScreen.style.display = 'none';
-    }
+    await initCamera();
+    permissionScreen.style.display = 'none';
 });
 
 presetButtons.forEach(btn => {
@@ -109,7 +113,29 @@ function renderPreset(presetKey) {
     }
 }
 
-async function initCamera() {
+async function initCamera(options = {}) {
+    const { showErrors = true } = options;
+
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        if (permissionHint) {
+            permissionHint.innerHTML = 'Seu navegador não suporta câmera aqui. Use a opção <strong>"Galeria"</strong>.';
+        }
+        if (showErrors) {
+            alert('Este navegador não suporta acesso à câmera. Você pode continuar usando uma foto da galeria.');
+        }
+        return false;
+    }
+
+    if (!window.isSecureContext) {
+        if (permissionHint) {
+            permissionHint.innerHTML = 'Abra em <strong>HTTPS</strong> para liberar a câmera, ou use a opção <strong>"Galeria"</strong>.';
+        }
+        if (showErrors) {
+            alert('A câmera só funciona em página segura (HTTPS). Abra este link via HTTPS para permitir acesso.');
+        }
+        return false;
+    }
+
     if (currentStream) {
         currentStream.getTracks().forEach(track => track.stop());
     }
@@ -131,7 +157,9 @@ async function initCamera() {
         return true;
     } catch (err) {
         console.error('Erro ao acessar câmera:', err);
-        alert('Não foi possível acessar a câmera. Tente utilizar uma foto da galeria.');
+        if (showErrors) {
+            alert('Não foi possível acessar a câmera. Você pode continuar usando uma foto da galeria.');
+        }
         return false;
     }
 }
