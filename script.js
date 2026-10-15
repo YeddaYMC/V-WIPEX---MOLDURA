@@ -25,7 +25,6 @@ let facingMode = 'user';
 let isUsingUserImage = false;
 let currentPreset = 'clean';
 
-// Presets SVG atualizados com as hashtags corretas nos elementos visuais (#ifpr.oficial, #ifprpinhaisoficial, #V_WIPEX)
 const presetsSVG = {
     clean: `
         <g transform="translate(540, 140)" text-anchor="middle">
@@ -66,15 +65,47 @@ const presetsSVG = {
         </g>
     `,
 
-    futuristic: `
-        <rect x="40" y="40" width="1000" height="1840" rx="15" fill="none" stroke="#06b6d4" stroke-width="4" stroke-dasharray="30 15" />
+    tech: `
+        <rect x="40" y="40" width="1000" height="1840" rx="15" fill="none" stroke="#22c55e" stroke-width="3" stroke-dasharray="20 10" />
+        <g fill="#22c55e" font-family="monospace" font-size="20" opacity="0.65" font-weight="700">
+            <text x="70" y="250">0 1 0 1 1 0 1</text>
+            <text x="70" y="320">1 0 1 1 0 1 0</text>
+            <text x="70" y="390">0 1 1 0 1 0 0</text>
+            <text x="910" y="250" text-anchor="end">1 0 1 0 0 1 1</text>
+            <text x="910" y="320" text-anchor="end">0 1 0 1 1 0 1</text>
+            <text x="910" y="390" text-anchor="end">1 1 0 0 1 1 0</text>
+        </g>
         <g transform="translate(540, 100)" text-anchor="middle">
-            <rect x="-260" y="-30" width="520" height="60" rx="8" fill="rgba(6, 182, 212, 0.2)" stroke="#06b6d4" stroke-width="2" />
-            <text y="8" fill="#06b6d4" font-family="Inter, sans-serif" font-size="22" font-weight="900" letter-spacing="3">⚡ SYSTEM // V_WIPEX</text>
+            <rect x="-260" y="-30" width="520" height="60" rx="8" fill="rgba(15, 23, 42, 0.85)" stroke="#22c55e" stroke-width="2" />
+            <text y="8" fill="#4ade80" font-family="Inter, sans-serif" font-size="22" font-weight="900" letter-spacing="3">⚡ TECH // V_WIPEX</text>
         </g>
         <g transform="translate(540, 1720)" text-anchor="middle">
-            <rect x="-440" y="-55" width="880" height="95" rx="10" fill="rgba(15, 23, 42, 0.95)" stroke="#06b6d4" stroke-width="3" />
-            <text y="-14" fill="#06b6d4" font-family="Inter, sans-serif" font-size="24" font-weight="900">#ifpr.oficial  #ifprpinhaisoficial</text>
+            <rect x="-440" y="-55" width="880" height="95" rx="10" fill="rgba(15, 23, 42, 0.95)" stroke="#22c55e" stroke-width="3" />
+            <text y="-14" fill="#4ade80" font-family="Inter, sans-serif" font-size="24" font-weight="900">#ifpr.oficial  #ifprpinhaisoficial</text>
+            <text y="24" fill="#ffffff" font-family="Inter, sans-serif" font-size="28" font-weight="900">#V_WIPEX</text>
+        </g>
+    `,
+
+    starwars: `
+        <defs>
+            <linearGradient id="sw-fade" x1="0%" y1="100%" x2="0%" y2="0%">
+                <stop offset="0%" stop-color="#ffff00" stop-opacity="1" />
+                <stop offset="70%" stop-color="#ffff00" stop-opacity="0.9" />
+                <stop offset="100%" stop-color="#ffff00" stop-opacity="0.1" />
+            </linearGradient>
+        </defs>
+        <rect x="30" y="30" width="1020" height="1860" rx="10" fill="none" stroke="#38bdf8" stroke-width="2" opacity="0.4" />
+        <g transform="translate(540, 1150) scale(1, 0.45)" text-anchor="middle">
+            <text y="-380" fill="#ffff00" font-family="Inter, sans-serif" font-size="46" font-weight="900" letter-spacing="4">IFPR</text>
+            <text y="-300" fill="#38bdf8" font-family="Inter, sans-serif" font-size="38" font-weight="700">Educação Publica de Qualidade</text>
+            <text y="-220" fill="#ffffff" font-family="Inter, sans-serif" font-size="34" font-weight="700">Ensino • Pesquisa • Extensão</text>
+            <text y="-130" fill="#4ade80" font-family="Inter, sans-serif" font-size="42" font-weight="900" letter-spacing="2">V WIPEX</text>
+            <text y="-30" fill="#ffff00" font-family="Inter, sans-serif" font-size="40" font-weight="900">QUE A FORÇA</text>
+            <text y="40" fill="#ffff00" font-family="Inter, sans-serif" font-size="40" font-weight="900">ESTEJA COM VOCÊ</text>
+        </g>
+        <g transform="translate(540, 1720)" text-anchor="middle">
+            <rect x="-440" y="-55" width="880" height="95" rx="10" fill="rgba(15, 23, 42, 0.95)" stroke="#38bdf8" stroke-width="3" />
+            <text y="-14" fill="#38bdf8" font-family="Inter, sans-serif" font-size="24" font-weight="900">#ifpr.oficial  #ifprpinhaisoficial</text>
             <text y="24" fill="#ffffff" font-family="Inter, sans-serif" font-size="28" font-weight="900">#V_WIPEX</text>
         </g>
     `
@@ -102,11 +133,8 @@ presetButtons.forEach(btn => {
 
 function renderPreset(presetKey) {
     svgElement.innerHTML = presetsSVG[presetKey];
-    if (presetKey === 'clean') {
-        viewport.classList.add('skin-smooth');
-    } else {
-        viewport.classList.remove('skin-smooth');
-    }
+    viewport.className = 'camera-layer';
+    viewport.classList.add(`preset-${presetKey}`);
 }
 
 async function initCamera() {
@@ -181,25 +209,42 @@ btnCapture.addEventListener('click', () => {
     const sourceEl = isUsingUserImage ? userImage : video;
     drawCover(ctx, sourceEl, 1080, 1920);
 
-    if (currentPreset === 'clean') {
-        applySkinSmoothEffect(ctx, 1080, 1920);
-    }
+    // Aplica o filtro correspondente e a correção natural de pele na imagem capturada
+    applyVideoFilterToCanvas(ctx, currentPreset, 1080, 1920);
 
     processOverlayAndExport(ctx);
 });
 
-function applySkinSmoothEffect(ctx, width, height) {
+function applyVideoFilterToCanvas(ctx, preset, width, height) {
     const imgData = ctx.getImageData(0, 0, width, height);
     const data = imgData.data;
-    const brightness = 10;
-    const contrast = 1.05;
 
     for (let i = 0; i < data.length; i += 4) {
-        data[i] = Math.min(255, (data[i] - 128) * contrast + 128 + brightness);
-        data[i+1] = Math.min(255, (data[i+1] - 128) * contrast + 128 + brightness);
-        data[i+2] = Math.min(255, (data[i+2] - 128) * contrast + 128 + brightness);
-    }
+        let r = data[i];
+        let g = data[i+1];
+        let b = data[i+2];
 
+        if (preset === 'clean') {
+            // Suavização leve + Brilho/Contraste natural de pele
+            data[i] = Math.min(255, (r - 128) * 1.04 + 128 + 10);
+            data[i+1] = Math.min(255, (g - 128) * 1.04 + 128 + 10);
+            data[i+2] = Math.min(255, (b - 128) * 1.04 + 128 + 10);
+        } else if (preset === 'cyber') {
+            data[i] = Math.min(255, r * 1.3 + 20);
+            data[i+1] = Math.max(0, g * 0.8 - 10);
+            data[i+2] = Math.min(255, b * 1.4 + 30);
+        } else if (preset === 'tech') {
+            let avg = (r + g + b) / 3;
+            data[i] = avg * 0.7;
+            data[i+1] = Math.min(255, avg * 1.3 + 20);
+            data[i+2] = avg * 0.6;
+        } else if (preset === 'starwars') {
+            let avg = (r + g + b) / 3;
+            data[i] = Math.min(255, avg * 1.2);
+            data[i+1] = Math.min(255, avg * 1.1);
+            data[i+2] = Math.min(255, avg * 1.3);
+        }
+    }
     ctx.putImageData(imgData, 0, 0);
 }
 
@@ -245,10 +290,6 @@ function processOverlayAndExport(ctx) {
         };
         overlayImg.src = blobURL;
     }
-}
-
-fnshowPreview = () => {
-    // ...
 }
 
 function showPreview() {
