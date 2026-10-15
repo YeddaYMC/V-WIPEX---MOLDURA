@@ -16,18 +16,18 @@
         <div class="permission-card">
             <div class="icon-header">📸</div>
             <h2>Câmera #V_WIPEX</h2>
-            <p>Para usar os filtros que preparamos para você acesse a sua câmera.</p>
+            <p>Para tirar sua foto com a moldura do IFPR Campus Pinhais, precisamos de acesso à sua câmera.</p>
             <button id="btn-grant-permission" class="btn btn-primary btn-large">
-                OK
+                Liberar Câmera e Começar
             </button>
-            <p class="permission-hint">Clique em <strong>"OK"</strong> e divirta-se.</p>
+            <p class="permission-hint">Clique acima e selecione <strong>"Permitir"</strong> no aviso do seu navegador.</p>
         </div>
     </div>
 
     <!-- App Viewport -->
     <div class="app-viewport">
         
-        <!-- UI Superior (Título + 3 Filtros) -->
+        <!-- UI Superior (Título + 4 Filtros) -->
         <div class="top-ui">
             <header class="header">
                 <h1 class="title">Câmera #V_WIPEX</h1>
@@ -35,14 +35,15 @@
             </header>
 
             <div class="preset-selector">
-                <button class="btn-preset active" data-preset="clean">1. Clean </button>
-                <button class="btn-preset" data-preset="cyber">2. Cyberpunk</button>
-                <button class="btn-preset" data-preset="futuristic">3. Futurista</button>
+                <button class="btn-preset active" data-preset="clean">Clean</button>
+                <button class="btn-preset" data-preset="cyber">Cyber</button>
+                <button class="btn-preset" data-preset="tech">Tech</button>
+                <button class="btn-preset" data-preset="starwars">Star Wars</button>
             </div>
         </div>
 
         <!-- Camada da Câmera -->
-        <div class="camera-layer" id="viewport">
+        <div class="camera-layer preset-clean" id="viewport">
             <video id="webcam" autoplay playsinline class="video-feed"></video>
             <img id="user-image" class="user-image-feed" alt="Foto importada" style="display: none;">
             
@@ -65,7 +66,10 @@
                     <input type="file" id="upload-photo" accept="image/*" class="file-input">
                 </label>
                 
-                
+                <label for="upload-frame" class="btn btn-outline">
+                    🎨 Trocar PNG
+                    <input type="file" id="upload-frame" accept="image/png" class="file-input">
+                </label>
             </div>
         </div>
 
