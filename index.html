@@ -1,436 +1,126 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="h-full bg-slate-950 text-slate-100">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Câmera de Eventos IFPR Pinhais - #V_Wipex</title>
-  
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- Configurações do Tailwind com as cores do IFPR -->
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            ifpr: {
-              green: '#22c55e',
-              darkgreen: '#15803d',
-              VERD: '#22c55e',
-              accent: '#16a34a'
-            }
-          },
-          fontFamily: {
-            sans: ['Inter', 'sans-serif']
-          }
-        }
-      }
-    }
-  </script>
-
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-
-  <style>
-    .aspect-story {
-      aspect-ratio: 9 / 16;
-    }
-
-    .mirror {
-      transform: scaleX(-1);
-    }
-
-    ::-webkit-scrollbar {
-      width: 6px;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #334155;
-      border-radius: 9999px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moldura #V_Wipex - IFPR Pinhais</title>
+    <!-- Fonte -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="h-full flex flex-col justify-between font-sans antialiased bg-slate-950 select-none overflow-x-hidden">
+<body>
 
-  <header class="w-full bg-slate-900/90 backdrop-blur-md border-b border-slate-800 p-3 px-4 flex items-center justify-between z-30 sticky top-0">
-    <div class="flex items-center gap-2">
-      <div class="w-8 h-8 rounded-lg bg-ifpr-green flex items-center justify-center font-bold text-slate-950 text-xl shadow-lg shadow-ifpr-green/20">
-        IF
-      </div>
-      <div>
-        <h1 class="text-sm font-bold text-white tracking-wide leading-none">IFPR PINHAIS</h1>
-        <p class="text-[10px] font-semibold text-ifpr-green leading-tight mt-0.5">#V_Wipex • Moldura Oficial</p>
-      </div>
-    </div>
-
-    <label for="custom-frame-upload" class="flex items-center gap-1.5 text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-full border border-slate-700 cursor-pointer transition active:scale-95">
-      <i data-lucide="image-plus" class="w-4 h-4 text-ifpr-green"></i>
-      <span class="hidden sm:inline">Usar PNG do Figma</span>
-      <span class="sm:hidden">PNG</span>
-      <input type="file" id="custom-frame-upload" accept="image/png" class="hidden" />
-    </label>
-  </header>
-
-  <main class="flex-1 flex flex-col items-center justify-center p-2 sm:p-4 max-w-md mx-auto w-full relative">
-
-    <div id="camera-container" class="relative w-full aspect-story bg-slate-900 rounded-2xl overflow-hidden border border-slate-800 shadow-2xl flex items-center justify-center">
-      
-      <video id="video-feed" autoplay playsinline class="absolute inset-0 w-full h-full object-cover mirror"></video>
-
-      <img id="captured-preview" class="absolute inset-0 w-full h-full object-cover hidden z-10" alt="Sua Foto com Moldura" />
-
-      <div id="frame-overlay" class="absolute inset-0 w-full h-full pointer-events-none z-20 flex flex-col justify-between p-4">
+    <!-- Container Principal -->
+    <div class="app-container">
         
-        <svg id="default-svg-frame" class="absolute inset-0 w-full h-full" viewBox="0 0 1080 1920" preserveAspectRatio="none">
-          <defs>
-            <linearGradient id="gradTop" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stop-color="#020617" stop-opacity="0.85" />
-              <stop offset="100%" stop-color="#020617" stop-opacity="0" />
-            </linearGradient>
-            <linearGradient id="gradBottom" x1="0%" y1="100%" x2="0%" y2="0%">
-              <stop offset="0%" stop-color="#020617" stop-opacity="0.9" />
-              <stop offset="100%" stop-color="#020617" stop-opacity="0" />
-            </linearGradient>
-          </defs>
+        <!-- Topo UI -->
+        <header class="header">
+            <h1 class="title">Câmera #V_Wipex</h1>
+            <p class="subtitle">IFPR Campus Pinhais</p>
+        </header>
 
-          <rect x="0" y="0" width="1080" height="380" fill="url(#gradTop)" />
-          <rect x="0" y="1540" width="1080" height="380" fill="url(#gradBottom)" />
-
-          <rect x="30" y="30" width="1020" height="1860" rx="40" fill="none" stroke="#22c55e" stroke-width="4" stroke-opacity="0.5" stroke-dasharray="16 12"/>
-
-          <!-- Topo: Capelo e Nome do Evento -->
-          <g transform="translate(540, 100)" text-anchor="middle">
-            <path d="M 0 -35 L 70 -10 L 0 15 L -70 -10 Z" fill="#22c55e" />
-            <polygon points="0,15 45,0 45,20 0,35 -45,20 -45,0" fill="#15803d" />
-            <path d="M 50 -3 L 65 25 L 60 45" stroke="#ef4444" stroke-width="5" fill="none" stroke-linecap="round" />
-            <circle cx="60" cy="48" r="6" fill="#ef4444" />
-
-            <text y="80" fill="#ffffff" font-family="Inter, sans-serif" font-size="44" font-weight="900" letter-spacing="4">IFPR PINHAIS</text>
-            <text y="115" fill="#22c55e" font-family="Inter, sans-serif" font-size="24" font-weight="700" letter-spacing="6">INSTITUTO FEDERAL</text>
-          </g>
-
-          <!-- Rodapé com Hashtags -->
-          <g transform="translate(540, 1750)" text-anchor="middle">
-            <rect x="-380" y="-60" width="760" height="90" rx="45" fill="#020617" stroke="#22c55e" stroke-width="4" />
+        <!-- Viewport da Câmera -->
+        <div class="camera-viewport">
+            <!-- Vídeo Câmera -->
+            <video id="webcam" autoplay playsinline class="video-feed"></video>
             
-            <text y="-5" fill="#ffffff" font-family="Inter, sans-serif" font-size="38" font-weight="900">
-              <tspan fill="#ef4444">#</tspan>V_Wipex  <tspan fill="#22c55e">#</tspan>IFPRPINHAIS
-            </text>
+            <!-- Imagem Galeria -->
+            <img id="user-image" class="user-image-feed" alt="Foto importada" style="display: none;">
 
-            <text y="65" fill="#94a3b8" font-family="Inter, sans-serif" font-size="22" font-weight="500">
-              Ensino • Pesquisa • Extensão
-            </text>
-          </g>
-        </svg>
+            <!-- Overlay SVG -->
+            <div class="frame-overlay" id="svg-frame">
+                <svg viewBox="0 0 1080 1920" class="svg-element">
+                    <!-- Cantoneiras -->
+                    <path d="M 60,180 L 60,60 L 180,60" stroke="#22c55e" stroke-width="12" fill="none" stroke-linecap="round" />
+                    <path d="M 1020,180 L 1020,60 L 900,60" stroke="#22c55e" stroke-width="12" fill="none" stroke-linecap="round" />
+                    <path d="M 60,1740 L 60,1860 L 180,1860" stroke="#22c55e" stroke-width="12" fill="none" stroke-linecap="round" />
+                    <path d="M 1020,1740 L 1020,1860 L 900,1860" stroke="#22c55e" stroke-width="12" fill="none" stroke-linecap="round" />
 
-        <img id="custom-frame-img" class="absolute inset-0 w-full h-full object-contain hidden" alt="Moldura Customizada" />
-      </div>
+                    <!-- Topo Header -->
+                    <g transform="translate(540, 150)" text-anchor="middle">
+                        <!-- Logo IFPR -->
+                        <g transform="translate(-160, -25)">
+                            <rect x="0" y="0" width="22" height="22" rx="4" fill="#22c55e" />
+                            <rect x="28" y="0" width="22" height="22" rx="4" fill="#ef4444" />
+                            <rect x="0" y="28" width="22" height="22" rx="4" fill="#22c55e" />
+                            <rect x="28" y="28" width="22" height="22" rx="4" fill="#22c55e" />
+                            <rect x="0" y="56" width="22" height="22" rx="4" fill="#22c55e" />
+                            <rect x="28" y="56" width="22" height="22" rx="4" fill="#22c55e" />
+                        </g>
 
-      <div id="camera-fallback" class="hidden absolute inset-0 bg-slate-900 p-6 flex flex-col items-center justify-center text-center z-0">
-        <div class="w-16 h-16 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 mb-4">
-          <i data-lucide="camera-off" class="w-8 h-8"></i>
+                        <!-- Capelo -->
+                        <g transform="translate(140, 0)">
+                            <path d="M -40,-10 L 0,-28 L 40,-10 L 0,8 Z" fill="#15803d" />
+                            <path d="M -22,-1 L -22,18 C -22,26 22,26 22,18 L 22,-1" fill="#166534" />
+                            <path d="M 0,-10 L 28,8 L 28,24" stroke="#eab308" stroke-width="3" fill="none" />
+                            <circle cx="28" cy="26" r="4" fill="#eab308" />
+                        </g>
+
+                        <!-- Texto Campus -->
+                        <text y="75" fill="#ffffff" font-family="Inter, sans-serif" font-size="28" font-weight="700" letter-spacing="4">CAMPUS PINHAIS</text>
+                    </g>
+
+                    <!-- Rodapé Base -->
+                    <g transform="translate(540, 1720)" text-anchor="middle">
+                        <!-- Hashtags -->
+                        <rect x="-320" y="-60" width="640" height="70" rx="35" fill="rgba(15, 23, 42, 0.85)" stroke="#22c55e" stroke-width="3" />
+                        <text y="-14" fill="#ffffff" font-family="Inter, sans-serif" font-size="34" font-weight="900" letter-spacing="2">
+                            <tspan fill="#4ade80">#V_Wipex</tspan>  <tspan fill="#ffffff">#IFPRPINHAIS</tspan>
+                        </text>
+
+                        <!-- Texto Footer -->
+                        <text y="50" fill="#e2e8f0" font-family="Inter, sans-serif" font-size="22" font-weight="900" letter-spacing="3">Ensino • Pesquisa • Extensão</text>
+                    </g>
+                </svg>
+            </div>
+
+            <!-- Imagem Moldura Customizada -->
+            <img id="custom-frame-img" class="custom-frame-overlay" alt="Moldura personalizada" style="display: none;">
         </div>
-        <h3 class="text-lg font-bold text-white mb-2">Câmera indisponível</h3>
-        <p class="text-xs text-slate-400 mb-6 max-w-xs">Permita o acesso à câmera no seu navegador ou envie uma foto da sua galeria.</p>
-        <label for="gallery-input-fallback" class="bg-ifpr-green hover:bg-ifpr-darkgreen text-slate-950 font-bold px-5 py-2.5 rounded-xl text-sm flex items-center gap-2 cursor-pointer shadow-lg">
-          <i data-lucide="image" class="w-4 h-4"></i> Escolher Foto da Galeria
-          <input type="file" id="gallery-input-fallback" accept="image/*" class="hidden" />
-        </label>
-      </div>
+
+        <!-- Painel Controles -->
+        <div class="controls-panel">
+            <div class="button-group">
+                <button id="btn-capture" class="btn btn-primary">Tirar Foto</button>
+                <button id="btn-switch" class="btn btn-secondary">Inverter Câmera</button>
+            </div>
+
+            <div class="button-group">
+                <label for="upload-photo" class="btn btn-outline">
+                    Usar Foto da Galeria
+                    <input type="file" id="upload-photo" accept="image/*" class="file-input">
+                </label>
+                
+                <label for="upload-frame" class="btn btn-outline">
+                    Trocar Moldura (PNG)
+                    <input type="file" id="upload-frame" accept="image/png" class="file-input">
+                </label>
+            </div>
+        </div>
+
+        <!-- Canvas Escondido Processamento -->
+        <canvas id="export-canvas" width="1080" height="1920" style="display: none;"></canvas>
+
+        <!-- Modal Prévia -->
+        <div id="preview-modal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <h2 class="modal-title">Sua foto está pronta!</h2>
+                <div class="preview-container">
+                    <img id="preview-image" alt="Prévia da foto">
+                </div>
+                <div class="modal-actions">
+                    <a id="btn-download" class="btn btn-primary" download="foto-v-wipex-ifpr.png">Baixar Foto PNG</a>
+                    <button id="btn-close-modal" class="btn btn-secondary">Tirar Outra</button>
+                </div>
+            </div>
+        </div>
 
     </div>
 
-    <p id="instruction-text" class="text-[11px] text-slate-400 text-center mt-3 font-medium">
-      Centralize seu rosto e clique no botão verde para tirar a foto!
-    </p>
-
-  </main>
-
-  <footer class="w-full bg-slate-900/90 backdrop-blur-md border-t border-slate-800 p-4 z-30">
-    <div class="max-w-md mx-auto flex items-center justify-between gap-4" id="controls-live">
-      
-      <label for="gallery-input" class="p-3.5 rounded-full bg-slate-800 text-slate-200 hover:bg-slate-700 active:scale-95 transition border border-slate-700 cursor-pointer" title="Usar Foto da Galeria">
-        <i data-lucide="image" class="w-6 h-6"></i>
-        <input type="file" id="gallery-input" accept="image/*" class="hidden" />
-      </label>
-
-      <button id="btn-capture" class="flex-1 max-w-[160px] bg-gradient-to-r from-ifpr-green to-emerald-600 hover:from-emerald-500 hover:to-ifpr-green text-slate-950 font-black py-3.5 px-6 rounded-full shadow-lg shadow-ifpr-green/25 active:scale-95 transition flex items-center justify-center gap-2 text-base">
-        <i data-lucide="camera" class="w-6 h-6"></i>
-        <span>TIRAR FOTO</span>
-      </button>
-
-      <button id="btn-switch-camera" class="p-3.5 rounded-full bg-slate-800 text-slate-200 hover:bg-slate-700 active:scale-95 transition border border-slate-700" title="Alternar Câmera">
-        <i data-lucide="refresh-cw" class="w-6 h-6"></i>
-      </button>
-    </div>
-
-    <div class="max-w-md mx-auto hidden flex-col gap-3" id="controls-preview">
-      <button id="btn-download" class="w-full bg-ifpr-green hover:bg-ifpr-darkgreen text-slate-950 font-extrabold py-3.5 px-4 rounded-xl shadow-lg shadow-ifpr-green/20 active:scale-98 transition flex items-center justify-center gap-2 text-base">
-        <i data-lucide="download" class="w-5 h-5"></i>
-        <span>BAIXAR FOTO (PNG 1080x1920)</span>
-      </button>
-
-      <div class="flex gap-2">
-        <button id="btn-retake" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-2.5 px-4 rounded-xl border border-slate-700 active:scale-98 transition flex items-center justify-center gap-2 text-xs">
-          <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
-          <span>Tirar Outra</span>
-        </button>
-        
-        <button id="btn-share" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-2.5 px-4 rounded-xl border border-slate-700 active:scale-98 transition flex items-center justify-center gap-2 text-xs">
-          <i data-lucide="share-2" class="w-4 h-4 text-ifpr-green"></i>
-          <span>Compartilhar</span>
-        </button>
-      </div>
-    </div>
-  </footer>
-
-  <canvas id="render-canvas" width="1080" height="1920" class="hidden"></canvas>
-
-  <script>
-    lucide.createIcons();
-
-    const videoFeed = document.getElementById('video-feed');
-    const capturedPreview = document.getElementById('captured-preview');
-    const cameraFallback = document.getElementById('camera-fallback');
-    const btnCapture = document.getElementById('btn-capture');
-    const btnSwitchCamera = document.getElementById('btn-switch-camera');
-    const galleryInput = document.getElementById('gallery-input');
-    const galleryInputFallback = document.getElementById('gallery-input-fallback');
-    const customFrameUpload = document.getElementById('custom-frame-upload');
-    const defaultSvgFrame = document.getElementById('default-svg-frame');
-    const customFrameImg = document.getElementById('custom-frame-img');
-    const controlsLive = document.getElementById('controls-live');
-    const controlsPreview = document.getElementById('controls-preview');
-    const btnDownload = document.getElementById('btn-download');
-    const btnRetake = document.getElementById('btn-retake');
-    const btnShare = document.getElementById('btn-share');
-    const instructionText = document.getElementById('instruction-text');
-    const renderCanvas = document.getElementById('render-canvas');
-    const ctx = renderCanvas.getContext('2d');
-
-    let currentStream = null;
-    let facingMode = 'user';
-    let customFrameSrc = null;
-    let capturedImageDataUrl = null;
-
-    async function startCamera() {
-      if (currentStream) {
-        currentStream.getTracks().forEach(track => track.stop());
-      }
-
-      try {
-        const constraints = {
-          video: {
-            facingMode: facingMode,
-            width: { ideal: 1920 },
-            height: { ideal: 1080 }
-          },
-          audio: false
-        };
-
-        currentStream = await navigator.mediaDevices.getUserMedia(constraints);
-        videoFeed.srcObject = currentStream;
-
-        if (facingMode === 'user') {
-          videoFeed.classList.add('mirror');
-        } else {
-          videoFeed.classList.remove('mirror');
-        }
-
-        cameraFallback.classList.add('hidden');
-        videoFeed.classList.remove('hidden');
-      } catch (err) {
-        console.warn("Câmera indisponível:", err);
-        cameraFallback.classList.remove('hidden');
-        videoFeed.classList.add('hidden');
-      }
-    }
-
-    btnSwitchCamera.addEventListener('click', () => {
-      facingMode = facingMode === 'user' ? 'environment' : 'user';
-      startCamera();
-    });
-
-    customFrameUpload.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          customFrameSrc = event.target.result;
-          customFrameImg.src = customFrameSrc;
-          customFrameImg.classList.remove('hidden');
-          defaultSvgFrame.classList.add('hidden');
-        };
-        reader.readAsDataURL(file);
-      }
-    });
-
-    btnCapture.addEventListener('click', () => {
-      if (!currentStream) return;
-
-      renderCanvas.width = 1080;
-      renderCanvas.height = 1920;
-
-      const vW = videoFeed.videoWidth;
-      const vH = videoFeed.videoHeight;
-
-      const targetAspect = 1080 / 1920;
-      const videoAspect = vW / vH;
-      let sx, sy, sWidth, sHeight;
-
-      if (videoAspect > targetAspect) {
-        sHeight = vH;
-        sWidth = vH * targetAspect;
-        sx = (vW - sWidth) / 2;
-        sy = 0;
-      } else {
-        sWidth = vW;
-        sHeight = vW / targetAspect;
-        sx = 0;
-        sy = (vH - sHeight) / 2;
-      }
-
-      ctx.save();
-      if (facingMode === 'user') {
-        ctx.translate(1080, 0);
-        ctx.scale(-1, 1);
-      }
-
-      ctx.drawImage(videoFeed, sx, sy, sWidth, sHeight, 0, 0, 1080, 1920);
-      ctx.restore();
-
-      renderOverlayOnCanvas().then(() => {
-        showPreview();
-      });
-    });
-
-    function handleGalleryUpload(file) {
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const img = new Image();
-        img.onload = () => {
-          renderCanvas.width = 1080;
-          renderCanvas.height = 1920;
-
-          const imgAspect = img.width / img.height;
-          const targetAspect = 1080 / 1920;
-          let sx, sy, sWidth, sHeight;
-
-          if (imgAspect > targetAspect) {
-            sHeight = img.height;
-            sWidth = img.height * targetAspect;
-            sx = (img.width - sWidth) / 2;
-            sy = 0;
-          } else {
-            sWidth = img.width;
-            sHeight = img.width / targetAspect;
-            sx = 0;
-            sy = (img.height - sHeight) / 2;
-          }
-
-          ctx.clearRect(0, 0, 1080, 1920);
-          ctx.drawImage(img, sx, sy, sWidth, sHeight, 0, 0, 1080, 1920);
-
-          renderOverlayOnCanvas().then(() => {
-            showPreview();
-          });
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
-
-    galleryInput.addEventListener('change', (e) => handleGalleryUpload(e.target.files[0]));
-    galleryInputFallback.addEventListener('change', (e) => handleGalleryUpload(e.target.files[0]));
-
-    function renderOverlayOnCanvas() {
-      return new Promise((resolve) => {
-        if (customFrameSrc) {
-          const frameImg = new Image();
-          frameImg.onload = () => {
-            ctx.drawImage(frameImg, 0, 0, 1080, 1920);
-            resolve();
-          };
-          frameImg.src = customFrameSrc;
-        } else {
-          const svgData = new XMLSerializer().serializeToString(defaultSvgFrame);
-          const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
-          const url = URL.createObjectURL(svgBlob);
-          const svgImage = new Image();
-
-          svgImage.onload = () => {
-            ctx.drawImage(svgImage, 0, 0, 1080, 1920);
-            URL.revokeObjectURL(url);
-            resolve();
-          };
-          svgImage.src = url;
-        }
-      });
-    }
-
-    function showPreview() {
-      capturedImageDataUrl = renderCanvas.toDataURL('image/png', 1.0);
-      capturedPreview.src = capturedImageDataUrl;
-
-      videoFeed.classList.add('hidden');
-      capturedPreview.classList.remove('hidden');
-      controlsLive.classList.add('hidden');
-      controlsLive.classList.remove('flex');
-      controlsPreview.classList.remove('hidden');
-      controlsPreview.classList.add('flex');
-
-      instructionText.textContent = "Sua foto está pronta! Baixe e compartilhe no LinkedIn, Instagram ou WhatsApp com a hashtag #V_Wipex";
-    }
-
-    btnRetake.addEventListener('click', () => {
-      capturedPreview.classList.add('hidden');
-      videoFeed.classList.remove('hidden');
-      controlsPreview.classList.add('hidden');
-      controlsPreview.classList.remove('flex');
-      controlsLive.classList.remove('hidden');
-      controlsLive.classList.add('flex');
-
-      instructionText.textContent = "Centralize seu rosto e clique no botão verde para tirar a foto!";
-    });
-
-    btnDownload.addEventListener('click', () => {
-      if (!capturedImageDataUrl) return;
-
-      const link = document.createElement('a');
-      link.download = `IFPR_V_Wipex_${Date.now()}.png`;
-      link.href = capturedImageDataUrl;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    });
-
-    btnShare.addEventListener('click', async () => {
-      if (!capturedImageDataUrl) return;
-
-      try {
-        const response = await fetch(capturedImageDataUrl);
-        const blob = await response.blob();
-        const file = new File([blob], 'V_Wipex_IFPR.png', { type: 'image/png' });
-
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-          await navigator.share({
-            title: 'Minha foto na V Wipex IFPR',
-            text: 'Participei da V Wipex no IFPR Pinhais! #V_Wipex #IFPRPINHAIS',
-            files: [file]
-          });
-        } else {
-          btnDownload.click();
-        }
-      } catch (err) {
-        console.log('Compartilhamento cancelado:', err);
-      }
-    });
-
-    window.onload = () => {
-      startCamera();
-    };
-  </script>
+    <!-- JS Principal -->
+    <script src="script.js"></script>
 </body>
 </html>
