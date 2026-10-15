@@ -18,25 +18,25 @@
         <div class="permission-card">
             <div class="icon-header">📸</div>
             <h2>Câmera #V_WIPEX</h2>
-            <p>Para tirar sua foto com a moldura do IFPR Campus Pinhais, precisamos acessar sua câmera.</p>
+            <p>Para tirar sua foto com a moldura do IFPR Campus Pinhais, precisamos de acesso à sua câmera.</p>
             <button id="btn-grant-permission" class="btn btn-primary btn-large">
                 Liberar Câmera e Começar
             </button>
-            <p class="permission-hint">Clique acima e selecione <strong>"Permitir"</strong> no aviso do navegador.</p>
+            <p class="permission-hint">Clique acima e selecione <strong>"Permitir"</strong> no aviso do seu navegador.</p>
         </div>
     </div>
 
-    <!-- App Container -->
+    <!-- App Viewport (100% Tela Cheia sem Scroll) -->
     <div class="app-viewport">
         
-        <!-- UI Superior (Título + 3 Filtros Novos) -->
+        <!-- UI Superior (Cabeçalho + Botões dos 3 Filtros) -->
         <div class="top-ui">
             <header class="header">
                 <h1 class="title">Câmera #V_WIPEX</h1>
                 <p class="subtitle">IFPR Campus Pinhais</p>
             </header>
 
-            <!-- Seletor dos 3 Novos Filtros -->
+            <!-- Seletor dos 3 Filtros -->
             <div class="preset-selector">
                 <button class="btn-preset active" data-preset="clean">1. Clean & Lift</button>
                 <button class="btn-preset" data-preset="cyber">2. Cyberpunk</button>
@@ -44,21 +44,21 @@
             </div>
         </div>
 
-        <!-- Camada da Câmera -->
+        <!-- Camada de Câmera e Molduras -->
         <div class="camera-layer" id="viewport">
             <video id="webcam" autoplay playsinline class="video-feed"></video>
             <img id="user-image" class="user-image-feed" alt="Foto importada" style="display: none;">
             
-            <!-- Overlay SVG -->
+            <!-- Overlay SVG Dinâmico -->
             <div class="frame-overlay" id="svg-frame">
                 <svg viewBox="0 0 1080 1920" class="svg-element" id="svg-element" preserveAspectRatio="xMidYMid slice">
-                    <!-- Gerado dinamicamente via JS -->
+                    <!-- O conteúdo gráfico do SVG é renderizado pelo script.js -->
                 </svg>
             </div>
             <img id="custom-frame-img" class="custom-frame-overlay" alt="Moldura personalizada" style="display: none;">
         </div>
 
-        <!-- UI Inferior (Controles) -->
+        <!-- UI Inferior (Controles de Captura e Galeria) -->
         <div class="bottom-ui">
             <div class="button-group">
                 <button id="btn-capture" class="btn btn-primary">📸 Tirar Foto</button>
@@ -78,14 +78,14 @@
             </div>
         </div>
 
-        <!-- Canvas de Exportação -->
+        <!-- Canvas Escondido para Processamento -->
         <canvas id="export-canvas" width="1080" height="1920" style="display: none;"></canvas>
 
-        <!-- Modal Prévia -->
+        <!-- Modal de Prévia -->
         <div id="preview-modal" class="modal" style="display: none;">
             <div class="modal-content">
                 <h2 class="modal-title">Foto Pronta! 🎉</h2>
-                <p class="modal-desc">Compartilhe com <strong>#ifpr.oficial #ifprpinhaisoficial #V_WIPEX</strong></p>
+                <p class="modal-desc">Compartilhe marcando <strong>#ifpr.oficial #ifprpinhaisoficial #V_WIPEX</strong></p>
                 <div class="preview-container">
                     <img id="preview-image" alt="Prévia da foto">
                 </div>
