@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Câmera #V_WIPEX - IFPR Pinhais</title>
     <!-- Fonte -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,7 +18,7 @@
         <div class="permission-card">
             <div class="icon-header">📸</div>
             <h2>Câmera #V_WIPEX</h2>
-            <p>Para tirar sua foto com a moldura do IFPR Campus Pinhais, precisamos de acesso à sua câmera.</p>
+            <p>Para tirar sua foto com a moldura do IFPR Campus Pinhais, liberamos o uso da sua câmera.</p>
             <button id="btn-grant-permission" class="btn btn-primary btn-large">
                 Liberar Câmera e Começar
             </button>
@@ -26,43 +26,40 @@
         </div>
     </div>
 
-    <!-- Container Principal (No-Scroll) -->
-    <div class="app-container">
+    <!-- App Container (Fixo 100% Tela) -->
+    <div class="app-viewport">
         
-        <!-- Topo UI Compacto -->
-        <header class="header">
-            <h1 class="title">Câmera #V_WIPEX</h1>
-            <p class="subtitle">IFPR Campus Pinhais</p>
-        </header>
-
-        <!-- Seletor de Estilos de Moldura -->
-        <div class="preset-selector">
-            <button class="btn-preset active" data-preset="cyber">1. Cyber Tech</button>
-            <button class="btn-preset" data-preset="presenter">2. Apresentador</button>
-            <button class="btn-preset" data-preset="smooth">3. Pele + Glow</button>
-        </div>
-
-        <!-- Viewport da Câmera (Preenche a tela) -->
-        <div class="camera-viewport" id="viewport">
-            <!-- Vídeo Câmera -->
+        <!-- Fundo Câmera / Imagem -->
+        <div class="camera-layer" id="viewport">
             <video id="webcam" autoplay playsinline class="video-feed"></video>
-            
-            <!-- Imagem Galeria -->
             <img id="user-image" class="user-image-feed" alt="Foto importada" style="display: none;">
-
-            <!-- Overlay SVG Dinâmico -->
+            
+            <!-- Overlay SVG -->
             <div class="frame-overlay" id="svg-frame">
-                <svg viewBox="0 0 1080 1920" class="svg-element" id="svg-element">
+                <svg viewBox="0 0 1080 1920" class="svg-element" id="svg-element" preserveAspectRatio="xMidYMid slice">
                     <!-- O conteudo do SVG é gerado via script.js -->
                 </svg>
             </div>
-
-            <!-- Imagem Moldura Customizada PNG -->
             <img id="custom-frame-img" class="custom-frame-overlay" alt="Moldura personalizada" style="display: none;">
         </div>
 
-        <!-- Painel Controles Compacto -->
-        <div class="controls-panel">
+        <!-- UI Flutuante Superior -->
+        <div class="top-ui">
+            <header class="header">
+                <h1 class="title">Câmera #V_WIPEX</h1>
+                <p class="subtitle">IFPR Campus Pinhais</p>
+            </header>
+
+            <!-- Seletor dos 3 Filtros/Presets -->
+            <div class="preset-selector">
+                <button class="btn-preset active" data-preset="cyber">1. Cyber Tech</button>
+                <button class="btn-preset" data-preset="presenter">2. Apresentador</button>
+                <button class="btn-preset" data-preset="smooth">3. Pele + Glow</button>
+            </div>
+        </div>
+
+        <!-- UI Flutuante Inferior (Controles) -->
+        <div class="bottom-ui">
             <div class="button-group">
                 <button id="btn-capture" class="btn btn-primary">📸 Tirar Foto</button>
                 <button id="btn-switch" class="btn btn-secondary">🔄 Inverter</button>
