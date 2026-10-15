@@ -2,28 +2,141 @@
 const video = document.getElementById('webcam');
 const userImage = document.getElementById('user-image');
 const svgFrame = document.getElementById('svg-frame');
+const svgElement = document.getElementById('svg-element');
 const customFrameImg = document.getElementById('custom-frame-img');
+const viewport = document.getElementById('viewport');
 const canvas = document.getElementById('export-canvas');
 
 const btnCapture = document.getElementById('btn-capture');
 const btnSwitch = document.getElementById('btn-switch');
 const uploadPhoto = document.getElementById('upload-photo');
 const uploadFrame = document.getElementById('upload-frame');
+const presetButtons = document.querySelectorAll('.btn-preset');
 
 const previewModal = document.getElementById('preview-modal');
 const previewImage = document.getElementById('preview-image');
 const btnDownload = document.getElementById('btn-download');
 const btnCloseModal = document.getElementById('btn-close-modal');
 
-// Variaveis Estado Camera
+// Variaveis Estado
 let currentStream = null;
 let facingMode = 'user';
 let isUsingUserImage = false;
+let currentPreset = 'cyber';
+
+// Templates SVG para as 3 Variaçoes
+const presetsSVG = {
+    cyber: `
+        <defs>
+            <linearGradient id="neon-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#4ade80" />
+                <stop offset="100%" stop-color="#06b6d4" />
+            </linearGradient>
+        </defs>
+
+        <!-- Cantoneiras Neon -->
+        <path d="M 60,180 L 60,60 L 180,60" stroke="url(#neon-grad)" stroke-width="14" fill="none" stroke-linecap="round" />
+        <path d="M 1020,180 L 1020,60 L 900,60" stroke="url(#neon-grad)" stroke-width="14" fill="none" stroke-linecap="round" />
+        <path d="M 60,1740 L 60,1860 L 180,1860" stroke="url(#neon-grad)" stroke-width="14" fill="none" stroke-linecap="round" />
+        <path d="M 1020,1740 L 1020,1860 L 900,1860" stroke="url(#neon-grad)" stroke-width="14" fill="none" stroke-linecap="round" />
+
+        <!-- Badge AO VIVO (Esq) -->
+        <g transform="translate(80, 100)">
+            <rect width="160" height="46" rx="23" fill="rgba(239, 68, 68, 0.9)" />
+            <circle cx="28" cy="23" r="7" fill="#ffffff" />
+            <text x="48" y="29" fill="#ffffff" font-family="Inter, sans-serif" font-size="18" font-weight="900" letter-spacing="1">AO VIVO</text>
+        </g>
+
+        <!-- Geo Location Badge (Dir) -->
+        <g transform="translate(680, 100)">
+            <rect width="320" height="46" rx="23" fill="rgba(15, 23, 42, 0.85)" stroke="#22c55e" stroke-width="2" />
+            <text x="160" y="29" fill="#ffffff" font-family="Inter, sans-serif" font-size="18" font-weight="700" text-anchor="middle">📍 IFPR Campus Pinhais</text>
+        </g>
+
+        <!-- Logo IFPR e Capelo Topo -->
+        <g transform="translate(540, 200)" text-anchor="middle">
+            <g transform="translate(-160, -25)">
+                <rect x="0" y="0" width="22" height="22" rx="4" fill="#22c55e" />
+                <rect x="28" y="0" width="22" height="22" rx="4" fill="#ef4444" />
+                <rect x="0" y="28" width="22" height="22" rx="4" fill="#22c55e" />
+                <rect x="28" y="28" width="22" height="22" rx="4" fill="#22c55e" />
+                <rect x="0" y="56" width="22" height="22" rx="4" fill="#22c55e" />
+                <rect x="28" y="56" width="22" height="22" rx="4" fill="#22c55e" />
+            </g>
+            <g transform="translate(140, 0)">
+                <path d="M -40,-10 L 0,-28 L 40,-10 L 0,8 Z" fill="#15803d" />
+                <path d="M -22,-1 L -22,18 C -22,26 22,26 22,18 L 22,-1" fill="#166534" />
+                <path d="M 0,-10 L 28,8 L 28,24" stroke="#eab308" stroke-width="3" fill="none" />
+                <circle cx="28" cy="26" r="4" fill="#eab308" />
+            </g>
+            <text y="75" fill="#ffffff" font-family="Inter, sans-serif" font-size="28" font-weight="700" letter-spacing="4">CAMPUS PINHAIS</text>
+        </g>
+
+        <!-- Rodapé Base -->
+        <g transform="translate(540, 1720)" text-anchor="middle">
+            <rect x="-340" y="-60" width="680" height="76" rx="38" fill="rgba(15, 23, 42, 0.9)" stroke="url(#neon-grad)" stroke-width="3" />
+            <text y="-10" fill="#ffffff" font-family="Inter, sans-serif" font-size="34" font-weight="900" letter-spacing="2">
+                <tspan fill="#4ade80">#V_Wipex</tspan>  <tspan fill="#ffffff">#IFPRPINHAIS</tspan>
+            </text>
+            <text y="50" fill="#e2e8f0" font-family="Inter, sans-serif" font-size="22" font-weight="900" letter-spacing="3">Ensino • Pesquisa • Extensão</text>
+        </g>
+    `,
+
+    presenter: `
+        <!-- Moldura Apresentador -->
+        <rect x="40" y="40" width="1000" height="1840" rx="30" fill="none" stroke="#22c55e" stroke-width="6" stroke-dasharray="20 10" />
+
+        <!-- Badge Projeto Aprovado Topo -->
+        <g transform="translate(540, 120)" text-anchor="middle">
+            <rect x="-220" y="-35" width="440" height="70" rx="35" fill="linear-gradient(135deg, #15803d, #047857)" fill="#15803d" />
+            <text y="10" fill="#ffffff" font-family="Inter, sans-serif" font-size="26" font-weight="900">🚀 PROJETO APRESENTADO</text>
+        </g>
+
+        <g transform="translate(540, 1700)" text-anchor="middle">
+            <rect x="-360" y="-50" width="720" height="100" rx="20" fill="rgba(15, 23, 42, 0.95)" stroke="#22c55e" stroke-width="4" />
+            <text y="-5" fill="#4ade80" font-family="Inter, sans-serif" font-size="32" font-weight="900">FEIRA DE CIÊNCIAS & TECNOLOGIA</text>
+            <text y="32" fill="#ffffff" font-family="Inter, sans-serif" font-size="22" font-weight="700">#V_Wipex • IFPR PINHAIS</text>
+        </g>
+    `,
+
+    smooth: `
+        <!-- Moldura Minimalista para destacar o Rosto -->
+        <g transform="translate(540, 110)" text-anchor="middle">
+            <rect x="-180" y="-30" width="360" height="60" rx="30" fill="rgba(0,0,0,0.6)" stroke="#4ade80" stroke-width="2" />
+            <text y="8" fill="#ffffff" font-family="Inter, sans-serif" font-size="22" font-weight="700">✨ Glow & Smooth Filter</text>
+        </g>
+
+        <g transform="translate(540, 1760)" text-anchor="middle">
+            <text y="0" fill="#ffffff" font-family="Inter, sans-serif" font-size="36" font-weight="900" letter-spacing="3">#V_Wipex</text>
+            <text y="40" fill="#4ade80" font-family="Inter, sans-serif" font-size="20" font-weight="700">IFPR CAMPUS PINHAIS</text>
+        </g>
+    `
+};
 
 // Inicializacao
 window.addEventListener('DOMContentLoaded', () => {
+    renderPreset('cyber');
     initCamera();
 });
+
+// Troca de Preset de Moldura
+presetButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+        presetButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentPreset = btn.dataset.preset;
+        renderPreset(currentPreset);
+    });
+});
+
+function renderPreset(presetKey) {
+    svgElement.innerHTML = presetsSVG[presetKey];
+    if (presetKey === 'smooth') {
+        viewport.classList.add('skin-smooth');
+    } else {
+        viewport.classList.remove('skin-smooth');
+    }
+}
 
 // Inicializar Camera
 async function initCamera() {
@@ -51,7 +164,7 @@ async function initCamera() {
     }
 }
 
-// Inverter Camera Frontal Traseira
+// Inverter Camera
 btnSwitch.addEventListener('click', () => {
     facingMode = facingMode === 'user' ? 'environment' : 'user';
     initCamera();
@@ -76,7 +189,7 @@ uploadPhoto.addEventListener('change', (e) => {
     }
 });
 
-// Upload Moldura Customizada PNG
+// Upload Moldura PNG Customizada
 uploadFrame.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -97,44 +210,39 @@ btnCapture.addEventListener('click', () => {
     canvas.height = 1920;
 
     // Desenhar Fundo Foto ou Video
-    if (isUsingUserImage) {
-        drawCoverImage(ctx, userImage, 1080, 1920);
-        processOverlayAndExport(ctx);
-    } else {
-        drawCoverVideo(ctx, video, 1080, 1920);
-        processOverlayAndExport(ctx);
+    const sourceEl = isUsingUserImage ? userImage : video;
+    drawCover(ctx, sourceEl, 1080, 1920);
+
+    // Aplicar Efeito de Pele Suave no Canvas se o Preset for Smooth
+    if (currentPreset === 'smooth') {
+        applySkinSmoothEffect(ctx, 1080, 1920);
     }
+
+    processOverlayAndExport(ctx);
 });
 
-// Ajustar Proporcao Video Canvas
-function drawCoverVideo(ctx, img, targetWidth, targetHeight) {
-    const videoWidth = img.videoWidth || targetWidth;
-    const videoHeight = img.videoHeight || targetHeight;
+// Suavização Natural de Pele no Canvas
+function applySkinSmoothEffect(ctx, width, height) {
+    const imgData = ctx.getImageData(0, 0, width, height);
+    const data = imgData.data;
 
-    const targetRatio = targetWidth / targetHeight;
-    const imgRatio = videoWidth / videoHeight;
+    // Leve ajuste de brilho e contraste para uniformizar a pele
+    const brightness = 8;
+    const contrast = 1.04;
 
-    let sw, sh, sx, sy;
-
-    if (imgRatio > targetRatio) {
-        sh = videoHeight;
-        sw = videoHeight * targetRatio;
-        sx = (videoWidth - sw) / 2;
-        sy = 0;
-    } else {
-        sw = videoWidth;
-        sh = videoWidth / targetRatio;
-        sx = 0;
-        sy = (videoHeight - sh) / 2;
+    for (let i = 0; i < data.length; i += 4) {
+        data[i] = Math.min(255, (data[i] - 128) * contrast + 128 + brightness);     // Red
+        data[i+1] = Math.min(255, (data[i+1] - 128) * contrast + 128 + brightness); // Green
+        data[i+2] = Math.min(255, (data[i+2] - 128) * contrast + 128 + brightness); // Blue
     }
 
-    ctx.drawImage(img, sx, sy, sw, sh, 0, 0, targetWidth, targetHeight);
+    ctx.putImageData(imgData, 0, 0);
 }
 
-// Ajustar Proporcao Imagem Canvas
-function drawCoverImage(ctx, img, targetWidth, targetHeight) {
-    const imgWidth = img.naturalWidth || targetWidth;
-    const imgHeight = img.naturalHeight || targetHeight;
+// Enquadramento Proporcional
+function drawCover(ctx, img, targetWidth, targetHeight) {
+    const imgWidth = img.videoWidth || img.naturalWidth || targetWidth;
+    const imgHeight = img.videoHeight || img.naturalHeight || targetHeight;
 
     const targetRatio = targetWidth / targetHeight;
     const imgRatio = imgWidth / imgHeight;
@@ -156,13 +264,12 @@ function drawCoverImage(ctx, img, targetWidth, targetHeight) {
     ctx.drawImage(img, sx, sy, sw, sh, 0, 0, targetWidth, targetHeight);
 }
 
-// Processar Overlay SVG ou PNG Customizado
+// Processar Moldura e Exportar
 function processOverlayAndExport(ctx) {
     if (customFrameImg.style.display !== 'none' && customFrameImg.src) {
         ctx.drawImage(customFrameImg, 0, 0, 1080, 1920);
         showPreview();
     } else {
-        const svgElement = svgFrame.querySelector('svg');
         const svgData = new XMLSerializer().serializeToString(svgElement);
         const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
         const URL = window.URL || window.webkitURL || window;
@@ -178,7 +285,7 @@ function processOverlayAndExport(ctx) {
     }
 }
 
-// Exibir Modal Previa
+// Exibir Modal Prévia
 function showPreview() {
     const dataURL = canvas.toDataURL('image/png');
     previewImage.src = dataURL;
@@ -189,7 +296,4 @@ function showPreview() {
 // Fechar Modal
 btnCloseModal.addEventListener('click', () => {
     previewModal.style.display = 'none';
-    if (!isUsingUserImage && !currentStream) {
-        initCamera();
-    }
 });
