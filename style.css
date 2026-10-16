@@ -90,36 +90,6 @@ html, body {
     color: #94a3b8;
 }
 
-.preset-selector {
-    display: flex !important;
-    gap: 4px;
-    background-color: rgba(30, 41, 59, 0.95);
-    backdrop-filter: blur(6px);
-    padding: 3px;
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-}
-
-.btn-preset {
-    flex: 1;
-    padding: 5px 2px;
-    border: none;
-    border-radius: 6px;
-    background-color: transparent;
-    color: #cbd5e1;
-    font-size: 0.6rem;
-    font-weight: 700;
-    cursor: pointer;
-    text-align: center;
-    white-space: nowrap;
-}
-
-.btn-preset.active {
-    background-color: #22c55e !important;
-    color: #022c22 !important;
-    box-shadow: 0 2px 6px rgba(34, 197, 94, 0.4);
-}
-
 .bottom-ui {
     position: relative;
     z-index: 10;
