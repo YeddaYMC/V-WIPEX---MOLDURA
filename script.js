@@ -90,7 +90,7 @@ const presetsSVG = {
         
         <g transform="translate(540, 1150) scale(1, 0.45)" text-anchor="middle">
             <text y="-380" fill="#ffff00" font-family="Inter, sans-serif" font-size="46" font-weight="900" letter-spacing="4">IFPR</text>
-            <text y="-300" fill="#38bdf8" font-family="Inter, sans-serif" font-size="38" font-weight="700">Educação Publica de Qualidade</text>
+            <text y="-300" fill="#38bdf8" font-family="Inter, sans-serif" font-size="38" font-weight="700">____</text>
             <text y="-220" fill="#ffffff" font-family="Inter, sans-serif" font-size="34" font-weight="700">Ensino • Pesquisa • Extensão</text>
             <text y="-130" fill="#4ade80" font-family="Inter, sans-serif" font-size="42" font-weight="900" letter-spacing="2">V WIPEX</text>
             <text y="-30" fill="#ffff00" font-family="Inter, sans-serif" font-size="40" font-weight="900">QUE A FORÇA</text>
