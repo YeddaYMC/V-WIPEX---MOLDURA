@@ -13,7 +13,6 @@ const btnCapture = document.getElementById('btn-capture');
 const btnSwitch = document.getElementById('btn-switch');
 const uploadPhoto = document.getElementById('upload-photo');
 const uploadFrame = document.getElementById('upload-frame');
-const presetButtons = document.querySelectorAll('.btn-preset');
 
 const previewModal = document.getElementById('preview-modal');
 const previewImage = document.getElementById('preview-image');
@@ -23,124 +22,104 @@ const btnCloseModal = document.getElementById('btn-close-modal');
 let currentStream = null;
 let facingMode = 'user';
 let isUsingUserImage = false;
-let currentPreset = 'clean';
 
-// Molduras de Altíssimo Impacto Visual com hashtags corretas (#ifpr.oficial, #ifprpinhaisoficial, #V_WIPEX)
-const presetsSVG = {
-    clean: `
-        <defs>
-            <linearGradient id="clean-border" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#22c55e" />
-                <stop offset="100%" stop-color="#15803d" />
-            </linearGradient>
-        </defs>
-        <rect x="25" y="25" width="1030" height="1870" rx="20" fill="none" stroke="url(#clean-border)" stroke-width="6" />
-        <rect x="40" y="40" width="1000" height="1840" rx="12" fill="none" stroke="#22c55e" stroke-width="2" stroke-dasharray="14 10" opacity="0.7" />
-        <g transform="translate(540, 130)" text-anchor="middle">
-            <rect x="-240" y="-45" width="480" height="85" rx="42.5" fill="rgba(15, 23, 42, 0.9)" stroke="#22c55e" stroke-width="3" />
-            <path d="M -35,-15 L 0,-32 L 35,-15 L 0,2 Z" fill="#22c55e" />
-            <path d="M -20,-3 L -20,15 C -20,22 20,22 20,15 L 20,-3" fill="#166534" />
-            <path d="M 0,-15 L 25,2 L 25,18" stroke="#facc15" stroke-width="3" fill="none" />
-            <circle cx="25" cy="20" r="4" fill="#facc15" />
-            <text y="50" fill="#ffffff" font-family="Inter, sans-serif" font-size="28" font-weight="900" letter-spacing="4">IFPR PINHAIS</text>
-        </g>
-        <g transform="translate(540, 1690)" text-anchor="middle">
-            <rect x="-460" y="-55" width="920" height="105" rx="52.5" fill="rgba(15, 23, 42, 0.95)" stroke="#22c55e" stroke-width="3.5" />
-            <text y="-14" fill="#ffffff" font-family="Inter, sans-serif" font-size="23" font-weight="900" letter-spacing="1">
-                <tspan fill="#f87171">#ifpr.oficial</tspan> <tspan fill="#38bdf8">#ifprpinhaisoficial</tspan> <tspan fill="#4ade80">#V_WIPEX</tspan>
-            </text>
-            <text y="22" fill="#94a3b8" font-family="Inter, sans-serif" font-size="21" font-weight="600">Ensino • Pesquisa • Extensão</text>
-        </g>
-    `,
+// Moldura Inspirada na Referência: Halo de Luz Radiante com Ícones Acadêmicos Flutuantes e Fundo Transparente
+const haloSVG = `
+    <defs>
+        <!-- Gradiente suave para o anel de luz radiante -->
+        <radialGradient id="halo-glow" cx="50%" cy="42%" r="45%">
+            <stop offset="0%" stop-color="#ffffff" stop-opacity="0.35" />
+            <stop offset="70%" stop-color="#fde047" stop-opacity="0.15" />
+            <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
+        </radialGradient>
+        <filter id="glow-effect" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="8" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+        </filter>
+    </defs>
 
-    cyber: `
-        <defs>
-            <linearGradient id="cyber-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#22c55e" />
-                <stop offset="50%" stop-color="#06b6d4" />
-                <stop offset="100%" stop-color="#3b82f6" />
-            </linearGradient>
-        </defs>
-        <path d="M 30,180 L 30,40 L 180,40" stroke="url(#cyber-grad)" stroke-width="12" fill="none" stroke-linecap="round" />
-        <path d="M 1050,180 L 1050,40 L 900,40" stroke="url(#cyber-grad)" stroke-width="12" fill="none" stroke-linecap="round" />
-        <path d="M 30,1740 L 30,1880 L 180,1880" stroke="url(#cyber-grad)" stroke-width="12" fill="none" stroke-linecap="round" />
-        <path d="M 1050,1740 L 1050,1880 L 900,1880" stroke="url(#cyber-grad)" stroke-width="12" fill="none" stroke-linecap="round" />
-        <line x1="540" y1="30" x2="540" y2="55" stroke="#06b6d4" stroke-width="4" />
-        <line x1="540" y1="1865" x2="540" y2="1890" stroke="#06b6d4" stroke-width="4" />
-        <g transform="translate(70, 75)">
-            <rect width="210" height="50" rx="25" fill="rgba(239, 68, 68, 0.92)" stroke="#ffffff" stroke-width="2" />
-            <circle cx="28" cy="25" r="8" fill="#ffffff" />
-            <text x="50" y="32" fill="#ffffff" font-family="Inter, sans-serif" font-size="19" font-weight="900" letter-spacing="1">SYSTEM LIVE</text>
-        </g>
-        <g transform="translate(540, 1690)" text-anchor="middle">
-            <rect x="-460" y="-55" width="920" height="105" rx="16" fill="rgba(10, 15, 30, 0.95)" stroke="url(#cyber-grad)" stroke-width="4" />
-            <text y="-14" fill="#ffffff" font-family="Inter, sans-serif" font-size="23" font-weight="900" letter-spacing="1">
-                <tspan fill="#f87171">#ifpr.oficial</tspan> <tspan fill="#38bdf8">#ifprpinhaisoficial</tspan> <tspan fill="#4ade80">#V_WIPEX</tspan>
-            </text>
-            <text y="22" fill="#06b6d4" font-family="Inter, sans-serif" font-size="21" font-weight="600">Ensino • Pesquisa • Extensão</text>
-        </g>
-    `,
+    <!-- Fundo totalmente transparente para a câmera aparecer perfeitamente -->
 
-    starwars: `
-        <g fill="#ffffff">
-            <circle cx="100" cy="250" r="3.5" opacity="0.9" />
-            <circle cx="980" cy="200" r="4.5" fill="#38bdf8" opacity="0.9" />
-            <circle cx="920" cy="650" r="2.5" opacity="0.8" />
-            <circle cx="150" cy="750" r="4" fill="#facc15" opacity="0.9" />
-            <circle cx="200" cy="1200" r="3" opacity="0.8" />
-            <circle cx="880" cy="1150" r="4" fill="#38bdf8" opacity="0.9" />
-            <circle cx="120" cy="1650" r="3.5" opacity="0.9" />
-            <circle cx="950" cy="1600" r="3" fill="#facc15" opacity="0.9" />
-        </g>
-        <rect x="30" y="30" width="1020" height="1860" rx="15" fill="none" stroke="#38bdf8" stroke-width="4" opacity="0.7" />
-        <g transform="translate(540, 920) scale(1, 0.42)" text-anchor="middle">
-            <text y="-340" fill="#ffff00" font-family="Inter, sans-serif" font-size="56" font-weight="900" letter-spacing="8">IFPR</text>
-            <text y="-240" fill="#38bdf8" font-family="Inter, sans-serif" font-size="46" font-weight="800">Campus Pinhais</text>
-            <text y="-140" fill="#ffffff" font-family="Inter, sans-serif" font-size="40" font-weight="700">Ensino • Pesquisa • Extensão</text>
-            <text y="-30" fill="#4ade80" font-family="Inter, sans-serif" font-size="52" font-weight="900" letter-spacing="4">V WIPEX</text>
-            <text y="100" fill="#ffff00" font-family="Inter, sans-serif" font-size="46" font-weight="900">QUE A FORÇA</text>
-            <text y="190" fill="#ffff00" font-family="Inter, sans-serif" font-size="46" font-weight="900">ESTEJA COM VOCÊ</text>
-        </g>
-        <g transform="translate(540, 1690)" text-anchor="middle">
-            <rect x="-460" y="-55" width="920" height="105" rx="15" fill="rgba(15, 23, 42, 0.95)" stroke="#38bdf8" stroke-width="3.5" />
-            <text y="-14" fill="#ffffff" font-family="Inter, sans-serif" font-size="23" font-weight="900">
-                <tspan fill="#f87171">#ifpr.oficial</tspan> <tspan fill="#38bdf8">#ifprpinhaisoficial</tspan> <tspan fill="#4ade80">#V_WIPEX</tspan>
-            </text>
-            <text y="22" fill="#94a3b8" font-family="Inter, sans-serif" font-size="21" font-weight="600">Ensino • Pesquisa • Extensão</text>
-        </g>
-    `,
+    <!-- Anel de Luz Principal (Halo Centralizado) -->
+    <circle cx="540" cy="800" r="380" fill="url(#halo-glow)" />
+    <circle cx="540" cy="800" r="380" fill="none" stroke="#ffffff" stroke-width="3" stroke-opacity="0.85" filter="url(#glow-effect)" />
 
-    poster: `
-        <rect x="25" y="25" width="1030" height="1870" rx="22" fill="none" stroke="#f59e0b" stroke-width="10" />
-        <rect x="45" y="45" width="990" height="1830" rx="12" fill="none" stroke="#f59e0b" stroke-width="3" stroke-dasharray="16 12" />
-        <g transform="translate(540, 140)" text-anchor="middle">
-            <path d="M -50,-15 L 0,-38 L 50,-15 L 0,8 Z" fill="#f59e0b" />
-            <path d="M -28,0 L -28,24 C -28,34 28,34 28,24 L 28,0" fill="#b45309" />
-            <path d="M 0,-15 L 35,8 L 35,28" stroke="#ffffff" stroke-width="4" fill="none" />
-            <circle cx="35" cy="30" r="5" fill="#ffffff" />
-            <g transform="translate(-270, 15) rotate(-12)">
-                <rect x="-40" y="-14" width="80" height="28" rx="6" fill="#fef08a" stroke="#d97706" stroke-width="2.5" />
-                <rect x="-9" y="-16" width="18" height="32" fill="#dc2626" />
-            </g>
-            <g transform="translate(270, 15) rotate(12)">
-                <path d="M -35,-18 C -18,-24 0,-18 0,-18 C 0,-18 18,-24 35,-18 L 35,18 C 18,12 0,18 0,18 C 0,18 -18,12 -35,18 Z" fill="#fef08a" stroke="#d97706" stroke-width="2.5" />
-                <path d="M 0,-18 L 0,18" stroke="#d97706" stroke-width="2.5" />
-            </g>
-            <rect x="-220" y="52" width="440" height="60" rx="30" fill="#f59e0b" stroke="#ffffff" stroke-width="3.5" />
-            <text y="90" fill="#1e293b" font-family="Inter, sans-serif" font-size="26" font-weight="900" letter-spacing="2">⭐ EDIÇÃO PÔSTER OFICIAL ⭐</text>
+    <!-- Partículas de Luz Elegantes ao Redor do Halo -->
+    <g fill="#ffffff" opacity="0.9">
+        <circle cx="320" cy="500" r="4" />
+        <circle cx="780" cy="480" r="3" />
+        <circle cx="240" cy="750" r="3.5" />
+        <circle cx="840" cy="720" r="4" />
+        <circle cx="280" cy="1020" r="3" />
+        <circle cx="800" cy="1000" r="3.5" />
+        <circle cx="420" cy="420" r="2.5" />
+        <circle cx="660" cy="430" r="3" />
+    </g>
+
+    <!-- Ícones Acadêmicos Minimalistas em Contorno Branco Flutuando ao Redor do Halo -->
+    <g stroke="#ffffff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.95" filter="url(#glow-effect)">
+        
+        <!-- 1. Bloco de Notas / Caderno (Topo Esquerda) -->
+        <g transform="translate(300, 560) scale(1.3)">
+            <rect x="-20" y="-25" width="40" height="50" rx="6" fill="rgba(255,255,255,0.1)" />
+            <line x1="-10" y1="-12" x2="10" y2="-12" />
+            <line x1="-10" y1="0" x2="10" y2="0" />
+            <line x1="-10" y1="12" x2="5" y2="12" />
+            <circle cx="-12" cy="-25" r="2" fill="#ffffff" />
+            <circle cx="0" cy="-25" r="2" fill="#ffffff" />
+            <circle cx="12" cy="-25" r="2" fill="#ffffff" />
         </g>
-        <g transform="translate(540, 1690)" text-anchor="middle">
-            <rect x="-460" y="-55" width="920" height="105" rx="52.5" fill="#f59e0b" stroke="#ffffff" stroke-width="3.5" />
-            <text y="-14" fill="#1e293b" font-family="Inter, sans-serif" font-size="23" font-weight="900" letter-spacing="1">
-                <tspan fill="#b91c1c">#ifpr.oficial</tspan> <tspan fill="#1e3a8a">#ifprpinhaisoficial</tspan> <tspan fill="#065f46">#V_WIPEX</tspan>
-            </text>
-            <text y="22" fill="#1e293b" font-family="Inter, sans-serif" font-size="21" font-weight="800">Ensino • Pesquisa • Extensão</text>
+
+        <!-- 2. Relógio / Tempo (Topo Direita) -->
+        <g transform="translate(780, 560) scale(1.3)">
+            <circle cx="0" cy="0" r="24" fill="rgba(255,255,255,0.1)" />
+            <polyline points="0,-10 0,0 8,6" />
+            <path d="M -18,-16 L -22,-20" />
+            <path d="M 18,-16 L 22,-20" />
         </g>
-    `
-};
+
+        <!-- 3. Ícone de Check / Conclusão (Meio Esquerda) -->
+        <g transform="translate(240, 720) scale(1.3)">
+            <circle cx="0" cy="0" r="22" fill="rgba(255,255,255,0.1)" />
+            <polyline points="-8,0 -2,6 10,-6" stroke-width="3.5" />
+        </g>
+
+        <!-- 4. Calendário / Evento (Meio Direita) -->
+        <g transform="translate(840, 720) scale(1.3)">
+            <rect x="-22" y="-20" width="44" height="44" rx="6" fill="rgba(255,255,255,0.1)" />
+            <line x1="-22" y1="-8" x2="22" y2="-8" />
+            <line x1="-10" y1="-26" x2="-10" y2="-20" stroke-width="4" />
+            <line x1="10" y1="-26" x2="10" y2="-20" stroke-width="4" />
+            <circle cx="-11" cy="2" r="2" fill="#ffffff" />
+            <circle cx="0" cy="2" r="2" fill="#ffffff" />
+            <circle cx="11" cy="2" r="2" fill="#ffffff" />
+        </g>
+
+        <!-- 5. Lâmpada / Inovação (Base inferior do Halo) -->
+        <g transform="translate(540, 1140) scale(1.3)">
+            <path d="M -14,-6 C -14,-18 14,-18 14,-6 C 14,2 6,8 6,14 L -6,14 C -6,8 -14,2 -14,-6 Z" fill="rgba(255,255,255,0.1)" />
+            <line x1="-6" y1="18" x2="6" y2="18" />
+            <line x1="-4" y1="22" x2="4" y2="22" />
+        </g>
+    </g>
+
+    <!-- Texto Superior: IFPR Campus Pinhais -->
+    <g transform="translate(540, 150)" text-anchor="middle">
+        <text y="0" fill="#ffffff" font-family="Inter, sans-serif" font-size="48" font-weight="900" letter-spacing="4" filter="url(#glow-effect)">IFPR</text>
+        <text y="50" fill="#38bdf8" font-family="Inter, sans-serif" font-size="28" font-weight="700" letter-spacing="2">CAMPUS PINHAIS</text>
+    </g>
+
+    <!-- Texto Inferior: V_WIPEX, Ensino Pesquisa Extensão e Hashtags Oficiais -->
+    <g transform="translate(540, 1680)" text-anchor="middle">
+        <rect x="-480" y="-65" width="960" height="120" rx="20" fill="rgba(10, 15, 30, 0.88)" stroke="#38bdf8" stroke-width="2.5" />
+        <text y="-22" fill="#4ade80" font-family="Inter, sans-serif" font-size="36" font-weight="900" letter-spacing="2">V_WIPEX</text>
+        <text y="10" fill="#ffffff" font-family="Inter, sans-serif" font-size="22" font-weight="700">Ensino • Pesquisa • Extensão</text>
+        <text y="38" fill="#f87171" font-family="Inter, sans-serif" font-size="18" font-weight="700" letter-spacing="0.5">#ifpr.oficial #ifprpinhaisoficial #V_WIPEX</text>
+    </g>
+`;
 
 window.addEventListener('DOMContentLoaded', () => {
-    renderPreset('clean');
+    svgElement.innerHTML = haloSVG;
 });
 
 btnGrantPermission.addEventListener('click', async () => {
@@ -149,21 +128,6 @@ btnGrantPermission.addEventListener('click', async () => {
         permissionScreen.style.display = 'none';
     }
 });
-
-presetButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-        presetButtons.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        currentPreset = btn.dataset.preset;
-        renderPreset(currentPreset);
-    });
-});
-
-function renderPreset(presetKey) {
-    svgElement.innerHTML = presetsSVG[presetKey];
-    viewport.className = 'camera-layer';
-    viewport.classList.add(`preset-${presetKey}`);
-}
 
 async function initCamera() {
     if (currentStream) {
@@ -240,10 +204,7 @@ btnCapture.addEventListener('click', () => {
     const sourceEl = isUsingUserImage ? userImage : video;
     drawCover(ctx, sourceEl, 1080, 1920);
 
-    if (currentPreset === 'clean') {
-        applyAdvancedSkinAndSmileEnhancement(ctx, 1080, 1920);
-    }
-
+    applyAdvancedSkinAndSmileEnhancement(ctx, 1080, 1920);
     processOverlayAndExport(ctx);
 });
 
