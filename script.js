@@ -23,45 +23,44 @@ let currentStream = null;
 let facingMode = 'user';
 let isUsingUserImage = false;
 
-// Moldura Inspirada na Referência: Halo de Luz Radiante com Ícones Acadêmicos Flutuantes e Fundo Transparente
+// Moldura exata baseada na referência: Círculo/Halo radiante central, ícones acadêmicos e textos limpos
 const haloSVG = `
     <defs>
-        <!-- Gradiente suave para o anel de luz radiante -->
-        <radialGradient id="halo-glow" cx="50%" cy="42%" r="45%">
-            <stop offset="0%" stop-color="#ffffff" stop-opacity="0.35" />
-            <stop offset="70%" stop-color="#fde047" stop-opacity="0.15" />
+        <radialGradient id="halo-glow" cx="50%" cy="45%" r="42%">
+            <stop offset="0%" stop-color="#ffffff" stop-opacity="0.45" />
+            <stop offset="70%" stop-color="#38bdf8" stop-opacity="0.2" />
             <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
         </radialGradient>
         <filter id="glow-effect" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="8" result="blur" />
+            <feGaussianBlur stdDeviation="10" result="blur" />
             <feComposite in="SourceGraphic" in2="blur" operator="over" />
         </filter>
     </defs>
 
-    <!-- Fundo totalmente transparente para a câmera aparecer perfeitamente -->
+    <!-- Fundo totalmente transparente para a câmera aparecer -->
 
-    <!-- Anel de Luz Principal (Halo Centralizado) -->
-    <circle cx="540" cy="800" r="380" fill="url(#halo-glow)" />
-    <circle cx="540" cy="800" r="380" fill="none" stroke="#ffffff" stroke-width="3" stroke-opacity="0.85" filter="url(#glow-effect)" />
+    <!-- Círculo / Halo de Luz Central -->
+    <circle cx="540" cy="780" r="360" fill="url(#halo-glow)" />
+    <circle cx="540" cy="780" r="360" fill="none" stroke="#ffffff" stroke-width="3.5" stroke-opacity="0.9" filter="url(#glow-effect)" />
 
-    <!-- Partículas de Luz Elegantes ao Redor do Halo -->
-    <g fill="#ffffff" opacity="0.9">
-        <circle cx="320" cy="500" r="4" />
-        <circle cx="780" cy="480" r="3" />
-        <circle cx="240" cy="750" r="3.5" />
-        <circle cx="840" cy="720" r="4" />
-        <circle cx="280" cy="1020" r="3" />
-        <circle cx="800" cy="1000" r="3.5" />
-        <circle cx="420" cy="420" r="2.5" />
-        <circle cx="660" cy="430" r="3" />
+    <!-- Partículas de luz ao redor do anel -->
+    <g fill="#ffffff" opacity="0.95">
+        <circle cx="300" cy="480" r="4.5" />
+        <circle cx="780" cy="460" r="3.5" />
+        <circle cx="220" cy="740" r="4" />
+        <circle cx="860" cy="700" r="4.5" />
+        <circle cx="260" cy="1020" r="3.5" />
+        <circle cx="820" cy="1000" r="4" />
+        <circle cx="400" cy="400" r="3" />
+        <circle cx="680" cy="410" r="3.5" />
     </g>
 
-    <!-- Ícones Acadêmicos Minimalistas em Contorno Branco Flutuando ao Redor do Halo -->
-    <g stroke="#ffffff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.95" filter="url(#glow-effect)">
+    <!-- Ícones Acadêmicos em Contorno Branco Flutuando no Halo -->
+    <g stroke="#ffffff" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.95" filter="url(#glow-effect)">
         
-        <!-- 1. Bloco de Notas / Caderno (Topo Esquerda) -->
-        <g transform="translate(300, 560) scale(1.3)">
-            <rect x="-20" y="-25" width="40" height="50" rx="6" fill="rgba(255,255,255,0.1)" />
+        <!-- 1. Bloco de Notas (Topo Esquerda) -->
+        <g transform="translate(290, 540) scale(1.4)">
+            <rect x="-20" y="-25" width="40" height="50" rx="6" fill="rgba(255,255,255,0.12)" />
             <line x1="-10" y1="-12" x2="10" y2="-12" />
             <line x1="-10" y1="0" x2="10" y2="0" />
             <line x1="-10" y1="12" x2="5" y2="12" />
@@ -70,23 +69,23 @@ const haloSVG = `
             <circle cx="12" cy="-25" r="2" fill="#ffffff" />
         </g>
 
-        <!-- 2. Relógio / Tempo (Topo Direita) -->
-        <g transform="translate(780, 560) scale(1.3)">
-            <circle cx="0" cy="0" r="24" fill="rgba(255,255,255,0.1)" />
+        <!-- 2. Relógio (Topo Direita) -->
+        <g transform="translate(790, 540) scale(1.4)">
+            <circle cx="0" cy="0" r="24" fill="rgba(255,255,255,0.12)" />
             <polyline points="0,-10 0,0 8,6" />
             <path d="M -18,-16 L -22,-20" />
             <path d="M 18,-16 L 22,-20" />
         </g>
 
-        <!-- 3. Ícone de Check / Conclusão (Meio Esquerda) -->
-        <g transform="translate(240, 720) scale(1.3)">
-            <circle cx="0" cy="0" r="22" fill="rgba(255,255,255,0.1)" />
-            <polyline points="-8,0 -2,6 10,-6" stroke-width="3.5" />
+        <!-- 3. Check (Meio Esquerda) -->
+        <g transform="translate(220, 720) scale(1.4)">
+            <circle cx="0" cy="0" r="22" fill="rgba(255,255,255,0.12)" />
+            <polyline points="-8,0 -2,6 10,-6" stroke-width="4" />
         </g>
 
-        <!-- 4. Calendário / Evento (Meio Direita) -->
-        <g transform="translate(840, 720) scale(1.3)">
-            <rect x="-22" y="-20" width="44" height="44" rx="6" fill="rgba(255,255,255,0.1)" />
+        <!-- 4. Calendário (Meio Direita) -->
+        <g transform="translate(860, 720) scale(1.4)">
+            <rect x="-22" y="-20" width="44" height="44" rx="6" fill="rgba(255,255,255,0.12)" />
             <line x1="-22" y1="-8" x2="22" y2="-8" />
             <line x1="-10" y1="-26" x2="-10" y2="-20" stroke-width="4" />
             <line x1="10" y1="-26" x2="10" y2="-20" stroke-width="4" />
@@ -95,9 +94,9 @@ const haloSVG = `
             <circle cx="11" cy="2" r="2" fill="#ffffff" />
         </g>
 
-        <!-- 5. Lâmpada / Inovação (Base inferior do Halo) -->
-        <g transform="translate(540, 1140) scale(1.3)">
-            <path d="M -14,-6 C -14,-18 14,-18 14,-6 C 14,2 6,8 6,14 L -6,14 C -6,8 -14,2 -14,-6 Z" fill="rgba(255,255,255,0.1)" />
+        <!-- 5. Lâmpada (Base Inferior) -->
+        <g transform="translate(540, 1120) scale(1.4)">
+            <path d="M -14,-6 C -14,-18 14,-18 14,-6 C 14,2 6,8 6,14 L -6,14 C -6,8 -14,2 -14,-6 Z" fill="rgba(255,255,255,0.12)" />
             <line x1="-6" y1="18" x2="6" y2="18" />
             <line x1="-4" y1="22" x2="4" y2="22" />
         </g>
@@ -105,14 +104,14 @@ const haloSVG = `
 
     <!-- Texto Superior: IFPR Campus Pinhais -->
     <g transform="translate(540, 150)" text-anchor="middle">
-        <text y="0" fill="#ffffff" font-family="Inter, sans-serif" font-size="48" font-weight="900" letter-spacing="4" filter="url(#glow-effect)">IFPR</text>
-        <text y="50" fill="#38bdf8" font-family="Inter, sans-serif" font-size="28" font-weight="700" letter-spacing="2">CAMPUS PINHAIS</text>
+        <text y="0" fill="#ffffff" font-family="Inter, sans-serif" font-size="52" font-weight="900" letter-spacing="4" filter="url(#glow-effect)">IFPR</text>
+        <text y="52" fill="#38bdf8" font-family="Inter, sans-serif" font-size="30" font-weight="700" letter-spacing="2">CAMPUS PINHAIS</text>
     </g>
 
     <!-- Texto Inferior: V_WIPEX, Ensino Pesquisa Extensão e Hashtags Oficiais -->
     <g transform="translate(540, 1680)" text-anchor="middle">
-        <rect x="-480" y="-65" width="960" height="120" rx="20" fill="rgba(10, 15, 30, 0.88)" stroke="#38bdf8" stroke-width="2.5" />
-        <text y="-22" fill="#4ade80" font-family="Inter, sans-serif" font-size="36" font-weight="900" letter-spacing="2">V_WIPEX</text>
+        <rect x="-480" y="-65" width="960" height="120" rx="20" fill="rgba(10, 15, 30, 0.9)" stroke="#38bdf8" stroke-width="3" />
+        <text y="-22" fill="#4ade80" font-family="Inter, sans-serif" font-size="38" font-weight="900" letter-spacing="2">V_WIPEX</text>
         <text y="10" fill="#ffffff" font-family="Inter, sans-serif" font-size="22" font-weight="700">Ensino • Pesquisa • Extensão</text>
         <text y="38" fill="#f87171" font-family="Inter, sans-serif" font-size="18" font-weight="700" letter-spacing="0.5">#ifpr.oficial #ifprpinhaisoficial #V_WIPEX</text>
     </g>
