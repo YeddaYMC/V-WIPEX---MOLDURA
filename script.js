@@ -25,14 +25,11 @@ let facingMode = 'user';
 let isUsingUserImage = false;
 let currentPreset = 'clean';
 
-// Molduras focadas em elementos visuais (Sem alteração agressiva de cor na foto)
+// Molduras corrigidas (Clean, Cyber, Star Wars e Pôster Artístico)
 const presetsSVG = {
     clean: `
-        <!-- Borda Dupla Tracejada Verde -->
         <rect x="35" y="35" width="1010" height="1850" rx="15" fill="none" stroke="#22c55e" stroke-width="4" stroke-dasharray="16 10" />
         <rect x="45" y="45" width="990" height="1830" rx="10" fill="none" stroke="#22c55e" stroke-width="2" opacity="0.6" stroke-dasharray="8 6" />
-
-        <!-- Topo: Capelo e Apenas IFPR PINHAIS -->
         <g transform="translate(540, 130)" text-anchor="middle">
             <path d="M -45,-12 L 0,-32 L 45,-12 L 0,8 Z" fill="#22c55e" />
             <path d="M -25,-1 L -25,20 C -25,28 25,28 25,20 L 25,-1" fill="#166534" />
@@ -40,8 +37,6 @@ const presetsSVG = {
             <circle cx="32" cy="28" r="4.5" fill="#facc15" />
             <text y="52" fill="#ffffff" font-family="Inter, sans-serif" font-size="26" font-weight="900" letter-spacing="3">IFPR PINHAIS</text>
         </g>
-
-        <!-- Rodapé Ajustado (Mais alto para não cortar) -->
         <g transform="translate(540, 1680)" text-anchor="middle">
             <rect x="-440" y="-45" width="880" height="90" rx="45" fill="rgba(15, 23, 42, 0.95)" stroke="#22c55e" stroke-width="3" />
             <text y="-8" fill="#ffffff" font-family="Inter, sans-serif" font-size="26" font-weight="900" letter-spacing="1">
@@ -52,7 +47,6 @@ const presetsSVG = {
     `,
 
     cyber: `
-        <!-- Moldura Cyberpunk (Foco total em elementos de interface / HUD nas bordas) -->
         <defs>
             <linearGradient id="cyber-grad" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stop-color="#22c55e" />
@@ -60,21 +54,15 @@ const presetsSVG = {
                 <stop offset="100%" stop-color="#3b82f6" />
             </linearGradient>
         </defs>
-        
-        <!-- Cantoneiras Tecnológicas -->
         <path d="M 40,160 L 40,50 L 160,50" stroke="url(#cyber-grad)" stroke-width="12" fill="none" stroke-linecap="round" />
         <path d="M 1040,160 L 1040,50 L 920,50" stroke="url(#cyber-grad)" stroke-width="12" fill="none" stroke-linecap="round" />
         <path d="M 40,1760 L 40,1870 L 160,1870" stroke="url(#cyber-grad)" stroke-width="12" fill="none" stroke-linecap="round" />
         <path d="M 1040,1760 L 1040,1870 L 920,1870" stroke="url(#cyber-grad)" stroke-width="12" fill="none" stroke-linecap="round" />
-
-        <!-- Tag Superior -->
         <g transform="translate(80, 80)">
             <rect width="180" height="46" rx="23" fill="rgba(239, 68, 68, 0.9)" />
             <circle cx="28" cy="23" r="7" fill="#ffffff" />
             <text x="48" y="29" fill="#ffffff" font-family="Inter, sans-serif" font-size="18" font-weight="900">CYBER LIVE</text>
         </g>
-
-        <!-- Rodapé Cyber -->
         <g transform="translate(540, 1680)" text-anchor="middle">
             <rect x="-440" y="-45" width="880" height="90" rx="15" fill="rgba(10, 15, 30, 0.95)" stroke="url(#cyber-grad)" stroke-width="4" />
             <text y="-8" fill="#ffffff" font-family="Inter, sans-serif" font-size="26" font-weight="900" letter-spacing="1">
@@ -85,18 +73,15 @@ const presetsSVG = {
     `,
 
     starwars: `
-        <!-- Moldura Star Wars (Com crédito subindo em perspectiva) -->
         <rect x="35" y="35" width="1010" height="1850" rx="10" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.5" />
-        
-        <g transform="translate(540, 1150) scale(1, 0.45)" text-anchor="middle">
-            <text y="-380" fill="#ffff00" font-family="Inter, sans-serif" font-size="46" font-weight="900" letter-spacing="4">IFPR</text>
-            <text y="-300" fill="#38bdf8" font-family="Inter, sans-serif" font-size="38" font-weight="700">____</text>
-            <text y="-220" fill="#ffffff" font-family="Inter, sans-serif" font-size="34" font-weight="700">Ensino • Pesquisa • Extensão</text>
-            <text y="-130" fill="#4ade80" font-family="Inter, sans-serif" font-size="42" font-weight="900" letter-spacing="2">V WIPEX</text>
-            <text y="-30" fill="#ffff00" font-family="Inter, sans-serif" font-size="40" font-weight="900">QUE A FORÇA</text>
-            <text y="40" fill="#ffff00" font-family="Inter, sans-serif" font-size="40" font-weight="900">ESTEJA COM VOCÊ</text>
+        <g transform="translate(540, 1050) scale(1, 0.42)" text-anchor="middle">
+            <text y="-320" fill="#ffff00" font-family="Inter, sans-serif" font-size="52" font-weight="900" letter-spacing="6">IFPR</text>
+            <text y="-230" fill="#38bdf8" font-family="Inter, sans-serif" font-size="42" font-weight="700">Educação Publica de Qualidade</text>
+            <text y="-140" fill="#ffffff" font-family="Inter, sans-serif" font-size="38" font-weight="700">Ensino • Pesquisa • Extensão</text>
+            <text y="-40" fill="#4ade80" font-family="Inter, sans-serif" font-size="48" font-weight="900" letter-spacing="3">V WIPEX</text>
+            <text y="80" fill="#ffff00" font-family="Inter, sans-serif" font-size="44" font-weight="900">QUE A FORÇA</text>
+            <text y="160" fill="#ffff00" font-family="Inter, sans-serif" font-size="44" font-weight="900">ESTEJA COM VOCÊ</text>
         </g>
-
         <g transform="translate(540, 1680)" text-anchor="middle">
             <rect x="-440" y="-45" width="880" height="90" rx="10" fill="rgba(15, 23, 42, 0.95)" stroke="#38bdf8" stroke-width="3" />
             <text y="-8" fill="#ffffff" font-family="Inter, sans-serif" font-size="26" font-weight="900">
@@ -107,17 +92,20 @@ const presetsSVG = {
     `,
 
     poster: `
-        <!-- Moldura Pôster (Estética de Desenho / Ilustração artística) -->
+        <!-- Moldura Pôster com traços artísticos e capelo integrado no topo -->
         <rect x="30" y="30" width="1020" height="1860" rx="20" fill="none" stroke="#f59e0b" stroke-width="8" />
         <rect x="50" y="50" width="980" height="1820" rx="10" fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="12 12" />
-
-        <!-- Selo de Pôster Ilustrado no Topo -->
-        <g transform="translate(540, 140)" text-anchor="middle">
-            <rect x="-240" y="-40" width="480" height="75" rx="35" fill="#f59e0b" stroke="#ffffff" stroke-width="3" />
-            <text y="6" fill="#1e293b" font-family="Inter, sans-serif" font-size="30" font-weight="900" letter-spacing="2">⭐ EDIÇÃO PÔSTER ⭐</text>
+        
+        <!-- Topo com Capelo Estilizado Pôster -->
+        <g transform="translate(540, 120)" text-anchor="middle">
+            <path d="M -45,-12 L 0,-32 L 45,-12 L 0,8 Z" fill="#f59e0b" />
+            <path d="M -25,-1 L -25,20 C -25,28 25,28 25,20 L 25,-1" fill="#d97706" />
+            <path d="M 0,-12 L 32,8 L 32,26" stroke="#ffffff" stroke-width="3.5" fill="none" />
+            <circle cx="32" cy="28" r="4.5" fill="#ffffff" />
+            <rect x="-200" y="42" width="400" height="50" rx="25" fill="#f59e0b" stroke="#ffffff" stroke-width="3" />
+            <text y="75" fill="#1e293b" font-family="Inter, sans-serif" font-size="24" font-weight="900" letter-spacing="2">⭐ EDIÇÃO PÔSTER ⭐</text>
         </g>
 
-        <!-- Rodapé Pôster -->
         <g transform="translate(540, 1680)" text-anchor="middle">
             <rect x="-440" y="-45" width="880" height="90" rx="45" fill="#f59e0b" stroke="#ffffff" stroke-width="3" />
             <text y="-8" fill="#1e293b" font-family="Inter, sans-serif" font-size="26" font-weight="900" letter-spacing="1">
@@ -225,52 +213,63 @@ btnCapture.addEventListener('click', () => {
     canvas.height = 1920;
 
     const sourceEl = isUsingUserImage ? userImage : video;
-    drawContain(ctx, sourceEl, 1080, 1920);
+    drawCover(ctx, sourceEl, 1080, 1920);
 
     if (currentPreset === 'clean') {
-        applySkinSmoothEffect(ctx, 1080, 1920);
+        applyAdvancedSkinAndSmileEnhancement(ctx, 1080, 1920);
     }
 
     processOverlayAndExport(ctx);
 });
 
-function applySkinSmoothEffect(ctx, width, height) {
+function applyAdvancedSkinAndSmileEnhancement(ctx, width, height) {
     const imgData = ctx.getImageData(0, 0, width, height);
     const data = imgData.data;
 
     for (let i = 0; i < data.length; i += 4) {
-        data[i] = Math.min(255, (data[i] - 128) * 1.02 + 128 + 8);
-        data[i+1] = Math.min(255, (data[i+1] - 128) * 1.02 + 128 + 8);
-        data[i+2] = Math.min(255, (data[i+2] - 128) * 1.02 + 128 + 8);
+        let r = data[i];
+        let g = data[i+1];
+        let b = data[i+2];
+
+        r = Math.min(255, (r - 128) * 1.05 + 128 + 12);
+        g = Math.min(255, (g - 128) * 1.05 + 128 + 12);
+        b = Math.min(255, (b - 128) * 1.05 + 128 + 12);
+
+        if (r > 180 && g > 170 && b > 160) {
+            r = Math.min(255, r * 1.06);
+            g = Math.min(255, g * 1.06);
+            b = Math.min(255, b * 1.06);
+        }
+
+        data[i] = r;
+        data[i+1] = g;
+        data[i+2] = b;
     }
     ctx.putImageData(imgData, 0, 0);
 }
 
-// Enquadramento sem zoom (tamanho normal proporcional)
-function drawContain(ctx, img, targetWidth, targetHeight) {
-    ctx.fillStyle = '#050505';
-    ctx.fillRect(0, 0, targetWidth, targetHeight);
-
+function drawCover(ctx, img, targetWidth, targetHeight) {
     const imgWidth = img.videoWidth || img.naturalWidth || targetWidth;
     const imgHeight = img.videoHeight || img.naturalHeight || targetHeight;
 
     const targetRatio = targetWidth / targetHeight;
     const imgRatio = imgWidth / imgHeight;
 
-    let dw = targetWidth;
-    let dh = targetHeight;
-    let dx = 0;
-    let dy = 0;
+    let sw, sh, sx, sy;
 
     if (imgRatio > targetRatio) {
-        dh = targetWidth / imgRatio;
-        dy = (targetHeight - dh) / 2;
+        sh = imgHeight;
+        sw = imgHeight * targetRatio;
+        sx = (imgWidth - sw) / 2;
+        sy = 0;
     } else {
-        dw = targetHeight * imgRatio;
-        dx = (targetWidth - dw) / 2;
+        sw = imgWidth;
+        sh = imgWidth / targetRatio;
+        sx = 0;
+        sy = (imgHeight - sh) / 2;
     }
 
-    ctx.drawImage(img, 0, 0, imgWidth, imgHeight, dx, dy, dw, dh);
+    ctx.drawImage(img, sx, sy, sw, sh, 0, 0, targetWidth, targetHeight);
 }
 
 function processOverlayAndExport(ctx) {
