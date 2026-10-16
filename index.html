@@ -1,90 +1,245 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Câmera #V_WIPEX - IFPR Pinhais</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+}
 
-    <!-- Tela Inicial de Permissão de Câmera -->
-    <div id="permission-screen" class="permission-overlay">
-        <div class="permission-card">
-            <div class="icon-header">📸</div>
-            <h2>Câmera #V_WIPEX</h2>
-            <p>Preparamos com muito carinho filtros para você se divertir e compartilhar o momento.</p>
-            <button id="btn-grant-permission" class="btn btn-primary btn-large">
-                Liberar Câmera e Começar
-            </button>
-            <p class="permission-hint">Para poder usar, clique acima e selecione <strong>"OK"</strong> para liberar a câmera.</p>
-        </div>
-    </div>
+html, body {
+    width: 100%;
+    height: 100%;
+    height: 100dvh;
+    overflow: hidden !important;
+    position: fixed;
+    background-color: #000000;
+    color: #f8fafc;
+}
 
-    <!-- App Viewport -->
-    <div class="app-viewport">
-        
-        <!-- UI Superior -->
-        <div class="top-ui">
-            <header class="header">
-                <h1 class="title">Câmera #V_WIPEX</h1>
-                <p class="subtitle">IFPR Campus Pinhais</p>
-            </header>
-        </div>
+.app-viewport {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+}
 
-        <!-- Camada da Câmera -->
-        <div class="camera-layer preset-clean" id="viewport">
-            <video id="webcam" autoplay playsinline class="video-feed"></video>
-            <img id="user-image" class="user-image-feed" alt="Foto importada" style="display: none;">
-            
-            <div class="frame-overlay" id="svg-frame">
-                <svg viewBox="0 0 1080 1920" class="svg-element" id="svg-element" preserveAspectRatio="none"></svg>
-            </div>
-            <img id="custom-frame-img" class="custom-frame-overlay" alt="Moldura personalizada" style="display: none;">
-        </div>
+.camera-layer {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    background-color: #000000;
+}
 
-        <!-- UI Inferior -->
-        <div class="bottom-ui">
-            <div class="button-group">
-                <button id="btn-capture" class="btn btn-primary">📸 Tirar Foto</button>
-                <button id="btn-switch" class="btn btn-secondary">🔄 Inverter</button>
-            </div>
+.video-feed,
+.user-image-feed {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1);
+}
 
-            <div class="button-group">
-                <label for="upload-photo" class="btn btn-outline">
-                    🖼️ Galeria
-                    <input type="file" id="upload-photo" accept="image/*" class="file-input">
-                </label>
-                
-                <label for="upload-frame" class="btn btn-outline">
-                    🎨 Trocar PNG
-                    <input type="file" id="upload-frame" accept="image/png" class="file-input">
-                </label>
-            </div>
-        </div>
+.frame-overlay,
+.custom-frame-overlay {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 5;
+}
 
-        <canvas id="export-canvas" width="1080" height="1920" style="display: none;"></canvas>
+.svg-element {
+    width: 100%;
+    height: 100%;
+}
 
-        <!-- Modal Prévia -->
-        <div id="preview-modal" class="modal" style="display: none;">
-            <div class="modal-content">
-                <h2 class="modal-title">Foto Pronta! 🎉</h2>
-                <p class="modal-desc">Compartilhe marcando<br><strong>#ifpr.oficial #ifprpinhaisoficial #V_WIPEX</strong></p>
-                <div class="preview-container">
-                    <img id="preview-image" alt="Prévia da foto">
-                </div>
-                <div class="modal-actions">
-                    <a id="btn-download" class="btn btn-primary" download="foto-v-wipex-ifpr.png">⬇️ Baixar Foto PNG</a>
-                    <button id="btn-close-modal" class="btn btn-secondary">🔄 Outra Foto</button>
-                </div>
-            </div>
-        </div>
+.top-ui {
+    position: relative;
+    z-index: 10;
+    padding: 8px 10px;
+    background: linear-gradient(180deg, rgba(9, 13, 22, 0.95) 0%, rgba(9, 13, 22, 0.7) 80%, transparent 100%);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
 
-    </div>
+.header {
+    text-align: center;
+}
 
-    <script src="script.js"></script>
-</body>
-</html>
+.title {
+    font-size: 0.95rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, #4ade80, #06b6d4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+    font-size: 0.65rem;
+    color: #94a3b8;
+}
+
+.bottom-ui {
+    position: relative;
+    z-index: 10;
+    padding: 10px 12px;
+    padding-bottom: max(14px, env(safe-area-inset-bottom));
+    background: linear-gradient(0deg, rgba(9, 13, 22, 0.95) 0%, rgba(9, 13, 22, 0.7) 80%, transparent 100%);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.button-group {
+    display: flex;
+    gap: 6px;
+}
+
+.btn {
+    flex: 1;
+    padding: 11px 6px;
+    border: none;
+    border-radius: 9px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: #ffffff;
+    box-shadow: 0 3px 10px rgba(34, 197, 94, 0.3);
+}
+
+.btn-secondary {
+    background-color: rgba(30, 41, 59, 0.9);
+    color: #f8fafc;
+}
+
+.btn-outline {
+    background-color: rgba(30, 41, 59, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #cbd5e1;
+}
+
+.file-input {
+    display: none;
+}
+
+.permission-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: #090d16;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.permission-card {
+    background-color: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 20px;
+    padding: 24px;
+    text-align: center;
+    max-width: 320px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.icon-header {
+    font-size: 2.5rem;
+}
+
+.permission-card h2 {
+    color: #4ade80;
+    font-size: 1.2rem;
+}
+
+.permission-card p {
+    color: #cbd5e1;
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+.permission-hint {
+    font-size: 0.72rem !important;
+    color: #94a3b8 !important;
+}
+
+.btn-large {
+    width: 100%;
+    padding: 14px !important;
+    font-size: 0.95rem !important;
+}
+
+.modal {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.92);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px;
+    z-index: 50;
+    backdrop-filter: blur(8px);
+}
+
+.modal-content {
+    background-color: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 16px;
+    padding: 14px;
+    width: 100%;
+    max-width: 380px;
+    max-height: 95dvh;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.modal-title {
+    font-size: 1rem;
+    text-align: center;
+    color: #f8fafc;
+}
+
+.modal-desc {
+    font-size: 0.72rem;
+    text-align: center;
+    color: #94a3b8;
+}
+
+.preview-container {
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+    aspect-ratio: 9 / 16;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #000000;
+}
+
+.preview-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 6px;
+}
