@@ -41,10 +41,11 @@ html, body {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transform: scale(1);
 }
 
 .camera-layer.preset-clean {
-    filter: contrast(104%) brightness(106%) saturate(104%);
+    filter: contrast(105%) brightness(105%) saturate(105%);
 }
 
 .frame-overlay,
