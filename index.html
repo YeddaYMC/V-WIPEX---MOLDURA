@@ -27,7 +27,7 @@
     <!-- App Viewport -->
     <div class="app-viewport">
         
-        <!-- UI Superior (Título + Filtros baseados em Molduras) -->
+        <!-- UI Superior (4 Filtros) -->
         <div class="top-ui">
             <header class="header">
                 <h1 class="title">Câmera #V_WIPEX</h1>
@@ -42,13 +42,13 @@
             </div>
         </div>
 
-        <!-- Camada da Câmera (Sem Zoom Excessivo) -->
+        <!-- Camada da Câmera -->
         <div class="camera-layer preset-clean" id="viewport">
             <video id="webcam" autoplay playsinline class="video-feed"></video>
             <img id="user-image" class="user-image-feed" alt="Foto importada" style="display: none;">
             
             <div class="frame-overlay" id="svg-frame">
-                <svg viewBox="0 0 1080 1920" class="svg-element" id="svg-element" preserveAspectRatio="xMidYMid slice"></svg>
+                <svg viewBox="0 0 1080 1920" class="svg-element" id="svg-element" preserveAspectRatio="none"></svg>
             </div>
             <img id="custom-frame-img" class="custom-frame-overlay" alt="Moldura personalizada" style="display: none;">
         </div>
