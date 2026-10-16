@@ -36,18 +36,15 @@ html, body {
     background-color: #000000;
 }
 
-/* Enquadramento proporcional correto (Evita zoom exagerado) */
 .video-feed,
 .user-image-feed {
     width: 100%;
     height: 100%;
-    object-fit: contain;
-    background-color: #050505;
+    object-fit: cover;
 }
 
-/* Suavização de pele natural e limpa apenas no Clean */
 .camera-layer.preset-clean {
-    filter: contrast(102%) brightness(104%) saturate(102%);
+    filter: contrast(104%) brightness(106%) saturate(104%);
 }
 
 .frame-overlay,
