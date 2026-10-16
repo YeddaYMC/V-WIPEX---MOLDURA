@@ -27,7 +27,7 @@
     <!-- App Viewport -->
     <div class="app-viewport">
         
-        <!-- UI Superior (Título + 4 Filtros) -->
+        <!-- UI Superior (Título + Filtros baseados em Molduras) -->
         <div class="top-ui">
             <header class="header">
                 <h1 class="title">Câmera #V_WIPEX</h1>
@@ -37,12 +37,12 @@
             <div class="preset-selector">
                 <button class="btn-preset active" data-preset="clean">Clean</button>
                 <button class="btn-preset" data-preset="cyber">Cyber</button>
-                <button class="btn-preset" data-preset="tech">Tech</button>
                 <button class="btn-preset" data-preset="starwars">Star Wars</button>
+                <button class="btn-preset" data-preset="poster">Pôster</button>
             </div>
         </div>
 
-        <!-- Camada da Câmera -->
+        <!-- Camada da Câmera (Sem Zoom Excessivo) -->
         <div class="camera-layer preset-clean" id="viewport">
             <video id="webcam" autoplay playsinline class="video-feed"></video>
             <img id="user-image" class="user-image-feed" alt="Foto importada" style="display: none;">
