@@ -26,7 +26,7 @@ let currentStream = null;
 let facingMode = 'user';
 let isUsingUserImage = false;
 
-// Mapeamento exato dos stickers na pasta "adesivos/"
+// Mapeamento exato dos caminhos dos adesivos
 const stickerSources = {
     audio: 'adesivos/audio1_2.jpeg',
     confetes: 'adesivos/confetes1.webp',
@@ -38,7 +38,7 @@ const stickerSources = {
     fogos: 'adesivos/fogos 1.jpeg'
 };
 
-// Abrir e Fechar o Painel "Personaliza"
+// Abrir e Fechar Gaveta de Adesivos
 if (btnCustomize && stickersModal) {
     btnCustomize.addEventListener('click', () => {
         stickersModal.style.display = 'flex';
@@ -51,13 +51,11 @@ if (btnCloseDrawer && stickersModal) {
     });
 }
 
-// Adicionar adesivo selecionado
+// Adicionar Adesivo à Tela
 stickerCards.forEach(card => {
     card.addEventListener('click', () => {
         const type = card.dataset.sticker;
-        const spanEl = card.querySelector('span');
-        const fallbackText = spanEl ? spanEl.textContent : 'Adesivo';
-        createStickerElement(stickerSources[type], fallbackText);
+        createStickerElement(stickerSources[type]);
         if (stickersModal) {
             stickersModal.style.display = 'none';
         }
@@ -70,22 +68,16 @@ if (btnClearStickers) {
     });
 }
 
-function createStickerElement(imageSrc, fallbackText) {
+function createStickerElement(imageSrc) {
     const div = document.createElement('div');
     div.className = 'draggable-sticker';
     
     const img = document.createElement('img');
     img.src = imageSrc;
-    img.alt = fallbackText;
-    
-    img.onerror = () => {
-        div.innerHTML = `<span style="font-size:1.5rem; background:#1e293b; padding:8px; border-radius:8px; border:1px solid #4ade80; color:#fff;">${fallbackText}</span>`;
-    };
-
     div.appendChild(img);
     
-    let posX = window.innerWidth / 2 - 60;
-    let posY = window.innerHeight / 2 - 60;
+    let posX = window.innerWidth / 2 - 50;
+    let posY = window.innerHeight / 2 - 50;
     let scale = 1;
     let rotation = 0;
 
@@ -116,10 +108,10 @@ function createStickerElement(imageSrc, fallbackText) {
         } catch (err) {}
     });
 
-    // Clique para girar e aumentar tamanho do adesivo
+    // Toque para redimensionar/rodar
     div.addEventListener('click', () => {
         scale += 0.2;
-        if (scale > 2.2) scale = 0.8;
+        if (scale > 2.0) scale = 0.8;
         rotation += 15;
         div.style.transform = `translate(${posX}px, ${posY}px) scale(${scale}) rotate(${rotation}deg)`;
     });
@@ -192,7 +184,7 @@ if (uploadPhoto) {
     });
 }
 
-// Tirar Foto e Gerar Imagem Final Polaroid
+// Tirar Foto e Gerar Imagem Final
 if (btnCapture) {
     btnCapture.addEventListener('click', async () => {
         const ctx = canvas.getContext('2d');
@@ -200,39 +192,41 @@ if (btnCapture) {
         canvas.height = 1920;
 
         const sourceEl = isUsingUserImage ? userImage : video;
+        
+        // 1. Desenhar a foto de fundo (preenchendo tudo)
         drawCover(ctx, sourceEl, 1080, 1920);
 
-        // Filtro de Pele Suave
+        // 2. Filtro de pele suave
         applySnapchatSkinFilter(ctx, 1080, 1920);
 
-        // Desenhar a Moldura Polaroid no Canvas
+        // 3. Desenhar a moldura Polaroid em cima
         ctx.fillStyle = '#ffffff';
-        ctx.fillRect(50, 120, 980, 1680);
+        ctx.fillRect(50, 100, 980, 1720);
 
-        // Janela transparente interna da foto
-        ctx.clearRect(90, 160, 900, 1320);
-        drawCoverRegion(ctx, sourceEl, 90, 160, 900, 1320);
-        applySnapchatSkinFilterRegion(ctx, 90, 160, 900, 1320);
+        // Janela recortada para a foto aparecer dentro da Polaroid
+        ctx.clearRect(90, 140, 900, 1340);
+        drawCoverRegion(ctx, sourceEl, 90, 140, 900, 1340);
+        applySnapchatSkinFilterRegion(ctx, 90, 140, 900, 1340);
 
         ctx.strokeStyle = '#e2e8f0';
         ctx.lineWidth = 4;
-        ctx.strokeRect(90, 160, 900, 1320);
+        ctx.strokeRect(90, 140, 900, 1340);
 
-        // Textos Oficiais no Cartão Polaroid
+        // 4. Textos da Polaroid no Canvas
         ctx.fillStyle = '#16a34a';
         ctx.font = '900 64px Inter, sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText('V_WIPEX! 💚', 540, 1580);
+        ctx.fillText('V_WIPEX! 💚', 540, 1600);
 
         ctx.fillStyle = '#334155';
         ctx.font = '700 32px Inter, sans-serif';
-        ctx.fillText('Ensino • Pesquisa • Extensão', 540, 1640);
+        ctx.fillText('Ensino • Pesquisa • Extensão', 540, 1660);
 
         ctx.fillStyle = '#e11d48';
         ctx.font = '700 24px Inter, sans-serif';
-        ctx.fillText('#ifpr.oficial #ifprpinhaisoficial #V_WIPEX', 540, 1700);
+        ctx.fillText('#ifpr.oficial #ifprpinhaisoficial #V_WIPEX', 540, 1720);
 
-        // Desenhar os Adesivos posicionados pelo utilizador
+        // 5. Desenhar os Adesivos posicionados
         const activeStickers = stickersContainer.querySelectorAll('.draggable-sticker');
         for (const stickerEl of activeStickers) {
             const imgEl = stickerEl.querySelector('img');
@@ -243,7 +237,7 @@ if (btnCapture) {
             if (imgEl && imgEl.complete && imgEl.naturalWidth !== 0) {
                 ctx.save();
                 ctx.translate(rect.left * scaleX + (rect.width * scaleX) / 2, rect.top * scaleY + (rect.height * scaleY) / 2);
-                ctx.drawImage(imgEl, -80, -80, 160, 160);
+                ctx.drawImage(imgEl, -75, -75, 150, 150);
                 ctx.restore();
             }
         }
