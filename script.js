@@ -158,7 +158,7 @@ async function initCamera() {
         isUsingUserImage = false;
         return true;
     } catch (err) {
-        console.error('Erro na câmera:', err);
+        console.error('Erro na câmara:', err);
         permissionScreen.style.display = 'none';
         return false;
     }
@@ -232,7 +232,7 @@ if (btnCapture) {
         ctx.font = '700 24px Inter, sans-serif';
         ctx.fillText('#ifpr.oficial #ifprpinhaisoficial #V_WIPEX', 540, 1700);
 
-        // Desenhar os Adesivos posicionados pelo usuário
+        // Desenhar os Adesivos posicionados pelo utilizador
         const activeStickers = stickersContainer.querySelectorAll('.draggable-sticker');
         for (const stickerEl of activeStickers) {
             const imgEl = stickerEl.querySelector('img');
