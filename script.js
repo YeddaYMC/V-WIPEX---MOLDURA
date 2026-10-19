@@ -1,8 +1,5 @@
 const video = document.getElementById('webcam');
 const userImage = document.getElementById('user-image');
-const svgFrame = document.getElementById('svg-frame');
-const svgElement = document.getElementById('svg-element');
-const viewport = document.getElementById('viewport');
 const stickersContainer = document.getElementById('stickers-container');
 const canvas = document.getElementById('export-canvas');
 
@@ -12,9 +9,12 @@ const btnGrantPermission = document.getElementById('btn-grant-permission');
 const btnCapture = document.getElementById('btn-capture');
 const btnSwitch = document.getElementById('btn-switch');
 const uploadPhoto = document.getElementById('upload-photo');
-const uploadFrame = document.getElementById('upload-frame');
-const stickerButtons = document.querySelectorAll('.btn-sticker[data-sticker]');
+
+const btnCustomize = document.getElementById('btn-customize');
+const stickersModal = document.getElementById('stickers-modal');
+const btnCloseDrawer = document.getElementById('btn-close-drawer');
 const btnClearStickers = document.getElementById('btn-clear-stickers');
+const stickerCards = document.querySelectorAll('.sticker-card');
 
 const previewModal = document.getElementById('preview-modal');
 const previewImage = document.getElementById('preview-image');
@@ -26,7 +26,7 @@ let currentStream = null;
 let facingMode = 'user';
 let isUsingUserImage = false;
 
-// Mapeamento exato dos stickers na pasta "adesivos/" com os seus nomes originais
+// Mapeamento exato dos stickers na pasta "adesivos/"
 const stickerSources = {
     audio: 'adesivos/audio1_2.jpeg',
     confetes: 'adesivos/confetes1.webp',
@@ -38,70 +38,54 @@ const stickerSources = {
     fogos: 'adesivos/fogos 1.jpeg'
 };
 
-// Moldura Polaroid perfeita com centro transparente e textos institucionais
-const polaroidTransparentSVG = `
-    <defs>
-        <mask id="polaroid-mask">
-            <rect x="0" y="0" width="1080" height="1920" fill="white" />
-            <rect x="80" y="240" width="920" height="1260" rx="10" fill="black" />
-        </mask>
-    </defs>
+// Abrir e Fechar o Painel "Personaliza"
+if (btnCustomize && stickersModal) {
+    btnCustomize.addEventListener('click', () => {
+        stickersModal.style.display = 'flex';
+    });
+}
 
-    <g mask="url(#polaroid-mask)">
-        <rect x="0" y="0" width="1080" height="1920" fill="rgba(0,0,0,0.2)" />
-        <rect x="50" y="190" width="980" height="1540" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="3" filter="drop-shadow(0 20px 30px rgba(0,0,0,0.6))" />
-    </g>
+if (btnCloseDrawer && stickersModal) {
+    btnCloseDrawer.addEventListener('click', () => {
+        stickersModal.style.display = 'none';
+    });
+}
 
-    <rect x="80" y="240" width="920" height="1260" rx="10" fill="none" stroke="#cbd5e1" stroke-width="3" />
-
-    <!-- Capelo Decorativo na Moldura -->
-    <g transform="translate(75, 215) rotate(-12)">
-        <path d="M -50,-14 L 0,-36 L 50,-14 L 0,8 Z" fill="#1e293b" stroke="#22c55e" stroke-width="2.5" />
-        <path d="M -30,0 L -30,22 C -30,30 30,30 30,22 L 30,0" fill="#1e293b" />
-        <path d="M 0,-14 L 35,6 L 35,22" stroke="#facc15" stroke-width="3.5" fill="none" />
-        <circle cx="35" cy="24" r="4" fill="#facc15" />
-    </g>
-
-    <!-- Texto Superior: IFPR Campus Pinhais -->
-    <g transform="translate(540, 140)" text-anchor="middle">
-        <text y="0" fill="#22c55e" font-family="Inter, sans-serif" font-size="52" font-weight="900" letter-spacing="5">IFPR PINHAIS</text>
-        <text y="42" fill="#ffffff" font-family="Inter, sans-serif" font-size="24" font-weight="700" letter-spacing="3">CAMPUS PINHAIS</text>
-    </g>
-
-    <!-- Rodapé da Polaroid: V_WIPEX e Hashes -->
-    <g transform="translate(540, 1620)" text-anchor="middle">
-        <text y="0" fill="#16a34a" font-family="Inter, sans-serif" font-size="44" font-weight="900" letter-spacing="2">V_WIPEX! 💚</text>
-        <text y="32" fill="#334155" font-family="Inter, sans-serif" font-size="22" font-weight="700">Ensino • Pesquisa • Extensão</text>
-        <text y="58" fill="#e11d48" font-family="Inter, sans-serif" font-size="16" font-weight="700">#ifpr.oficial #ifprpinhaisoficial #V_WIPEX</text>
-    </g>
-`;
-
-window.addEventListener('DOMContentLoaded', () => {
-    svgElement.innerHTML = polaroidTransparentSVG;
-});
-
-// Adicionar Stickers na Tela
-stickerButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-        const type = btn.dataset.sticker;
-        createStickerElement(stickerSources[type]);
+// Adicionar adesivo selecionado
+stickerCards.forEach(card => {
+    card.addEventListener('click', () => {
+        const type = card.dataset.sticker;
+        const spanEl = card.querySelector('span');
+        const fallbackText = spanEl ? spanEl.textContent : 'Adesivo';
+        createStickerElement(stickerSources[type], fallbackText);
+        if (stickersModal) {
+            stickersModal.style.display = 'none';
+        }
     });
 });
 
-btnClearStickers.addEventListener('click', () => {
-    stickersContainer.innerHTML = '';
-});
+if (btnClearStickers) {
+    btnClearStickers.addEventListener('click', () => {
+        stickersContainer.innerHTML = '';
+    });
+}
 
-function createStickerElement(imageSrc) {
+function createStickerElement(imageSrc, fallbackText) {
     const div = document.createElement('div');
     div.className = 'draggable-sticker';
     
     const img = document.createElement('img');
     img.src = imageSrc;
+    img.alt = fallbackText;
+    
+    img.onerror = () => {
+        div.innerHTML = `<span style="font-size:1.5rem; background:#1e293b; padding:8px; border-radius:8px; border:1px solid #4ade80; color:#fff;">${fallbackText}</span>`;
+    };
+
     div.appendChild(img);
     
-    let posX = window.innerWidth / 2 - 55;
-    let posY = window.innerHeight / 2 - 55;
+    let posX = window.innerWidth / 2 - 60;
+    let posY = window.innerHeight / 2 - 60;
     let scale = 1;
     let rotation = 0;
 
@@ -127,9 +111,12 @@ function createStickerElement(imageSrc) {
 
     div.addEventListener('pointerup', (e) => {
         isDragging = false;
-        div.releasePointerCapture(e.pointerId);
+        try {
+            div.releasePointerCapture(e.pointerId);
+        } catch (err) {}
     });
 
+    // Clique para girar e aumentar tamanho do adesivo
     div.addEventListener('click', () => {
         scale += 0.2;
         if (scale > 2.2) scale = 0.8;
@@ -140,12 +127,14 @@ function createStickerElement(imageSrc) {
     stickersContainer.appendChild(div);
 }
 
-btnGrantPermission.addEventListener('click', async () => {
-    const success = await initCamera();
-    if (success) {
-        permissionScreen.style.display = 'none';
-    }
-});
+if (btnGrantPermission) {
+    btnGrantPermission.addEventListener('click', async () => {
+        const success = await initCamera();
+        if (success) {
+            permissionScreen.style.display = 'none';
+        }
+    });
+}
 
 async function initCamera() {
     if (currentStream) {
@@ -169,82 +158,81 @@ async function initCamera() {
         isUsingUserImage = false;
         return true;
     } catch (err) {
-        console.error('Erro ao aceder à câmara:', err);
+        console.error('Erro na câmera:', err);
         permissionScreen.style.display = 'none';
-        alert('A câmara foi bloqueada ou não é suportada. Tira uma foto com a câmara normal e usa o botão "Galeria"!');
         return false;
     }
 }
 
-btnSwitch.addEventListener('click', () => {
-    facingMode = facingMode === 'user' ? 'environment' : 'user';
-    initCamera();
-});
+if (btnSwitch) {
+    btnSwitch.addEventListener('click', () => {
+        facingMode = facingMode === 'user' ? 'environment' : 'user';
+        initCamera();
+    });
+}
 
-uploadPhoto.addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            userImage.src = event.target.result;
-            userImage.style.display = 'block';
-            video.style.display = 'none';
-            isUsingUserImage = true;
-            permissionScreen.style.display = 'none';
+if (uploadPhoto) {
+    uploadPhoto.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                userImage.src = event.target.result;
+                userImage.style.display = 'block';
+                video.style.display = 'none';
+                isUsingUserImage = true;
+                permissionScreen.style.display = 'none';
 
-            if (currentStream) {
-                currentStream.getTracks().forEach(track => track.stop());
-            }
-        };
-        reader.readAsDataURL(file);
-    }
-});
-
-uploadFrame.addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            const img = new Image();
-            img.onload = () => {
-                const ctx = canvas.getContext('2d');
-                canvas.width = 1080;
-                canvas.height = 1920;
-                const sourceEl = isUsingUserImage ? userImage : video;
-                drawCover(ctx, sourceEl, 1080, 1920);
-                applySnapchatSkinFilter(ctx, 1080, 1920);
-                ctx.drawImage(img, 0, 0, 1080, 1920);
-                showPreview();
+                if (currentStream) {
+                    currentStream.getTracks().forEach(track => track.stop());
+                }
             };
-            img.src = event.target.result;
-        };
-        reader.readAsDataURL(file);
-    }
-});
+            reader.readAsDataURL(file);
+        }
+    });
+}
 
-btnCapture.addEventListener('click', async () => {
-    const ctx = canvas.getContext('2d');
-    canvas.width = 1080;
-    canvas.height = 1920;
+// Tirar Foto e Gerar Imagem Final Polaroid
+if (btnCapture) {
+    btnCapture.addEventListener('click', async () => {
+        const ctx = canvas.getContext('2d');
+        canvas.width = 1080;
+        canvas.height = 1920;
 
-    const sourceEl = isUsingUserImage ? userImage : video;
-    drawCover(ctx, sourceEl, 1080, 1920);
+        const sourceEl = isUsingUserImage ? userImage : video;
+        drawCover(ctx, sourceEl, 1080, 1920);
 
-    // Filtro de pele estilo Snapchat aplicado
-    applySnapchatSkinFilter(ctx, 1080, 1920);
+        // Filtro de Pele Suave
+        applySnapchatSkinFilter(ctx, 1080, 1920);
 
-    // Desenhar moldura Polaroid SVG
-    const svgData = new XMLSerializer().serializeToString(svgElement);
-    const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
-    const URL = window.URL || window.webkitURL || window;
-    const blobURL = URL.createObjectURL(svgBlob);
+        // Desenhar a Moldura Polaroid no Canvas
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(50, 120, 980, 1680);
 
-    const frameImg = new Image();
-    frameImg.onload = async () => {
-        ctx.drawImage(frameImg, 0, 0, 1080, 1920);
-        URL.revokeObjectURL(blobURL);
+        // Janela transparente interna da foto
+        ctx.clearRect(90, 160, 900, 1320);
+        drawCoverRegion(ctx, sourceEl, 90, 160, 900, 1320);
+        applySnapchatSkinFilterRegion(ctx, 90, 160, 900, 1320);
 
-        // Desenhar adesivos no Canvas final
+        ctx.strokeStyle = '#e2e8f0';
+        ctx.lineWidth = 4;
+        ctx.strokeRect(90, 160, 900, 1320);
+
+        // Textos Oficiais no Cartão Polaroid
+        ctx.fillStyle = '#16a34a';
+        ctx.font = '900 64px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('V_WIPEX! 💚', 540, 1580);
+
+        ctx.fillStyle = '#334155';
+        ctx.font = '700 32px Inter, sans-serif';
+        ctx.fillText('Ensino • Pesquisa • Extensão', 540, 1640);
+
+        ctx.fillStyle = '#e11d48';
+        ctx.font = '700 24px Inter, sans-serif';
+        ctx.fillText('#ifpr.oficial #ifprpinhaisoficial #V_WIPEX', 540, 1700);
+
+        // Desenhar os Adesivos posicionados pelo usuário
         const activeStickers = stickersContainer.querySelectorAll('.draggable-sticker');
         for (const stickerEl of activeStickers) {
             const imgEl = stickerEl.querySelector('img');
@@ -252,54 +240,86 @@ btnCapture.addEventListener('click', async () => {
             const scaleX = 1080 / window.innerWidth;
             const scaleY = 1920 / window.innerHeight;
             
-            await new Promise((resolve) => {
-                const img = new Image();
-                img.crossOrigin = 'anonymous';
-                img.onload = () => {
-                    ctx.save();
-                    ctx.translate(rect.left * scaleX + (rect.width * scaleX) / 2, rect.top * scaleY + (rect.height * scaleY) / 2);
-                    ctx.drawImage(img, -70, -70, 140, 140);
-                    ctx.restore();
-                    resolve();
-                };
-                img.src = imgEl.src;
-            });
+            if (imgEl && imgEl.complete && imgEl.naturalWidth !== 0) {
+                ctx.save();
+                ctx.translate(rect.left * scaleX + (rect.width * scaleX) / 2, rect.top * scaleY + (rect.height * scaleY) / 2);
+                ctx.drawImage(imgEl, -80, -80, 160, 160);
+                ctx.restore();
+            }
         }
 
         showPreview();
-    };
-    frameImg.src = blobURL;
-});
-
-function applySnapchatSkinFilter(ctx, width, height) {
-    const imgData = ctx.getImageData(0, 0, width, height);
-    const data = imgData.data;
-
-    for (let i = 0; i < data.length; i += 4) {
-        let r = data[i];
-        let g = data[i+1];
-        let b = data[i+2];
-
-        r = Math.min(255, (r - 128) * 1.06 + 128 + 14);
-        g = Math.min(255, (g - 128) * 1.06 + 128 + 14);
-        b = Math.min(255, (b - 128) * 1.06 + 128 + 14);
-
-        if (r > 170 && g > 160 && b > 150) {
-            r = Math.min(255, r * 1.04);
-            g = Math.min(255, g * 1.04);
-            b = Math.min(255, b * 1.04);
-        }
-
-        data[i] = r;
-        data[i+1] = g;
-        data[i+2] = b;
-    }
-    ctx.putImageData(imgData, 0, 0);
+    });
 }
 
 function drawCover(ctx, img, targetWidth, targetHeight) {
     const imgWidth = img.videoWidth || img.naturalWidth || targetWidth;
     const imgHeight = img.videoHeight || img.naturalHeight || targetHeight;
-
     const targetRatio = targetWidth / targetHeight;
     const imgRatio = imgWidth / imgHeight;
+
+    let sw, sh, sx, sy;
+    if (imgRatio > targetRatio) {
+        sh = imgHeight;
+        sw = imgHeight * targetRatio;
+        sx = (imgWidth - sw) / 2;
+        sy = 0;
+    } else {
+        sw = imgWidth;
+        sh = imgWidth / targetRatio;
+        sx = 0;
+        sy = (imgHeight - sh) / 2;
+    }
+    ctx.drawImage(img, sx, sy, sw, sh, 0, 0, targetWidth, targetHeight);
+}
+
+function drawCoverRegion(ctx, img, x, y, width, height) {
+    const imgWidth = img.videoWidth || img.naturalWidth || width;
+    const imgHeight = img.videoHeight || img.naturalHeight || height;
+    ctx.drawImage(img, 0, 0, imgWidth, imgHeight, x, y, width, height);
+}
+
+function applySnapchatSkinFilter(ctx, width, height) {
+    const imgData = ctx.getImageData(0, 0, width, height);
+    const data = imgData.data;
+    for (let i = 0; i < data.length; i += 4) {
+        data[i] = Math.min(255, data[i] * 1.05 + 8);
+        data[i+1] = Math.min(255, data[i+1] * 1.05 + 8);
+        data[i+2] = Math.min(255, data[i+2] * 1.05 + 8);
+    }
+    ctx.putImageData(imgData, 0, 0);
+}
+
+function applySnapchatSkinFilterRegion(ctx, x, y, width, height) {
+    const imgData = ctx.getImageData(x, y, width, height);
+    const data = imgData.data;
+    for (let i = 0; i < data.length; i += 4) {
+        data[i] = Math.min(255, data[i] * 1.05 + 8);
+        data[i+1] = Math.min(255, data[i+1] * 1.05 + 8);
+        data[i+2] = Math.min(255, data[i+2] * 1.05 + 8);
+    }
+    ctx.putImageData(imgData, x, y);
+}
+
+function showPreview() {
+    const dataURL = canvas.toDataURL('image/png');
+    previewImage.src = dataURL;
+    btnDownload.href = dataURL;
+    previewModal.style.display = 'flex';
+}
+
+if (btnCopyCaption) {
+    btnCopyCaption.addEventListener('click', () => {
+        const captionText = "V_WIPEX! 💚 Ensino • Pesquisa • Extensão\n#ifpr.oficial #ifprpinhaisoficial #V_WIPEX";
+        navigator.clipboard.writeText(captionText).then(() => {
+            btnCopyCaption.textContent = '✅ Legenda Copiada!';
+            setTimeout(() => btnCopyCaption.textContent = '📋 Copiar Legenda', 2000);
+        });
+    });
+}
+
+if (bntCloseModal) {
+    bntCloseModal.addEventListener('click', () => {
+        previewModal.style.display = 'none';
+    });
+}
