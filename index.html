@@ -7,54 +7,45 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=16">
+    <link rel="stylesheet" href="style.css?v=17">
 </head>
 <body>
 
-    <!-- Tela Inicial de Permissão de Câmera -->
+    <!-- Ecrã Inicial de Permissão -->
     <div id="permission-screen" class="permission-overlay">
         <div class="permission-card">
             <div class="icon-header">📸</div>
             <h2>Câmera #V_WIPEX</h2>
-            <p>Preparamos uma moldura estilo Polaroid e adesivos para você personalizar sua foto!</p>
+            <p>Toque abaixo para liberar a câmara e tirar a sua foto oficial com moldura Polaroid!</p>
             <button id="btn-grant-permission" class="btn btn-primary btn-large">
-                Liberar Câmera e Começar
+                Liberar Câmara e Começar
             </button>
-            <p class="permission-hint">Clique acima para liberar a câmera no navegador.</p>
         </div>
     </div>
 
     <!-- App Viewport -->
     <div class="app-viewport">
         
-        <!-- UI Superior -->
-        <div class="top-ui">
-            <header class="header">
-                <h1 class="title">IFPR PINHAIS</h1>
-                <p class="subtitle">CAMPUS PINHAIS • #V_WIPEX</p>
-            </header>
-        </div>
-
-        <!-- Camada da Câmera, Moldura Polaroid e Adesivos -->
+        <!-- Câmara e Moldura Polaroid em tempo real -->
         <div class="camera-layer" id="viewport">
             <video id="webcam" autoplay playsinline class="video-feed"></video>
-            <img id="user-image" class="user-image-feed" alt="Foto importada" style="display: none;">
+            <img id="user-image" class="user-image-feed" alt="Foto" style="display: none;">
             
-            <!-- Moldura Estilo Polaroid -->
-            <div class="polaroid-frame-container" id="polaroid-frame">
-                <div class="polaroid-window"></div>
-                <div class="polaroid-bottom-card">
-                    <div class="polaroid-title">V_WIPEX! 💚</div>
-                    <div class="polaroid-subtitle">Ensino • Pesquisa • Extensão</div>
-                    <div class="polaroid-hashtags">#ifpr.oficial #ifprpinhaisoficial #V_WIPEX</div>
+            <!-- Moldura Polaroid Visual (HTML/CSS) -->
+            <div class="polaroid-frame">
+                <div class="polaroid-inner-window"></div>
+                <div class="polaroid-footer">
+                    <div class="p-title">V_WIPEX! 💚</div>
+                    <div class="p-sub">Ensino • Pesquisa • Extensão</div>
+                    <div class="p-hash">#ifpr.oficial #ifprpinhaisoficial #V_WIPEX</div>
                 </div>
             </div>
             
-            <!-- Container dos Adesivos Arrastáveis -->
+            <!-- Contentor de Adesivos Arrastáveis -->
             <div id="stickers-container" class="stickers-container"></div>
         </div>
 
-        <!-- UI Inferior -->
+        <!-- Barra Inferior de Ações -->
         <div class="bottom-ui">
             <div class="button-group">
                 <button id="btn-capture" class="btn btn-primary">📸 Tirar Foto</button>
@@ -68,50 +59,50 @@
                 </label>
                 
                 <button id="btn-customize" class="btn btn-outline btn-highlight">
-                    🎨 Personaliza (Adesivos)
+                    🎨 Personalizar (Adesivos)
                 </button>
             </div>
         </div>
 
-        <!-- Painel / Gaveta "Personaliza" para Escolher e Adicionar Adesivos -->
+        <!-- Gaveta de Adesivos -->
         <div id="stickers-modal" class="modal-stickers-drawer" style="display: none;">
             <div class="drawer-content">
                 <div class="drawer-header">
-                    <h3>🎨 Escolha um Adesivo</h3>
+                    <h3>🎨 Escolher Adesivo</h3>
                     <button id="btn-close-drawer" class="btn-close-x">✕</button>
                 </div>
-                <p class="drawer-desc">Clique em um adesivo para adicionar à sua foto. Depois, toque nele na tela para mover e redimensionar!</p>
+                <p class="drawer-desc">Clique num adesivo para o adicionar. Depois, arraste-o na tela para posicionar!</p>
                 <div class="stickers-grid">
                     <button class="sticker-card" data-sticker="lamp">
-                        <img src="adesivos/lamp.flor.webp" alt="Lâmpada" onerror="this.parentElement.innerHTML='💡 Lâmpada'">
+                        <img src="adesivos/lamp.flor.webp" alt="Lâmpada">
                         <span>Lâmpada</span>
                     </button>
                     <button class="sticker-card" data-sticker="lapiseira">
-                        <img src="adesivos/lapiseira1.jpeg" alt="Lapiseira" onerror="this.parentElement.innerHTML='✒️ Caneta'">
+                        <img src="adesivos/lapiseira1.jpeg" alt="Lapiseira">
                         <span>Caneta</span>
                     </button>
                     <button class="sticker-card" data-sticker="foguete">
-                        <img src="adesivos/foguete 1_2.jpeg" alt="Foguete" onerror="this.parentElement.innerHTML='🚀 Foguete'">
+                        <img src="adesivos/foguete 1_2.jpeg" alt="Foguete">
                         <span>Foguete</span>
                     </button>
                     <button class="sticker-card" data-sticker="seta">
-                        <img src="adesivos/seta1.jpeg" alt="Cursor" onerror="this.parentElement.innerHTML='↗️ Cursor'">
+                        <img src="adesivos/seta1.jpeg" alt="Seta">
                         <span>Cursor</span>
                     </button>
                     <button class="sticker-card" data-sticker="wifi">
-                        <img src="adesivos/wifi1.jpeg" alt="Wi-Fi" onerror="this.parentElement.innerHTML='📶 Wi-Fi'">
+                        <img src="adesivos/wifi1.jpeg" alt="Wi-Fi">
                         <span>Wi-Fi</span>
                     </button>
                     <button class="sticker-card" data-sticker="audio">
-                        <img src="adesivos/audio1_2.jpeg" alt="Áudio" onerror="this.parentElement.innerHTML='📊 Áudio'">
+                        <img src="adesivos/audio1_2.jpeg" alt="Áudio">
                         <span>Áudio</span>
                     </button>
                     <button class="sticker-card" data-sticker="confetes">
-                        <img src="adesivos/confetes1.webp" alt="Confetes" onerror="this.parentElement.innerHTML='🎉 Confetes'">
+                        <img src="adesivos/confetes1.webp" alt="Confetes">
                         <span>Confetes</span>
                     </button>
                     <button class="sticker-card" data-sticker="fogos">
-                        <img src="adesivos/fogos 1.jpeg" alt="Fogos" onerror="this.parentElement.innerHTML='✨ Fogos'">
+                        <img src="adesivos/fogos 1.jpeg" alt="Fogos">
                         <span>Fogos</span>
                     </button>
                 </div>
@@ -119,15 +110,16 @@
             </div>
         </div>
 
+        <!-- Canvas oculto para exportar a imagem final com alta qualidade -->
         <canvas id="export-canvas" width="1080" height="1920" style="display: none;"></canvas>
 
-        <!-- Modal Prévia da Foto Final -->
+        <!-- Modal de Pré-visualização Final (Baixar / Partilhar) -->
         <div id="preview-modal" class="modal" style="display: none;">
             <div class="modal-content">
                 <h2 class="modal-title">Foto Pronta! 🎉</h2>
-                <p class="modal-desc">Compartilhe marcando<br><strong>#ifpr.oficial #ifprpinhaisoficial #V_WIPEX</strong></p>
+                <p class="modal-desc">Toque em baixar para guardar no seu telemóvel!</p>
                 <div class="preview-container">
-                    <img id="preview-image" alt="Prévia da foto">
+                    <img id="preview-image" alt="Pré-visualização da foto final">
                 </div>
                 <div class="modal-actions">
                     <a id="btn-download" class="btn btn-primary" download="foto-v-wipex-ifpr.png">⬇️ Baixar Foto</a>
@@ -139,6 +131,6 @@
 
     </div>
 
-    <script src="script.js?v=16"></script>
+    <script src="script.js?v=17"></script>
 </body>
 </html>
