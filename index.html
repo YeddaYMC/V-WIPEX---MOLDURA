@@ -1,52 +1,66 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Câmera #V_WIPEX - IFPR Pinhais</title>
+    <title>Câmara #V_WIPEX - IFPR Pinhais</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=5">
+    <link rel="stylesheet" href="style.css?v=14">
 </head>
 <body>
 
-    <!-- Tela Inicial de Permissão de Câmera -->
+    <!-- Ecrã Inicial de Permissão de Câmara -->
     <div id="permission-screen" class="permission-overlay">
         <div class="permission-card">
             <div class="icon-header">📸</div>
-            <h2>V_WIPEX</h2>
-            <p>Preparamos com muito carinho filtros para você se divertir e compartilhar o momento.</p>
+            <h2>Câmara #V_WIPEX</h2>
+            <p>Preparamos filtros especiais para te divertires e partilhares este momento académico.</p>
             <button id="btn-grant-permission" class="btn btn-primary btn-large">
-                Liberar Câmera e Começar
+                Liberar Câmara e Começar
             </button>
-            <p class="permission-hint">Para poder usar, clique acima e  para liberar a câmera.</p>
+            <p class="permission-hint">Clica acima e seleciona <strong>"Permitir"</strong> para aceder à câmara.</p>
         </div>
     </div>
 
     <!-- App Viewport -->
     <div class="app-viewport">
         
-        <!-- UI Superior (Apenas Título limpo, sem botões de filtros) -->
+        <!-- UI Superior -->
         <div class="top-ui">
             <header class="header">
-                <h1 class="title">Câmera #V_WIPEX</h1>
+                <h1 class="title">Câmara #V_WIPEX</h1>
                 <p class="subtitle">IFPR Campus Pinhais</p>
             </header>
         </div>
 
-        <!-- Camada da Câmera com Fundo Transparente e Halo -->
+        <!-- Camada da Câmara e Adesivos -->
         <div class="camera-layer" id="viewport">
             <video id="webcam" autoplay playsinline class="video-feed"></video>
-            <img id="user-image" class="user-image-feed" alt="Foto importada" style="display: none;">
+            <img id="user-image" class="user-image-feed" alt="Fotografia importada" style="display: none;">
             
             <div class="frame-overlay" id="svg-frame">
                 <svg viewBox="0 0 1080 1920" class="svg-element" id="svg-element" preserveAspectRatio="none"></svg>
             </div>
-            <img id="custom-frame-img" class="custom-frame-overlay" alt="Moldura personalizada" style="display: none;">
+            
+            <div id="stickers-container" class="stickers-container"></div>
         </div>
 
-        <!-- UI Inferior (Ações essenciais) -->
+        <!-- Barra de Ferramentas com os Adesivos da pasta adesivos/ -->
+        <div class="sticker-toolbar">
+            <button class="btn-sticker" data-sticker="audio">📊 Áudio</button>
+            <button class="btn-sticker" data-sticker="confetes">🎉 Confetes</button>
+            <button class="btn-sticker" data-sticker="foguete">🚀 Foguete</button>
+            <button class="btn-sticker" data-sticker="lamp">💡 Lâmpada</button>
+            <button class="btn-sticker" data-sticker="lapiseira">✒️ Lapiseira</button>
+            <button class="btn-sticker" data-sticker="seta">↗️ Seta</button>
+            <button class="btn-sticker" data-sticker="wifi">📶 Wi-Fi</button>
+            <button class="btn-sticker" data-sticker="fogos">✨ Fogos</button>
+            <button class="btn-sticker" id="btn-clear-stickers">🗑️ Limpar</button>
+        </div>
+
+        <!-- UI Inferior -->
         <div class="bottom-ui">
             <div class="button-group">
                 <button id="btn-capture" class="btn btn-primary">📸 Tirar Foto</button>
@@ -60,7 +74,7 @@
                 </label>
                 
                 <label for="upload-frame" class="btn btn-outline">
-                    🎨 Trocar PNG
+                    🎨 Trocar Moldura
                     <input type="file" id="upload-frame" accept="image/png" class="file-input">
                 </label>
             </div>
@@ -68,23 +82,24 @@
 
         <canvas id="export-canvas" width="1080" height="1920" style="display: none;"></canvas>
 
-        <!-- Modal Prévia -->
+        <!-- Modal de Pré-visualização -->
         <div id="preview-modal" class="modal" style="display: none;">
             <div class="modal-content">
                 <h2 class="modal-title">Foto Pronta! 🎉</h2>
-                <p class="modal-desc">Compartilhe marcando<br><strong>#ifpr.oficial #ifprpinhaisoficial #V_WIPEX</strong></p>
+                <p class="modal-desc">Partilha marcando<br><strong>#ifpr.oficial #ifprpinhaisoficial #V_WIPEX</strong></p>
                 <div class="preview-container">
-                    <img id="preview-image" alt="Prévia da foto">
+                    <img id="preview-image" alt="Pré-visualização da fotografia">
                 </div>
                 <div class="modal-actions">
-                    <a id="btn-download" class="btn btn-primary" download="foto-v-wipex-ifpr.png">⬇️ Baixar Foto PNG</a>
-                    <button id="btn-close-modal" class="btn btn-secondary">🔄 Outra Foto</button>
+                    <a id="btn-download" class="btn btn-primary" download="foto-v-wipex-ifpr.png">⬇️ Descarregar PNG</a>
+                    <button id="btn-copy-caption" class="btn btn-secondary">📋 Copiar Legenda</button>
                 </div>
+                <button id="btn-close-modal" class="btn btn-outline btn-small">🔄 Tirar Outra</button>
             </div>
         </div>
 
     </div>
 
-    <script src="script.js?v=5"></script>
+    <script src="script.js?v=14"></script>
 </body>
 </html>
