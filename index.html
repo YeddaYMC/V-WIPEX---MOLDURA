@@ -1,26 +1,26 @@
 <!DOCTYPE html>
-<html lang="pt-PT">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Câmara #V_WIPEX - IFPR Pinhais</title>
+    <title>Câmera #V_WIPEX - IFPR Pinhais</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=14">
+    <link rel="stylesheet" href="style.css?v=16">
 </head>
 <body>
 
-    <!-- Ecrã Inicial de Permissão de Câmara -->
+    <!-- Tela Inicial de Permissão de Câmera -->
     <div id="permission-screen" class="permission-overlay">
         <div class="permission-card">
             <div class="icon-header">📸</div>
-            <h2>Câmara #V_WIPEX</h2>
-            <p>Preparamos filtros especiais para te divertires e partilhares este momento académico.</p>
+            <h2>Câmera #V_WIPEX</h2>
+            <p>Preparamos uma moldura estilo Polaroid e adesivos para você personalizar sua foto!</p>
             <button id="btn-grant-permission" class="btn btn-primary btn-large">
-                Liberar Câmara e Começar
+                Liberar Câmera e Começar
             </button>
-            <p class="permission-hint">Clica acima e seleciona <strong>"Permitir"</strong> para aceder à câmara.</p>
+            <p class="permission-hint">Clique acima para liberar a câmera no navegador.</p>
         </div>
     </div>
 
@@ -30,34 +30,28 @@
         <!-- UI Superior -->
         <div class="top-ui">
             <header class="header">
-                <h1 class="title">Câmara #V_WIPEX</h1>
-                <p class="subtitle">IFPR Campus Pinhais</p>
+                <h1 class="title">IFPR PINHAIS</h1>
+                <p class="subtitle">CAMPUS PINHAIS • #V_WIPEX</p>
             </header>
         </div>
 
-        <!-- Camada da Câmara e Adesivos -->
+        <!-- Camada da Câmera, Moldura Polaroid e Adesivos -->
         <div class="camera-layer" id="viewport">
             <video id="webcam" autoplay playsinline class="video-feed"></video>
-            <img id="user-image" class="user-image-feed" alt="Fotografia importada" style="display: none;">
+            <img id="user-image" class="user-image-feed" alt="Foto importada" style="display: none;">
             
-            <div class="frame-overlay" id="svg-frame">
-                <svg viewBox="0 0 1080 1920" class="svg-element" id="svg-element" preserveAspectRatio="none"></svg>
+            <!-- Moldura Estilo Polaroid -->
+            <div class="polaroid-frame-container" id="polaroid-frame">
+                <div class="polaroid-window"></div>
+                <div class="polaroid-bottom-card">
+                    <div class="polaroid-title">V_WIPEX! 💚</div>
+                    <div class="polaroid-subtitle">Ensino • Pesquisa • Extensão</div>
+                    <div class="polaroid-hashtags">#ifpr.oficial #ifprpinhaisoficial #V_WIPEX</div>
+                </div>
             </div>
             
+            <!-- Container dos Adesivos Arrastáveis -->
             <div id="stickers-container" class="stickers-container"></div>
-        </div>
-
-        <!-- Barra de Ferramentas com os Adesivos da pasta adesivos/ -->
-        <div class="sticker-toolbar">
-            <button class="btn-sticker" data-sticker="audio">📊 Áudio</button>
-            <button class="btn-sticker" data-sticker="confetes">🎉 Confetes</button>
-            <button class="btn-sticker" data-sticker="foguete">🚀 Foguete</button>
-            <button class="btn-sticker" data-sticker="lamp">💡 Lâmpada</button>
-            <button class="btn-sticker" data-sticker="lapiseira">✒️ Lapiseira</button>
-            <button class="btn-sticker" data-sticker="seta">↗️ Seta</button>
-            <button class="btn-sticker" data-sticker="wifi">📶 Wi-Fi</button>
-            <button class="btn-sticker" data-sticker="fogos">✨ Fogos</button>
-            <button class="btn-sticker" id="btn-clear-stickers">🗑️ Limpar</button>
         </div>
 
         <!-- UI Inferior -->
@@ -73,25 +67,70 @@
                     <input type="file" id="upload-photo" accept="image/*" class="file-input">
                 </label>
                 
-                <label for="upload-frame" class="btn btn-outline">
-                    🎨 Trocar Moldura
-                    <input type="file" id="upload-frame" accept="image/png" class="file-input">
-                </label>
+                <button id="btn-customize" class="btn btn-outline btn-highlight">
+                    🎨 Personaliza (Adesivos)
+                </button>
+            </div>
+        </div>
+
+        <!-- Painel / Gaveta "Personaliza" para Escolher e Adicionar Adesivos -->
+        <div id="stickers-modal" class="modal-stickers-drawer" style="display: none;">
+            <div class="drawer-content">
+                <div class="drawer-header">
+                    <h3>🎨 Escolha um Adesivo</h3>
+                    <button id="btn-close-drawer" class="btn-close-x">✕</button>
+                </div>
+                <p class="drawer-desc">Clique em um adesivo para adicionar à sua foto. Depois, toque nele na tela para mover e redimensionar!</p>
+                <div class="stickers-grid">
+                    <button class="sticker-card" data-sticker="lamp">
+                        <img src="adesivos/lamp.flor.webp" alt="Lâmpada" onerror="this.parentElement.innerHTML='💡 Lâmpada'">
+                        <span>Lâmpada</span>
+                    </button>
+                    <button class="sticker-card" data-sticker="lapiseira">
+                        <img src="adesivos/lapiseira1.jpeg" alt="Lapiseira" onerror="this.parentElement.innerHTML='✒️ Caneta'">
+                        <span>Caneta</span>
+                    </button>
+                    <button class="sticker-card" data-sticker="foguete">
+                        <img src="adesivos/foguete 1_2.jpeg" alt="Foguete" onerror="this.parentElement.innerHTML='🚀 Foguete'">
+                        <span>Foguete</span>
+                    </button>
+                    <button class="sticker-card" data-sticker="seta">
+                        <img src="adesivos/seta1.jpeg" alt="Cursor" onerror="this.parentElement.innerHTML='↗️ Cursor'">
+                        <span>Cursor</span>
+                    </button>
+                    <button class="sticker-card" data-sticker="wifi">
+                        <img src="adesivos/wifi1.jpeg" alt="Wi-Fi" onerror="this.parentElement.innerHTML='📶 Wi-Fi'">
+                        <span>Wi-Fi</span>
+                    </button>
+                    <button class="sticker-card" data-sticker="audio">
+                        <img src="adesivos/audio1_2.jpeg" alt="Áudio" onerror="this.parentElement.innerHTML='📊 Áudio'">
+                        <span>Áudio</span>
+                    </button>
+                    <button class="sticker-card" data-sticker="confetes">
+                        <img src="adesivos/confetes1.webp" alt="Confetes" onerror="this.parentElement.innerHTML='🎉 Confetes'">
+                        <span>Confetes</span>
+                    </button>
+                    <button class="sticker-card" data-sticker="fogos">
+                        <img src="adesivos/fogos 1.jpeg" alt="Fogos" onerror="this.parentElement.innerHTML='✨ Fogos'">
+                        <span>Fogos</span>
+                    </button>
+                </div>
+                <button id="btn-clear-stickers" class="btn btn-secondary btn-full">🗑️ Limpar Todos os Adesivos</button>
             </div>
         </div>
 
         <canvas id="export-canvas" width="1080" height="1920" style="display: none;"></canvas>
 
-        <!-- Modal de Pré-visualização -->
+        <!-- Modal Prévia da Foto Final -->
         <div id="preview-modal" class="modal" style="display: none;">
             <div class="modal-content">
                 <h2 class="modal-title">Foto Pronta! 🎉</h2>
-                <p class="modal-desc">Partilha marcando<br><strong>#ifpr.oficial #ifprpinhaisoficial #V_WIPEX</strong></p>
+                <p class="modal-desc">Compartilhe marcando<br><strong>#ifpr.oficial #ifprpinhaisoficial #V_WIPEX</strong></p>
                 <div class="preview-container">
-                    <img id="preview-image" alt="Pré-visualização da fotografia">
+                    <img id="preview-image" alt="Prévia da foto">
                 </div>
                 <div class="modal-actions">
-                    <a id="btn-download" class="btn btn-primary" download="foto-v-wipex-ifpr.png">⬇️ Descarregar PNG</a>
+                    <a id="btn-download" class="btn btn-primary" download="foto-v-wipex-ifpr.png">⬇️ Baixar Foto</a>
                     <button id="btn-copy-caption" class="btn btn-secondary">📋 Copiar Legenda</button>
                 </div>
                 <button id="btn-close-modal" class="btn btn-outline btn-small">🔄 Tirar Outra</button>
@@ -100,6 +139,6 @@
 
     </div>
 
-    <script src="script.js?v=14"></script>
+    <script src="script.js?v=16"></script>
 </body>
 </html>
