@@ -26,7 +26,7 @@ let currentStream = null;
 let facingMode = 'user';
 let isUsingUserImage = false;
 
-// Mapeamento exato dos caminhos dos adesivos
+// Mapeamento corrigido para a pasta "adesivos/"
 const stickerSources = {
     audio: 'adesivos/audio1_2.jpeg',
     confetes: 'adesivos/confetes1.webp',
@@ -38,7 +38,6 @@ const stickerSources = {
     fogos: 'adesivos/fogos 1.jpeg'
 };
 
-// Abrir e Fechar Gaveta de Adesivos
 if (btnCustomize && stickersModal) {
     btnCustomize.addEventListener('click', () => {
         stickersModal.style.display = 'flex';
@@ -51,7 +50,6 @@ if (btnCloseDrawer && stickersModal) {
     });
 }
 
-// Adicionar Adesivo à Tela
 stickerCards.forEach(card => {
     card.addEventListener('click', () => {
         const type = card.dataset.sticker;
@@ -68,6 +66,7 @@ if (btnClearStickers) {
     });
 }
 
+// Criar elemento de adesivo interativo (Drag & Pinch to Zoom)
 function createStickerElement(imageSrc) {
     const div = document.createElement('div');
     div.className = 'draggable-sticker';
@@ -76,47 +75,98 @@ function createStickerElement(imageSrc) {
     img.src = imageSrc;
     div.appendChild(img);
     
-    let posX = window.innerWidth / 2 - 50;
-    let posY = window.innerHeight / 2 - 50;
+    let posX = window.innerWidth / 2 - 55;
+    let posY = window.innerHeight / 2 - 55;
     let scale = 1;
     let rotation = 0;
 
     div.style.transform = `translate(${posX}px, ${posY}px) scale(${scale}) rotate(${rotation}deg)`;
 
+    let initialPinchDistance = 0;
+    let initialScale = 1;
     let isDragging = false;
     let startX, startY;
 
+    // Gestos de Toque (Drag + Pinça Multi-touch)
+    div.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) {
+            isDragging = true;
+            startX = e.touches[0].clientX - posX;
+            startY = e.touches[0].clientY - posY;
+        } else if (e.touches.length === 2) {
+            isDragging = false;
+            initialPinchDistance = getTouchDistance(e.touches);
+            initialScale = scale;
+        }
+    }, { passive: false });
+
+    div.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        if (e.touches.length === 1 && isDragging) {
+            posX = e.touches[0].clientX - startX;
+            posY = e.touches[0].clientY - startY;
+            updateTransform();
+        } else if (e.touches.length === 2) {
+            const currentDistance = getTouchDistance(e.touches);
+            if (initialPinchDistance > 0) {
+                scale = Math.min(Math.max(0.5, initialScale * (currentDistance / initialPinchDistance)), 3.0);
+                updateTransform();
+            }
+        }
+    }, { passive: false });
+
+    div.addEventListener('touchend', (e) => {
+        if (e.touches.length < 2) {
+            initialPinchDistance = 0;
+        }
+        if (e.touches.length === 0) {
+            isDragging = false;
+        }
+    });
+
+    // Suporte para Mouse / Pointer Events
     div.addEventListener('pointerdown', (e) => {
-        isDragging = true;
-        startX = e.clientX - posX;
-        startY = e.clientY - posY;
-        div.setPointerCapture(e.pointerId);
-        e.stopPropagation();
+        if (e.pointerType === 'mouse') {
+            isDragging = true;
+            startX = e.clientX - posX;
+            startY = e.clientY - posY;
+            div.setPointerCapture(e.pointerId);
+        }
     });
 
     div.addEventListener('pointermove', (e) => {
-        if (!isDragging) return;
-        posX = e.clientX - startX;
-        posY = e.clientY - startY;
-        div.style.transform = `translate(${posX}px, ${posY}px) scale(${scale}) rotate(${rotation}deg)`;
+        if (e.pointerType === 'mouse' && isDragging) {
+            posX = e.clientX - startX;
+            posY = e.clientY - startY;
+            updateTransform();
+        }
     });
 
     div.addEventListener('pointerup', (e) => {
-        isDragging = false;
-        try {
-            div.releasePointerCapture(e.pointerId);
-        } catch (err) {}
+        if (e.pointerType === 'mouse') {
+            isDragging = false;
+            try { div.releasePointerCapture(e.pointerId); } catch(err){}
+        }
     });
 
-    // Toque para redimensionar/rodar
+    // Toque simples para alternar tamanho se desejar
     div.addEventListener('click', () => {
         scale += 0.2;
-        if (scale > 2.0) scale = 0.8;
-        rotation += 15;
-        div.style.transform = `translate(${posX}px, ${posY}px) scale(${scale}) rotate(${rotation}deg)`;
+        if (scale > 2.2) scale = 0.8;
+        updateTransform();
     });
 
+    function updateTransform() {
+        div.style.transform = `translate(${posX}px, ${posY}px) scale(${scale}) rotate(${rotation}deg)`;
+    }
+
     stickersContainer.appendChild(div);
+}
+
+function getTouchDistance(touches) {
+    const dx = touches[0].clientX - touches[1].clientX;
+    const dy = touches[0].clientY - touches[1].clientY;
+    return Math.sqrt(dx * dx + dy * dy);
 }
 
 if (btnGrantPermission) {
@@ -135,11 +185,7 @@ async function initCamera() {
 
     try {
         const constraints = {
-            video: {
-                facingMode: facingMode,
-                width: { ideal: 1280 },
-                height: { ideal: 720 }
-            },
+            video: { facingMode: facingMode, width: { ideal: 1280 }, height: { ideal: 720 } },
             audio: false
         };
 
@@ -184,7 +230,7 @@ if (uploadPhoto) {
     });
 }
 
-// Tirar Foto e Gerar Imagem Final
+// Tirar Foto e Renderizar a Moldura Polaroid e Adesivos no Canvas
 if (btnCapture) {
     btnCapture.addEventListener('click', async () => {
         const ctx = canvas.getContext('2d');
@@ -193,40 +239,46 @@ if (btnCapture) {
 
         const sourceEl = isUsingUserImage ? userImage : video;
         
-        // 1. Desenhar a foto de fundo (preenchendo tudo)
+        // 1. Desenhar a foto de fundo cobrindo tudo
         drawCover(ctx, sourceEl, 1080, 1920);
 
-        // 2. Filtro de pele suave
+        // 2. Filtro de pele suave estilo Snapchat
         applySnapchatSkinFilter(ctx, 1080, 1920);
 
-        // 3. Desenhar a moldura Polaroid em cima
+        // 3. Moldura Superior Branca (IFPR PINHAIS)
         ctx.fillStyle = '#ffffff';
-        ctx.fillRect(50, 100, 980, 1720);
+        ctx.fillRect(0, 0, 1080, 180);
 
-        // Janela recortada para a foto aparecer dentro da Polaroid
-        ctx.clearRect(90, 140, 900, 1340);
-        drawCoverRegion(ctx, sourceEl, 90, 140, 900, 1340);
-        applySnapchatSkinFilterRegion(ctx, 90, 140, 900, 1340);
-
-        ctx.strokeStyle = '#e2e8f0';
-        ctx.lineWidth = 4;
-        ctx.strokeRect(90, 140, 900, 1340);
-
-        // 4. Textos da Polaroid no Canvas
         ctx.fillStyle = '#16a34a';
-        ctx.font = '900 64px Inter, sans-serif';
+        ctx.font = '900 62px Inter, sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText('V_WIPEX! 💚', 540, 1600);
+        ctx.fillText('IFPR PINHAIS', 540, 110);
+
+        ctx.fillStyle = '#475569';
+        ctx.font = '700 28px Inter, sans-serif';
+        ctx.fillText('CAMPUS PINHAIS', 540, 155);
+
+        // 4. Moldura Inferior Branca Polaroid (WIPEX)
+        ctx.fillRect(0, 1520, 1080, 400);
+
+        ctx.fillStyle = '#16a34a';
+        ctx.font = '900 72px Inter, sans-serif';
+        ctx.fillText('V_WIPEX! 💚', 540, 1630);
 
         ctx.fillStyle = '#334155';
-        ctx.font = '700 32px Inter, sans-serif';
-        ctx.fillText('Ensino • Pesquisa • Extensão', 540, 1660);
+        ctx.font = '700 36px Inter, sans-serif';
+        ctx.fillText('Ensino • Pesquisa • Extensão', 540, 1700);
 
         ctx.fillStyle = '#e11d48';
-        ctx.font = '700 24px Inter, sans-serif';
-        ctx.fillText('#ifpr.oficial #ifprpinhaisoficial #V_WIPEX', 540, 1720);
+        ctx.font = '700 28px Inter, sans-serif';
+        ctx.fillText('#ifpr.oficial #ifprpinhaisoficial #V_WIPEX', 540, 1760);
 
-        // 5. Desenhar os Adesivos posicionados
+        // Linhas de borda da janela central da Polaroid
+        ctx.strokeStyle = '#e2e8f0';
+        ctx.lineWidth = 6;
+        ctx.strokeRect(0, 180, 1080, 1340);
+
+        // 5. Desenhar Adesivos no Canvas
         const activeStickers = stickersContainer.querySelectorAll('.draggable-sticker');
         for (const stickerEl of activeStickers) {
             const imgEl = stickerEl.querySelector('img');
@@ -237,7 +289,7 @@ if (btnCapture) {
             if (imgEl && imgEl.complete && imgEl.naturalWidth !== 0) {
                 ctx.save();
                 ctx.translate(rect.left * scaleX + (rect.width * scaleX) / 2, rect.top * scaleY + (rect.height * scaleY) / 2);
-                ctx.drawImage(imgEl, -75, -75, 150, 150);
+                ctx.drawImage(imgEl, -90, -90, 180, 180);
                 ctx.restore();
             }
         }
@@ -267,12 +319,6 @@ function drawCover(ctx, img, targetWidth, targetHeight) {
     ctx.drawImage(img, sx, sy, sw, sh, 0, 0, targetWidth, targetHeight);
 }
 
-function drawCoverRegion(ctx, img, x, y, width, height) {
-    const imgWidth = img.videoWidth || img.naturalWidth || width;
-    const imgHeight = img.videoHeight || img.naturalHeight || height;
-    ctx.drawImage(img, 0, 0, imgWidth, imgHeight, x, y, width, height);
-}
-
 function applySnapchatSkinFilter(ctx, width, height) {
     const imgData = ctx.getImageData(0, 0, width, height);
     const data = imgData.data;
@@ -282,17 +328,6 @@ function applySnapchatSkinFilter(ctx, width, height) {
         data[i+2] = Math.min(255, data[i+2] * 1.05 + 8);
     }
     ctx.putImageData(imgData, 0, 0);
-}
-
-function applySnapchatSkinFilterRegion(ctx, x, y, width, height) {
-    const imgData = ctx.getImageData(x, y, width, height);
-    const data = imgData.data;
-    for (let i = 0; i < data.length; i += 4) {
-        data[i] = Math.min(255, data[i] * 1.05 + 8);
-        data[i+1] = Math.min(255, data[i+1] * 1.05 + 8);
-        data[i+2] = Math.min(255, data[i+2] * 1.05 + 8);
-    }
-    ctx.putImageData(imgData, x, y);
 }
 
 function showPreview() {
