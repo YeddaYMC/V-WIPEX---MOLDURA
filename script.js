@@ -19,8 +19,7 @@ const stickerCards = document.querySelectorAll('.sticker-card');
 const previewModal = document.getElementById('preview-modal');
 const previewImage = document.getElementById('preview-image');
 const btnDownload = document.getElementById('btn-download');
-const btnCopyCaption = document.getElementById('btn-copy-caption');
-const bntCloseModal = document.getElementById('bnt-close-modal');
+const bntCloseModal = document.getElementById('btn-close-modal');
 
 let currentStream = null;
 let facingMode = 'user';
@@ -91,7 +90,6 @@ function createStickerElement(imageSrc) {
     img.src = imageSrc;
     div.appendChild(img);
     
-    // Botão de fechar/excluir individual no adesivo
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'sticker-delete-btn';
     deleteBtn.innerHTML = '✕';
@@ -237,7 +235,7 @@ if (uploadPhoto) {
     });
 }
 
-// Tirar Foto e Renderizar Moldura e Adesivos no Canvas
+// Tirar Foto e Renderizar Moldura e Adesivos no Canvas com alinhamento perfeito
 if (btnCapture) {
     btnCapture.addEventListener('click', async () => {
         const ctx = canvas.getContext('2d');
@@ -281,18 +279,28 @@ if (btnCapture) {
         ctx.lineWidth = 6;
         ctx.strokeRect(0, 180, 1080, 1340);
 
-        // Desenhar Adesivos no Canvas
+        // Renderizar Adesivos no Canvas usando getBoundingClientRect e coordenadas exatas da tela
         const activeStickers = stickersContainer.querySelectorAll('.draggable-sticker');
+        const containerRect = stickersContainer.getBoundingClientRect();
+        
+        const scaleX = 1080 / containerRect.width;
+        const scaleY = 1920 / containerRect.height;
+
         for (const stickerEl of activeStickers) {
             const imgEl = stickerEl.querySelector('img');
             const rect = stickerEl.getBoundingClientRect();
-            const scaleX = 1080 / window.innerWidth;
-            const scaleY = 1920 / window.innerHeight;
             
             if (imgEl && imgEl.complete && imgEl.naturalWidth !== 0) {
+                const centerX = (rect.left + rect.width / 2 - containerRect.left) * scaleX;
+                const centerY = (rect.top + rect.height / 2 - containerRect.top) * scaleY;
+                
+                // Extrair o tamanho visual atual do adesivo no ecrã convertido para o canvas
+                const drawWidth = rect.width * scaleX;
+                const drawHeight = rect.height * scaleY;
+
                 ctx.save();
-                ctx.translate(rect.left * scaleX + (rect.width * scaleX) / 2, rect.top * scaleY + (rect.height * scaleY) / 2);
-                ctx.drawImage(imgEl, -90, -90, 180, 180);
+                ctx.translate(centerX, centerY);
+                ctx.drawImage(imgEl, -drawWidth / 2, -drawHeight / 2, drawWidth, drawHeight);
                 ctx.restore();
             }
         }
@@ -341,13 +349,10 @@ function showPreview() {
         previewImage.src = dataURL;
         previewModal.style.display = 'flex';
 
-        // Texto oficial com as hashtags do V_WIPEX
         const captionText = "V_WIPEX! 💚 Ensino • Pesquisa • Extensão\n#ifpr.oficial #ifprpinhaisoficial #V_WIPEX";
 
-        // Configurar Botão de Compartilhar Direto
         if (btnDownload) {
             btnDownload.textContent = '📤 Compartilhar Foto';
-            
             btnDownload.onclick = async () => {
                 if (navigator.canShare && navigator.canShare({ files: [file] })) {
                     try {
@@ -362,7 +367,6 @@ function showPreview() {
                     }
                 }
                 
-                // Fallback automático caso o navegador não suporte partilha direta de ficheiro
                 const a = document.createElement('a');
                 a.href = dataURL;
                 a.download = 'foto-v-wipex-ifpr.png';
@@ -377,16 +381,7 @@ function showPreview() {
     }, 'image/png');
 }
 
-if (btnCopyCaption) {
-    btnCopyCaption.addEventListener('click', () => {
-        const captionText = "V_WIPEX! 💚 Ensino • Pesquisa • Extensão\n#ifpr.oficial #ifprpinhaisoficial #V_WIPEX";
-        navigator.clipboard.writeText(captionText).then(() => {
-            btnCopyCaption.textContent = '✅ Legenda Copiada!';
-            setTimeout(() => btnCopyCaption.textContent = '📋 Copiar Legenda', 2000);
-        });
-    });
-}
-
+// Botão "Tirar Outra" corrigido para fechar o modal e voltar à câmara
 if (bntCloseModal) {
     bntCloseModal.addEventListener('click', () => {
         previewModal.style.display = 'none';
