@@ -7,18 +7,18 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=17">
+    <link rel="stylesheet" href="style.css?v=21">
 </head>
 <body>
 
-    <!-- Ecrã Inicial de Permissão -->
+    <!-- Tela Inicial de Permissão de Câmera -->
     <div id="permission-screen" class="permission-overlay">
         <div class="permission-card">
             <div class="icon-header">📸</div>
             <h2>Câmera #V_WIPEX</h2>
-            <p>Toque abaixo para liberar a câmara e tirar a sua foto oficial com moldura Polaroid!</p>
+            <p>IFPR Campus Pinhais</p>
             <button id="btn-grant-permission" class="btn btn-primary btn-large">
-                Liberar Câmara e Começar
+                Liberar Câmera e Começar
             </button>
         </div>
     </div>
@@ -26,26 +26,35 @@
     <!-- App Viewport -->
     <div class="app-viewport">
         
-        <!-- Câmara e Moldura Polaroid em tempo real -->
+        <!-- Camada de Fundo (Câmera ou Imagem da Galeria) -->
         <div class="camera-layer" id="viewport">
             <video id="webcam" autoplay playsinline class="video-feed"></video>
-            <img id="user-image" class="user-image-feed" alt="Foto" style="display: none;">
+            <img id="user-image" class="user-image-feed" alt="Foto importada" style="display: none;">
             
-            <!-- Moldura Polaroid Visual (HTML/CSS) -->
-            <div class="polaroid-frame">
-                <div class="polaroid-inner-window"></div>
+            <!-- Moldura Polaroid Totalmente Integrada (Centro Transparente) -->
+            <div class="polaroid-overlay">
+                <!-- Borda Superior Branca da Polaroid com IFPR PINHAIS -->
+                <div class="polaroid-header">
+                    <h1 class="ifpr-title">IFPR PINHAIS</h1>
+                    <p class="ifpr-sub">CAMPUS PINHAIS</p>
+                </div>
+
+                <!-- Centro Transparente por onde a foto/vídeo aparece -->
+                <div class="polaroid-window"></div>
+
+                <!-- Rodapé Largo Branco da Polaroid com WIPEX -->
                 <div class="polaroid-footer">
-                    <div class="p-title">V_WIPEX! 💚</div>
-                    <div class="p-sub">Ensino • Pesquisa • Extensão</div>
-                    <div class="p-hash">#ifpr.oficial #ifprpinhaisoficial #V_WIPEX</div>
+                    <h2 class="wipex-title">V_WIPEX! 💚</h2>
+                    <p class="wipex-sub">Ensino • Pesquisa • Extensão</p>
+                    <p class="wipex-hash">#ifpr.oficial #ifprpinhaisoficial #V_WIPEX</p>
                 </div>
             </div>
             
-            <!-- Contentor de Adesivos Arrastáveis -->
+            <!-- Container dos Adesivos Arrastáveis -->
             <div id="stickers-container" class="stickers-container"></div>
         </div>
 
-        <!-- Barra Inferior de Ações -->
+        <!-- Barra de Ações Inferior (Na altura dos dedos) -->
         <div class="bottom-ui">
             <div class="button-group">
                 <button id="btn-capture" class="btn btn-primary">📸 Tirar Foto</button>
@@ -64,14 +73,14 @@
             </div>
         </div>
 
-        <!-- Gaveta de Adesivos -->
+        <!-- Gaveta de Adesivos (Pasta adesivos/) -->
         <div id="stickers-modal" class="modal-stickers-drawer" style="display: none;">
             <div class="drawer-content">
                 <div class="drawer-header">
-                    <h3>🎨 Escolher Adesivo</h3>
+                    <h3>🎨 Adicionar Adesivos</h3>
                     <button id="btn-close-drawer" class="btn-close-x">✕</button>
                 </div>
-                <p class="drawer-desc">Clique num adesivo para o adicionar. Depois, arraste-o na tela para posicionar!</p>
+                <p class="drawer-desc">Toque em um adesivo para adicionar. Arraste e use a pinça de dois dedos para redimensionar e girar!</p>
                 <div class="stickers-grid">
                     <button class="sticker-card" data-sticker="lamp">
                         <img src="adesivos/lamp.flor.webp" alt="Lâmpada">
@@ -110,16 +119,14 @@
             </div>
         </div>
 
-        <!-- Canvas oculto para exportar a imagem final com alta qualidade -->
         <canvas id="export-canvas" width="1080" height="1920" style="display: none;"></canvas>
 
-        <!-- Modal de Pré-visualização Final (Baixar / Partilhar) -->
+        <!-- Modal de Pré-visualização Final -->
         <div id="preview-modal" class="modal" style="display: none;">
             <div class="modal-content">
                 <h2 class="modal-title">Foto Pronta! 🎉</h2>
-                <p class="modal-desc">Toque em baixar para guardar no seu telemóvel!</p>
                 <div class="preview-container">
-                    <img id="preview-image" alt="Pré-visualização da foto final">
+                    <img id="preview-image" alt="Foto Polaroid Final">
                 </div>
                 <div class="modal-actions">
                     <a id="btn-download" class="btn btn-primary" download="foto-v-wipex-ifpr.png">⬇️ Baixar Foto</a>
@@ -131,6 +138,6 @@
 
     </div>
 
-    <script src="script.js?v=17"></script>
+    <script src="script.js?v=21"></script>
 </body>
 </html>
