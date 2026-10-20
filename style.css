@@ -57,6 +57,7 @@ html, body {
     padding: 18px 12px 10px 12px;
     text-align: center;
     box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    pointer-events: auto;
 }
 
 .ifpr-title {
@@ -89,6 +90,7 @@ html, body {
     align-items: center;
     gap: 3px;
     box-shadow: 0 -4px 10px rgba(0,0,0,0.15);
+    pointer-events: auto;
 }
 
 .wipex-title {
@@ -135,7 +137,6 @@ html, body {
     display: block;
 }
 
-/* Botão de excluir (X) visível no adesivo ativo */
 .sticker-delete-btn {
     position: absolute;
     top: 2px;
