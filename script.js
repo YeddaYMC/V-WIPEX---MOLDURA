@@ -26,16 +26,30 @@ let currentStream = null;
 let facingMode = 'user';
 let isUsingUserImage = false;
 
-// Mapeamento correto com os ficheiros atuais no GitHub
+// Mapeamento completo e correto para todos os 22 adesivos da pasta adesivos/
 const stickerSources = {
-    audio: 'adesivos/audio1.jpeg',
-    confetes: 'adesivos/confetes1.webp',
-    foguete: 'adesivos/foguete 1.jpeg',
-    lamp: 'adesivos/lamp.flor.webp',
-    lapiseira: 'adesivos/lapiseira1.jpeg',
-    seta: 'adesivos/seta1.jpeg',
-    wifi: 'adesivos/wifi1.jpeg',
-    fogos: 'adesivos/fogos 1.jpeg'
+    lampflor: 'adesivos/lamp.flor1.png',
+    lapiseira: 'adesivos/lapiseira1.png',
+    foguete1: 'adesivos/foguete.1.png',
+    foguete2: 'adesivos/foguete 2.png',
+    capelo1: 'adesivos/capelo 1.png',
+    capelo2: 'adesivos/capelo 2.png',
+    seta: 'adesivos/seta1.png',
+    wifi: 'adesivos/wifi1.png',
+    audio: 'adesivos/audio1.png',
+    caderno: 'adesivos/caderno1.png',
+    llivro: 'adesivos/llivro 1.png',
+    coracao: 'adesivos/coracao1.png',
+    emoji: 'adesivos/emoji1.png',
+    fflor: 'adesivos/fflor1.png',
+    lupa: 'adesivos/lupa1.png',
+    ideias: 'adesivos/ideias1.png',
+    pc1: 'adesivos/pc1.png',
+    pc2: 'adesivos/pc2.png',
+    robo: 'adesivos/robo1.png',
+    ifpr: 'adesivos/ifpr.png',
+    confetes: 'adesivos/confetes.1.png',
+    fogos: 'adesivos/fogos_1.png'
 };
 
 if (btnCustomize && stickersModal) {
@@ -68,7 +82,7 @@ if (btnClearStickers) {
     });
 }
 
-// Criar adesivo com suporte a arrastar, pinça, redimensionar e excluir por toque duplo
+// Criar adesivo com suporte a arrastar, pinça, redimensionar e botão de exclusão (✕)
 function createStickerElement(imageSrc) {
     const div = document.createElement('div');
     div.className = 'draggable-sticker';
@@ -321,13 +335,13 @@ function applySnapchatSkinFilter(ctx, width, height) {
 
 function showPreview() {
     canvas.toBlob(async (blob) => {
-        const file = new File([blob], "foto-v-wipex-ifpr.png", { type: "png" });
+        const file = new File([blob], "foto-v-wipex-ifpr.png", { type: "image/png" });
         const dataURL = URL.createObjectURL(blob);
         
         previewImage.src = dataURL;
         previewModal.style.display = 'flex';
 
-        // Configurar Botão de Compartilhar / Baixar Nativo
+        // Configurar Botão de Compartilhar / Baixar Nativo com Hashtags
         btnDownload.onclick = async () => {
             const captionText = "V_WIPEX! 💚 Ensino • Pesquisa • Extensão\n#ifpr.oficial #ifprpinhaisoficial #V_WIPEX";
             
@@ -340,11 +354,11 @@ function showPreview() {
                     });
                     return;
                 } catch (err) {
-                    console.log('Compartilhamento cancelado ou falhou', err);
+                    console.log('Partilha cancelada', err);
                 }
             }
             
-            // Fallback para download normal caso o navegador não suporte compartilhamento direto de ficheiro
+            // Fallback para download caso o telemóvel não suporte partilha direta de ficheiro
             const a = document.createElement('a');
             a.href = dataURL;
             a.download = 'foto-v-wipex-ifpr.png';
