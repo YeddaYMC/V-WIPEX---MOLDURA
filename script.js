@@ -26,30 +26,16 @@ let currentStream = null;
 let facingMode = 'user';
 let isUsingUserImage = false;
 
-// Mapeamento exato com todos os novos nomes na pasta "adesivos/"
+// Mapeamento correto com os ficheiros atuais no GitHub
 const stickerSources = {
-    audio: 'adesivos/audio1.png',
-    caderno: 'adesivos/caderno1.png',
-    capelo1: 'adesivos/capelo 1.png',
-    capelo2: 'adesivos/capelo 2.png',
-    confetes: 'adesivos/confetes.1.png',
-    coracao: 'adesivos/coracao1.png',
-    emoji: 'adesivos/emoji1.png',
-    fflor: 'adesivos/fflor1.png',
-    fogos: 'adesivos/fogos_1.png',
-    foguete2: 'adesivos/foguete 2.png',
-    foguete1: 'adesivos/foguete.1.png',
-    ideias: 'adesivos/ideias1.png',
-    ifpr: 'adesivos/ifpr.png',
-    lampflor: 'adesivos/lamp.flor1.png',
-    lapiseira: 'adesivos/lapiseira1.png',
-    llivro: 'adesivos/llivro 1.png',
-    lupa: 'adesivos/lupa1.png',
-    pc1: 'adesivos/pc1.png',
-    pc2: 'adesivos/pc2.png',
-    robo: 'adesivos/robo1.png',
-    seta: 'adesivos/seta1.png',
-    wifi: 'adesivos/wifi1.png'
+    audio: 'adesivos/audio1.jpeg',
+    confetes: 'adesivos/confetes1.webp',
+    foguete: 'adesivos/foguete 1.jpeg',
+    lamp: 'adesivos/lamp.flor.webp',
+    lapiseira: 'adesivos/lapiseira1.jpeg',
+    seta: 'adesivos/seta1.jpeg',
+    wifi: 'adesivos/wifi1.jpeg',
+    fogos: 'adesivos/fogos 1.jpeg'
 };
 
 if (btnCustomize && stickersModal) {
@@ -82,7 +68,7 @@ if (btnClearStickers) {
     });
 }
 
-// Criar elemento de adesivo interativo (Drag & Pinch to Zoom)
+// Criar adesivo com suporte a arrastar, pinça, redimensionar e excluir por toque duplo
 function createStickerElement(imageSrc) {
     const div = document.createElement('div');
     div.className = 'draggable-sticker';
@@ -91,6 +77,16 @@ function createStickerElement(imageSrc) {
     img.src = imageSrc;
     div.appendChild(img);
     
+    // Botão de fechar/excluir individual no adesivo
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'sticker-delete-btn';
+    deleteBtn.innerHTML = '✕';
+    deleteBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        div.remove();
+    });
+    div.appendChild(deleteBtn);
+
     let posX = window.innerWidth / 2 - 55;
     let posY = window.innerHeight / 2 - 55;
     let scale = 1;
@@ -157,12 +153,6 @@ function createStickerElement(imageSrc) {
             isDragging = false;
             try { div.releasePointerCapture(e.pointerId); } catch(err){}
         }
-    });
-
-    div.addEventListener('click', () => {
-        scale += 0.2;
-        if (scale > 2.2) scale = 0.8;
-        updateTransform();
     });
 
     function updateTransform() {
@@ -330,10 +320,39 @@ function applySnapchatSkinFilter(ctx, width, height) {
 }
 
 function showPreview() {
-    const dataURL = canvas.toDataURL('image/png');
-    previewImage.src = dataURL;
-    btnDownload.href = dataURL;
-    previewModal.style.display = 'flex';
+    canvas.toBlob(async (blob) => {
+        const file = new File([blob], "foto-v-wipex-ifpr.png", { type: "png" });
+        const dataURL = URL.createObjectURL(blob);
+        
+        previewImage.src = dataURL;
+        previewModal.style.display = 'flex';
+
+        // Configurar Botão de Compartilhar / Baixar Nativo
+        btnDownload.onclick = async () => {
+            const captionText = "V_WIPEX! 💚 Ensino • Pesquisa • Extensão\n#ifpr.oficial #ifprpinhaisoficial #V_WIPEX";
+            
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                try {
+                    await navigator.share({
+                        title: 'Foto #V_WIPEX - IFPR Pinhais',
+                        text: captionText,
+                        files: [file]
+                    });
+                    return;
+                } catch (err) {
+                    console.log('Compartilhamento cancelado ou falhou', err);
+                }
+            }
+            
+            // Fallback para download normal caso o navegador não suporte compartilhamento direto de ficheiro
+            const a = document.createElement('a');
+            a.href = dataURL;
+            a.download = 'foto-v-wipex-ifpr.png';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        };
+    }, 'image/png');
 }
 
 if (btnCopyCaption) {
