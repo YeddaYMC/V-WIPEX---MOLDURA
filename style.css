@@ -421,3 +421,31 @@ html, body {
     flex-direction: column;
     gap: 12px;
 }
+
+/* Gaveta de Adesivos */
+.modal-stickers-drawer {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.95);
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    backdrop-filter: blur(6px);
+}
+
+.drawer-content {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 20px 20px 0 0;
+    padding: 20px;
+    width: 100%;
+    max-width: 500px;
+    max-height: 65dvh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+
