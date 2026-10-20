@@ -2,6 +2,7 @@ const video = document.getElementById('webcam');
 const userImage = document.getElementById('user-image');
 const stickersContainer = document.getElementById('stickers-container');
 const canvas = document.getElementById('export-canvas');
+const viewport = document.getElementById('viewport');
 
 const permissionScreen = document.getElementById('permission-screen');
 const btnGrantPermission = document.getElementById('btn-grant-permission');
@@ -56,7 +57,6 @@ if (btnClearStickers) {
     });
 }
 
-// Criar adesivo com pinça funcional e botão de fechar (X)
 function createStickerElement(imageSrc) {
     const div = document.createElement('div');
     div.className = 'draggable-sticker';
@@ -65,7 +65,6 @@ function createStickerElement(imageSrc) {
     img.src = imageSrc;
     div.appendChild(img);
 
-    // Botão X para apagar o adesivo facilmente
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'sticker-delete-btn';
     deleteBtn.innerHTML = '✕';
@@ -211,7 +210,7 @@ if (uploadPhoto) {
     });
 }
 
-// Tirar Foto e Renderizar no Canvas mantendo a proporção exata
+// Tirar Foto e Renderizar Perfeitamente na Moldura Branca e na Janela Central
 if (btnCapture) {
     btnCapture.addEventListener('click', async () => {
         const ctx = canvas.getContext('2d');
@@ -220,10 +219,11 @@ if (btnCapture) {
 
         const sourceEl = isUsingUserImage ? userImage : video;
         
+        // 1. Desenhar a foto de fundo cobrindo toda a área central transparente
         drawCover(ctx, sourceEl, 1080, 1920);
         applySnapchatSkinFilter(ctx, 1080, 1920);
 
-        // Moldura Superior IFPR Pinhais
+        // 2. Moldura Superior Branca (IFPR PINHAIS) - SEMPRE BRANCA
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, 1080, 180);
 
@@ -236,7 +236,8 @@ if (btnCapture) {
         ctx.font = '700 28px Inter, sans-serif';
         ctx.fillText('CAMPUS PINHAIS', 540, 155);
 
-        // Moldura Inferior V_WIPEX
+        // 3. Moldura Inferior Branca Polaroid (V_WIPEX) - SEMPRE BRANCA
+        ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 1520, 1080, 400);
 
         ctx.fillStyle = '#16a34a';
@@ -255,9 +256,9 @@ if (btnCapture) {
         ctx.lineWidth = 6;
         ctx.strokeRect(0, 180, 1080, 1340);
 
-        // Desenhar Adesivos no Canvas baseado na viewport real
+        // 4. Desenhar Todos os Adesivos (tanto na barra branca quanto na foto) com escala exata
         const activeStickers = stickersContainer.querySelectorAll('.draggable-sticker');
-        const viewRect = document.getElementById('viewport').getBoundingClientRect();
+        const viewRect = viewport.getBoundingClientRect();
         
         for (const stickerEl of activeStickers) {
             const imgEl = stickerEl.querySelector('img');
@@ -272,6 +273,7 @@ if (btnCapture) {
                 
                 ctx.save();
                 ctx.translate(centerX, centerY);
+                
                 const transformMatrix = window.getComputedStyle(stickerEl).transform;
                 let userScale = 1;
                 if (transformMatrix && transformMatrix !== 'none') {
@@ -369,7 +371,6 @@ if (btnCopyCaption) {
 if (bntCloseModal) {
     bntCloseModal.addEventListener('click', () => {
         previewModal.style.display = 'none';
-        // Limpar adesivos ao tirar outra foto, se desejar, ou manter. Mantém a tela limpa para nova foto:
         stickersContainer.innerHTML = '';
     });
 }
