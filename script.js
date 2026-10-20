@@ -56,7 +56,7 @@ if (btnClearStickers) {
     });
 }
 
-// Criar adesivo com suporte a arrastar, pinça/zoom, rotação e exclusão por DOIS TOQUES
+// Criar adesivo com pinça funcional e botão de fechar (X)
 function createStickerElement(imageSrc) {
     const div = document.createElement('div');
     div.className = 'draggable-sticker';
@@ -64,6 +64,16 @@ function createStickerElement(imageSrc) {
     const img = document.createElement('img');
     img.src = imageSrc;
     div.appendChild(img);
+
+    // Botão X para apagar o adesivo facilmente
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'sticker-delete-btn';
+    deleteBtn.innerHTML = '✕';
+    deleteBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        div.remove();
+    });
+    div.appendChild(deleteBtn);
     
     let posX = window.innerWidth / 2 - 60;
     let posY = window.innerHeight / 2 - 60;
@@ -76,22 +86,6 @@ function createStickerElement(imageSrc) {
     let initialScale = 1;
     let isDragging = false;
     let startX, startY;
-
-    // Excluir por duplo toque (2 toques rápidos)
-    let lastTapTime = 0;
-    div.addEventListener('touchend', (e) => {
-        const currentTime = new Date().getTime();
-        const tapLength = currentTime - lastTapTime;
-        if (tapLength < 300 && tapLength > 0) {
-            div.remove();
-            e.preventDefault();
-        }
-        lastTapTime = currentTime;
-    });
-
-    div.addEventListener('dblclick', () => {
-        div.remove();
-    });
 
     div.addEventListener('touchstart', (e) => {
         if (e.touches.length === 1) {
@@ -217,7 +211,7 @@ if (uploadPhoto) {
     });
 }
 
-// Tirar Foto e Renderizar no Canvas mantendo a posição exata dos adesivos
+// Tirar Foto e Renderizar no Canvas mantendo a proporção exata
 if (btnCapture) {
     btnCapture.addEventListener('click', async () => {
         const ctx = canvas.getContext('2d');
@@ -261,7 +255,7 @@ if (btnCapture) {
         ctx.lineWidth = 6;
         ctx.strokeRect(0, 180, 1080, 1340);
 
-        // Desenhar Adesivos no Canvas com proporção correta
+        // Desenhar Adesivos no Canvas baseado na viewport real
         const activeStickers = stickersContainer.querySelectorAll('.draggable-sticker');
         const viewRect = document.getElementById('viewport').getBoundingClientRect();
         
@@ -375,5 +369,7 @@ if (btnCopyCaption) {
 if (bntCloseModal) {
     bntCloseModal.addEventListener('click', () => {
         previewModal.style.display = 'none';
+        // Limpar adesivos ao tirar outra foto, se desejar, ou manter. Mantém a tela limpa para nova foto:
+        stickersContainer.innerHTML = '';
     });
 }
