@@ -344,9 +344,10 @@ function showPreview() {
         // Texto oficial com as hashtags do V_WIPEX
         const captionText = "V_WIPEX! 💚 Ensino • Pesquisa • Extensão\n#ifpr.oficial #ifprpinhaisoficial #V_WIPEX";
 
-        // Configurar Botão de Compartilhar / Baixar Nativo com as Hashtags
+        // Configurar Botão de Compartilhar Direto
         if (btnDownload) {
             btnDownload.textContent = '📤 Compartilhar Foto';
+            
             btnDownload.onclick = async () => {
                 if (navigator.canShare && navigator.canShare({ files: [file] })) {
                     try {
@@ -361,7 +362,7 @@ function showPreview() {
                     }
                 }
                 
-                // Fallback: Se o telemóvel não suportar partilha direta de ficheiro, faz o download automático e copia a legenda
+                // Fallback automático caso o navegador não suporte partilha direta de ficheiro
                 const a = document.createElement('a');
                 a.href = dataURL;
                 a.download = 'foto-v-wipex-ifpr.png';
