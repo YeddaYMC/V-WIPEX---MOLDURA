@@ -19,37 +19,12 @@ const stickerCards = document.querySelectorAll('.sticker-card');
 const previewModal = document.getElementById('preview-modal');
 const previewImage = document.getElementById('preview-image');
 const btnDownload = document.getElementById('btn-download');
+const btnCopyCaption = document.getElementById('btn-copy-caption');
 const bntCloseModal = document.getElementById('btn-close-modal');
 
 let currentStream = null;
 let facingMode = 'user';
 let isUsingUserImage = false;
-
-// Mapeamento completo e correto para todos os 22 adesivos da pasta adesivos/
-const stickerSources = {
-    lampflor: 'adesivos/lamp.flor1.png',
-    lapiseira: 'adesivos/lapiseira1.png',
-    foguete1: 'adesivos/foguete.1.png',
-    foguete2: 'adesivos/foguete 2.png',
-    capelo1: 'adesivos/capelo 1.png',
-    capelo2: 'adesivos/capelo 2.png',
-    seta: 'adesivos/seta1.png',
-    wifi: 'adesivos/wifi1.png',
-    audio: 'adesivos/audio1.png',
-    caderno: 'adesivos/caderno1.png',
-    llivro: 'adesivos/llivro 1.png',
-    coracao: 'adesivos/coracao1.png',
-    emoji: 'adesivos/emoji1.png',
-    fflor: 'adesivos/fflor1.png',
-    lupa: 'adesivos/lupa1.png',
-    ideias: 'adesivos/ideias1.png',
-    pc1: 'adesivos/pc1.png',
-    pc2: 'adesivos/pc2.png',
-    robo: 'adesivos/robo1.png',
-    ifpr: 'adesivos/ifpr.png',
-    confetes: 'adesivos/confetes.1.png',
-    fogos: 'adesivos/fogos_1.png'
-};
 
 if (btnCustomize && stickersModal) {
     btnCustomize.addEventListener('click', () => {
@@ -65,9 +40,9 @@ if (btnCloseDrawer && stickersModal) {
 
 stickerCards.forEach(card => {
     card.addEventListener('click', () => {
-        const type = card.dataset.sticker;
-        if (type && stickerSources[type]) {
-            createStickerElement(stickerSources[type]);
+        const imgEl = card.querySelector('img');
+        if (imgEl && imgEl.src) {
+            createStickerElement(imgEl.src);
         }
         if (stickersModal) {
             stickersModal.style.display = 'none';
@@ -81,7 +56,7 @@ if (btnClearStickers) {
     });
 }
 
-// Criar adesivo com suporte a arrastar, pinça, redimensionar e botão de exclusão (✕)
+// Criar adesivo com suporte a arrastar, pinça/zoom, rotação e exclusão por DOIS TOQUES
 function createStickerElement(imageSrc) {
     const div = document.createElement('div');
     div.className = 'draggable-sticker';
@@ -90,17 +65,8 @@ function createStickerElement(imageSrc) {
     img.src = imageSrc;
     div.appendChild(img);
     
-    const deleteBtn = document.createElement('button');
-    deleteBtn.className = 'sticker-delete-btn';
-    deleteBtn.innerHTML = '✕';
-    deleteBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        div.remove();
-    });
-    div.appendChild(deleteBtn);
-
-    let posX = window.innerWidth / 2 - 55;
-    let posY = window.innerHeight / 2 - 55;
+    let posX = window.innerWidth / 2 - 60;
+    let posY = window.innerHeight / 2 - 60;
     let scale = 1;
     let rotation = 0;
 
@@ -110,6 +76,22 @@ function createStickerElement(imageSrc) {
     let initialScale = 1;
     let isDragging = false;
     let startX, startY;
+
+    // Excluir por duplo toque (2 toques rápidos)
+    let lastTapTime = 0;
+    div.addEventListener('touchend', (e) => {
+        const currentTime = new Date().getTime();
+        const tapLength = currentTime - lastTapTime;
+        if (tapLength < 300 && tapLength > 0) {
+            div.remove();
+            e.preventDefault();
+        }
+        lastTapTime = currentTime;
+    });
+
+    div.addEventListener('dblclick', () => {
+        div.remove();
+    });
 
     div.addEventListener('touchstart', (e) => {
         if (e.touches.length === 1) {
@@ -132,7 +114,7 @@ function createStickerElement(imageSrc) {
         } else if (e.touches.length === 2) {
             const currentDistance = getTouchDistance(e.touches);
             if (initialPinchDistance > 0) {
-                scale = Math.min(Math.max(0.5, initialScale * (currentDistance / initialPinchDistance)), 3.0);
+                scale = Math.min(Math.max(0.4, initialScale * (currentDistance / initialPinchDistance)), 4.0);
                 updateTransform();
             }
         }
@@ -235,7 +217,7 @@ if (uploadPhoto) {
     });
 }
 
-// Tirar Foto e Renderizar Moldura e Adesivos no Canvas com alinhamento perfeito
+// Tirar Foto e Renderizar no Canvas mantendo a posição exata dos adesivos
 if (btnCapture) {
     btnCapture.addEventListener('click', async () => {
         const ctx = canvas.getContext('2d');
@@ -279,28 +261,33 @@ if (btnCapture) {
         ctx.lineWidth = 6;
         ctx.strokeRect(0, 180, 1080, 1340);
 
-        // Renderizar Adesivos no Canvas usando getBoundingClientRect e coordenadas exatas da tela
+        // Desenhar Adesivos no Canvas com proporção correta
         const activeStickers = stickersContainer.querySelectorAll('.draggable-sticker');
-        const containerRect = stickersContainer.getBoundingClientRect();
+        const viewRect = document.getElementById('viewport').getBoundingClientRect();
         
-        const scaleX = 1080 / containerRect.width;
-        const scaleY = 1920 / containerRect.height;
-
         for (const stickerEl of activeStickers) {
             const imgEl = stickerEl.querySelector('img');
             const rect = stickerEl.getBoundingClientRect();
             
+            const scaleX = 1080 / viewRect.width;
+            const scaleY = 1920 / viewRect.height;
+            
             if (imgEl && imgEl.complete && imgEl.naturalWidth !== 0) {
-                const centerX = (rect.left + rect.width / 2 - containerRect.left) * scaleX;
-                const centerY = (rect.top + rect.height / 2 - containerRect.top) * scaleY;
+                const centerX = (rect.left - viewRect.left + rect.width / 2) * scaleX;
+                const centerY = (rect.top - viewRect.top + rect.height / 2) * scaleY;
                 
-                // Extrair o tamanho visual atual do adesivo no ecrã convertido para o canvas
-                const drawWidth = rect.width * scaleX;
-                const drawHeight = rect.height * scaleY;
-
                 ctx.save();
                 ctx.translate(centerX, centerY);
-                ctx.drawImage(imgEl, -drawWidth / 2, -drawHeight / 2, drawWidth, drawHeight);
+                const transformMatrix = window.getComputedStyle(stickerEl).transform;
+                let userScale = 1;
+                if (transformMatrix && transformMatrix !== 'none') {
+                    const values = transformMatrix.split('(')[1].split(')')[0].split(',');
+                    const a = parseFloat(values[0]);
+                    const b = parseFloat(values[1]);
+                    userScale = Math.sqrt(a * a + b * b);
+                }
+                const drawSize = 140 * userScale;
+                ctx.drawImage(imgEl, -drawSize / 2, -drawSize / 2, drawSize, drawSize);
                 ctx.restore();
             }
         }
@@ -349,39 +336,42 @@ function showPreview() {
         previewImage.src = dataURL;
         previewModal.style.display = 'flex';
 
-        const captionText = "V_WIPEX! 💚 Ensino • Pesquisa • Extensão\n#ifpr.oficial #ifprpinhaisoficial #V_WIPEX";
-
-        if (btnDownload) {
-            btnDownload.textContent = '📤 Compartilhar Foto';
-            btnDownload.onclick = async () => {
-                if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                    try {
-                        await navigator.share({
-                            title: 'Foto #V_WIPEX - IFPR Pinhais',
-                            text: captionText,
-                            files: [file]
-                        });
-                        return;
-                    } catch (err) {
-                        console.log('Partilha cancelada', err);
-                    }
+        btnDownload.onclick = async () => {
+            const captionText = "V_WIPEX! 💚 Ensino • Pesquisa • Extensão\n#ifpr.oficial #ifprpinhaisoficial #V_WIPEX";
+            
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                try {
+                    await navigator.share({
+                        title: 'Foto #V_WIPEX - IFPR Pinhais',
+                        text: captionText,
+                        files: [file]
+                    });
+                    return;
+                } catch (err) {
+                    console.log('Partilha cancelada', err);
                 }
-                
-                const a = document.createElement('a');
-                a.href = dataURL;
-                a.download = 'foto-v-wipex-ifpr.png';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-
-                navigator.clipboard.writeText(captionText).catch(() => {});
-                alert('Foto salva! A legenda foi copiada para você colar na publicação. 💚');
-            };
-        }
+            }
+            
+            const a = document.createElement('a');
+            a.href = dataURL;
+            a.download = 'foto-v-wipex-ifpr.png';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        };
     }, 'image/png');
 }
 
-// Botão "Tirar Outra" corrigido para fechar o modal e voltar à câmara
+if (btnCopyCaption) {
+    btnCopyCaption.addEventListener('click', () => {
+        const captionText = "V_WIPEX! 💚 Ensino • Pesquisa • Extensão\n#ifpr.oficial #ifprpinhaisoficial #V_WIPEX";
+        navigator.clipboard.writeText(captionText).then(() => {
+            btnCopyCaption.textContent = '✅ Legenda Copiada!';
+            setTimeout(() => btnCopyCaption.textContent = '📋 Copiar Legenda', 2000);
+        });
+    });
+}
+
 if (bntCloseModal) {
     bntCloseModal.addEventListener('click', () => {
         previewModal.style.display = 'none';
