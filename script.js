@@ -20,7 +20,7 @@ const previewModal = document.getElementById('preview-modal');
 const previewImage = document.getElementById('preview-image');
 const btnDownload = document.getElementById('btn-download');
 const btnCopyCaption = document.getElementById('btn-copy-caption');
-const bntCloseModal = document.getElementById('btn-close-modal');
+const bntCloseModal = document.getElementById('bnt-close-modal');
 
 let currentStream = null;
 let facingMode = 'user';
@@ -341,31 +341,38 @@ function showPreview() {
         previewImage.src = dataURL;
         previewModal.style.display = 'flex';
 
-        // Configurar Botão de Compartilhar / Baixar Nativo com Hashtags
-        btnDownload.onclick = async () => {
-            const captionText = "V_WIPEX! 💚 Ensino • Pesquisa • Extensão\n#ifpr.oficial #ifprpinhaisoficial #V_WIPEX";
-            
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                try {
-                    await navigator.share({
-                        title: 'Foto #V_WIPEX - IFPR Pinhais',
-                        text: captionText,
-                        files: [file]
-                    });
-                    return;
-                } catch (err) {
-                    console.log('Partilha cancelada', err);
+        // Texto oficial com as hashtags do V_WIPEX
+        const captionText = "V_WIPEX! 💚 Ensino • Pesquisa • Extensão\n#ifpr.oficial #ifprpinhaisoficial #V_WIPEX";
+
+        // Configurar Botão de Compartilhar / Baixar Nativo com as Hashtags
+        if (btnDownload) {
+            btnDownload.textContent = '📤 Compartilhar Foto';
+            btnDownload.onclick = async () => {
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    try {
+                        await navigator.share({
+                            title: 'Foto #V_WIPEX - IFPR Pinhais',
+                            text: captionText,
+                            files: [file]
+                        });
+                        return;
+                    } catch (err) {
+                        console.log('Partilha cancelada', err);
+                    }
                 }
-            }
-            
-            // Fallback para download caso o telemóvel não suporte partilha direta de ficheiro
-            const a = document.createElement('a');
-            a.href = dataURL;
-            a.download = 'foto-v-wipex-ifpr.png';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-        };
+                
+                // Fallback: Se o telemóvel não suportar partilha direta de ficheiro, faz o download automático e copia a legenda
+                const a = document.createElement('a');
+                a.href = dataURL;
+                a.download = 'foto-v-wipex-ifpr.png';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+
+                navigator.clipboard.writeText(captionText).catch(() => {});
+                alert('Foto salva! A legenda foi copiada para você colar na publicação. 💚');
+            };
+        }
     }, 'image/png');
 }
 
