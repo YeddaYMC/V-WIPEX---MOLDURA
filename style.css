@@ -23,7 +23,7 @@ html, body {
     height: 100dvh;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-end;
     overflow: hidden;
 }
 
@@ -43,65 +43,82 @@ html, body {
     object-fit: cover;
 }
 
-/* Moldura Polaroid Perfeita */
-.polaroid-frame {
+/* Moldura Polaroid Sem Espaço Externo (Apenas Centro Transparente) */
+.polaroid-overlay {
     position: absolute;
-    top: 20px;
-    left: 20px;
-    right: 20px;
-    bottom: 120px;
-    background: #ffffff;
-    border-radius: 12px;
-    padding: 16px 16px 12px 16px;
+    inset: 0;
     display: flex;
     flex-direction: column;
     pointer-events: none;
     z-index: 5;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
 }
 
-.polaroid-inner-window {
-    flex: 1;
-    background: transparent;
-    border: 2px solid #e2e8f0;
-    border-radius: 6px;
-}
-
-.polaroid-footer {
-    height: 100px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+.polaroid-header {
+    background: #ffffff;
+    padding: 18px 12px 10px 12px;
     text-align: center;
-    padding-top: 6px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
 }
 
-.p-title {
+.ifpr-title {
     font-size: 1.3rem;
     font-weight: 900;
     color: #16a34a;
+    letter-spacing: 2px;
 }
 
-.p-sub {
-    font-size: 0.75rem;
+.ifpr-sub {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #475569;
+    letter-spacing: 1px;
+}
+
+/* Janela Central Transparente por Onde Aparece a Foto */
+.polaroid-window {
+    flex: 1;
+    background: transparent;
+    border-top: 3px solid #e2e8f0;
+    border-bottom: 3px solid #e2e8f0;
+    box-shadow: inset 0 0 15px rgba(0,0,0,0.25);
+}
+
+/* Rodapé Largo Estilo Polaroid */
+.polaroid-footer {
+    background: #ffffff;
+    padding: 16px 12px 140px 12px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    box-shadow: 0 -4px 10px rgba(0,0,0,0.15);
+}
+
+.wipex-title {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: #16a34a;
+    letter-spacing: 1px;
+}
+
+.wipex-sub {
+    font-size: 0.8rem;
     font-weight: 700;
     color: #334155;
-    margin-top: 2px;
 }
 
-.p-hash {
-    font-size: 0.6rem;
+.wipex-hash {
+    font-size: 0.65rem;
     font-weight: 700;
     color: #e11d48;
-    margin-top: 3px;
 }
 
-/* Contentor de Adesivos */
+/* Container dos Adesivos */
 .stickers-container {
     position: absolute;
     inset: 0;
-    z-index: 8;
+    z-index: 10;
     pointer-events: none;
 }
 
@@ -111,7 +128,7 @@ html, body {
     pointer-events: auto;
     user-select: none;
     touch-action: none;
-    padding: 10px;
+    padding: 8px;
     transform-origin: center center;
 }
 
@@ -119,22 +136,26 @@ html, body {
     cursor: grabbing;
 }
 
+/* Remoção de Fundo Branco em Adesivos JPG/PNG para transparência perfeita */
 .draggable-sticker img {
-    width: 100px;
-    height: 100px;
+    width: 110px;
+    height: 110px;
     object-fit: contain;
-    filter: drop-shadow(0 6px 12px rgba(0,0,0,0.5));
+    mix-blend-mode: multiply;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
 }
 
+/* Interface Inferior (Altura dos Dedos) */
 .bottom-ui {
     position: relative;
     z-index: 20;
-    padding: 10px 14px;
-    padding-bottom: max(12px, env(safe-area-inset-bottom));
-    background: rgba(9, 13, 22, 0.95);
+    padding: 12px;
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+    background: linear-gradient(0deg, rgba(9, 13, 22, 0.98) 0%, rgba(9, 13, 22, 0.85) 100%);
     display: flex;
     flex-direction: column;
     gap: 8px;
+    border-radius: 16px 16px 0 0;
 }
 
 .button-group {
@@ -157,6 +178,7 @@ html, body {
 .btn-primary {
     background: linear-gradient(135deg, #22c55e, #16a34a);
     color: #ffffff;
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.35);
 }
 
 .btn-secondary {
@@ -166,14 +188,13 @@ html, body {
 }
 
 .btn-outline {
-    background-color: rgba(30, 41, 59, 0.7);
+    background-color: rgba(30, 41, 59, 0.8);
     border: 1px solid rgba(255, 255, 255, 0.2);
     color: #f8fafc;
 }
 
 .btn-highlight {
     background: linear-gradient(135deg, #0284c7, #0369a1);
-    border: none;
     color: #ffffff;
 }
 
@@ -209,7 +230,7 @@ html, body {
     padding: 20px;
     width: 100%;
     max-width: 500px;
-    max-height: 70dvh;
+    max-height: 65dvh;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
@@ -266,9 +287,10 @@ html, body {
     width: 45px;
     height: 45px;
     object-fit: contain;
+    mix-blend-mode: multiply;
 }
 
-/* Modal de Pré-visualização */
+/* Modal de Pré-visualização Final */
 .modal {
     position: fixed;
     inset: 0;
@@ -297,12 +319,6 @@ html, body {
     font-size: 1rem;
     text-align: center;
     color: #f8fafc;
-}
-
-.modal-desc {
-    font-size: 0.72rem;
-    text-align: center;
-    color: #94a3b8;
 }
 
 .preview-container {
