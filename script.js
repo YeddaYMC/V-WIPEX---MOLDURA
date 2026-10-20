@@ -26,16 +26,30 @@ let currentStream = null;
 let facingMode = 'user';
 let isUsingUserImage = false;
 
-// Mapeamento corrigido para a pasta "adesivos/"
+// Mapeamento exato com todos os novos nomes na pasta "adesivos/"
 const stickerSources = {
-    audio: 'adesivos/audio1_2.jpeg',
-    confetes: 'adesivos/confetes1.webp',
-    foguete: 'adesivos/foguete 1_2.jpeg',
-    lamp: 'adesivos/lamp.flor.webp',
-    lapiseira: 'adesivos/lapiseira1.jpeg',
-    seta: 'adesivos/seta1.jpeg',
-    wifi: 'adesivos/wifi1.jpeg',
-    fogos: 'adesivos/fogos 1.jpeg'
+    audio: 'adesivos/audio1.png',
+    caderno: 'adesivos/caderno1.png',
+    capelo1: 'adesivos/capelo 1.png',
+    capelo2: 'adesivos/capelo 2.png',
+    confetes: 'adesivos/confetes.1.png',
+    coracao: 'adesivos/coracao1.png',
+    emoji: 'adesivos/emoji1.png',
+    fflor: 'adesivos/fflor1.png',
+    fogos: 'adesivos/fogos_1.png',
+    foguete2: 'adesivos/foguete 2.png',
+    foguete1: 'adesivos/foguete.1.png',
+    ideias: 'adesivos/ideias1.png',
+    ifpr: 'adesivos/ifpr.png',
+    lampflor: 'adesivos/lamp.flor1.png',
+    lapiseira: 'adesivos/lapiseira1.png',
+    llivro: 'adesivos/llivro 1.png',
+    lupa: 'adesivos/lupa1.png',
+    pc1: 'adesivos/pc1.png',
+    pc2: 'adesivos/pc2.png',
+    robo: 'adesivos/robo1.png',
+    seta: 'adesivos/seta1.png',
+    wifi: 'adesivos/wifi1.png'
 };
 
 if (btnCustomize && stickersModal) {
@@ -53,7 +67,9 @@ if (btnCloseDrawer && stickersModal) {
 stickerCards.forEach(card => {
     card.addEventListener('click', () => {
         const type = card.dataset.sticker;
-        createStickerElement(stickerSources[type]);
+        if (type && stickerSources[type]) {
+            createStickerElement(stickerSources[type]);
+        }
         if (stickersModal) {
             stickersModal.style.display = 'none';
         }
@@ -87,7 +103,6 @@ function createStickerElement(imageSrc) {
     let isDragging = false;
     let startX, startY;
 
-    // Gestos de Toque (Drag + Pinça Multi-touch)
     div.addEventListener('touchstart', (e) => {
         if (e.touches.length === 1) {
             isDragging = true;
@@ -116,15 +131,10 @@ function createStickerElement(imageSrc) {
     }, { passive: false });
 
     div.addEventListener('touchend', (e) => {
-        if (e.touches.length < 2) {
-            initialPinchDistance = 0;
-        }
-        if (e.touches.length === 0) {
-            isDragging = false;
-        }
+        if (e.touches.length < 2) initialPinchDistance = 0;
+        if (e.touches.length === 0) isDragging = false;
     });
 
-    // Suporte para Mouse / Pointer Events
     div.addEventListener('pointerdown', (e) => {
         if (e.pointerType === 'mouse') {
             isDragging = true;
@@ -149,7 +159,6 @@ function createStickerElement(imageSrc) {
         }
     });
 
-    // Toque simples para alternar tamanho se desejar
     div.addEventListener('click', () => {
         scale += 0.2;
         if (scale > 2.2) scale = 0.8;
@@ -172,16 +181,12 @@ function getTouchDistance(touches) {
 if (btnGrantPermission) {
     btnGrantPermission.addEventListener('click', async () => {
         const success = await initCamera();
-        if (success) {
-            permissionScreen.style.display = 'none';
-        }
+        if (success) permissionScreen.style.display = 'none';
     });
 }
 
 async function initCamera() {
-    if (currentStream) {
-        currentStream.getTracks().forEach(track => track.stop());
-    }
+    if (currentStream) currentStream.getTracks().forEach(track => track.stop());
 
     try {
         const constraints = {
@@ -221,16 +226,14 @@ if (uploadPhoto) {
                 isUsingUserImage = true;
                 permissionScreen.style.display = 'none';
 
-                if (currentStream) {
-                    currentStream.getTracks().forEach(track => track.stop());
-                }
+                if (currentStream) currentStream.getTracks().forEach(track => track.stop());
             };
             reader.readAsDataURL(file);
         }
     });
 }
 
-// Tirar Foto e Renderizar a Moldura Polaroid e Adesivos no Canvas
+// Tirar Foto e Renderizar Moldura e Adesivos no Canvas
 if (btnCapture) {
     btnCapture.addEventListener('click', async () => {
         const ctx = canvas.getContext('2d');
@@ -239,13 +242,10 @@ if (btnCapture) {
 
         const sourceEl = isUsingUserImage ? userImage : video;
         
-        // 1. Desenhar a foto de fundo cobrindo tudo
         drawCover(ctx, sourceEl, 1080, 1920);
-
-        // 2. Filtro de pele suave estilo Snapchat
         applySnapchatSkinFilter(ctx, 1080, 1920);
 
-        // 3. Moldura Superior Branca (IFPR PINHAIS)
+        // Moldura Superior IFPR Pinhais
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, 1080, 180);
 
@@ -258,7 +258,7 @@ if (btnCapture) {
         ctx.font = '700 28px Inter, sans-serif';
         ctx.fillText('CAMPUS PINHAIS', 540, 155);
 
-        // 4. Moldura Inferior Branca Polaroid (WIPEX)
+        // Moldura Inferior V_WIPEX
         ctx.fillRect(0, 1520, 1080, 400);
 
         ctx.fillStyle = '#16a34a';
@@ -273,12 +273,11 @@ if (btnCapture) {
         ctx.font = '700 28px Inter, sans-serif';
         ctx.fillText('#ifpr.oficial #ifprpinhaisoficial #V_WIPEX', 540, 1760);
 
-        // Linhas de borda da janela central da Polaroid
         ctx.strokeStyle = '#e2e8f0';
         ctx.lineWidth = 6;
         ctx.strokeRect(0, 180, 1080, 1340);
 
-        // 5. Desenhar Adesivos no Canvas
+        // Desenhar Adesivos no Canvas
         const activeStickers = stickersContainer.querySelectorAll('.draggable-sticker');
         for (const stickerEl of activeStickers) {
             const imgEl = stickerEl.querySelector('img');
