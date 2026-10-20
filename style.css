@@ -43,7 +43,6 @@ html, body {
     object-fit: cover;
 }
 
-/* Moldura Polaroid Sem Espaço Externo (Apenas Centro Transparente) */
 .polaroid-overlay {
     position: absolute;
     inset: 0;
@@ -74,16 +73,13 @@ html, body {
     letter-spacing: 1px;
 }
 
-/* Janela Central Transparente por Onde Aparece a Foto */
 .polaroid-window {
     flex: 1;
     background: transparent;
     border-top: 3px solid #e2e8f0;
     border-bottom: 3px solid #e2e8f0;
-    box-shadow: inset 0 0 15px rgba(0,0,0,0.25);
 }
 
-/* Rodapé Largo Estilo Polaroid */
 .polaroid-footer {
     background: #ffffff;
     padding: 16px 12px 140px 12px;
@@ -114,7 +110,6 @@ html, body {
     color: #e11d48;
 }
 
-/* Container dos Adesivos */
 .stickers-container {
     position: absolute;
     inset: 0;
@@ -128,24 +123,17 @@ html, body {
     pointer-events: auto;
     user-select: none;
     touch-action: none;
-    padding: 8px;
+    padding: 10px;
     transform-origin: center center;
 }
 
-.draggable-sticker:active {
-    cursor: grabbing;
-}
-
-/* Remoção de Fundo Branco em Adesivos JPG/PNG para transparência perfeita */
 .draggable-sticker img {
-    width: 110px;
-    height: 110px;
+    width: 120px;
+    height: 120px;
     object-fit: contain;
-    mix-blend-mode: multiply;
-    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
 }
 
-/* Interface Inferior (Altura dos Dedos) */
 .bottom-ui {
     position: relative;
     z-index: 20;
@@ -204,15 +192,14 @@ html, body {
 }
 
 .btn-small {
-    padding: 8px !important;
-    font-size: 0.75rem !important;
+    padding: 10px !important;
+    font-size: 0.8rem !important;
 }
 
 .file-input {
     display: none;
 }
 
-/* Gaveta de Adesivos */
 .modal-stickers-drawer {
     position: fixed;
     inset: 0;
@@ -269,7 +256,7 @@ html, body {
 }
 
 .sticker-card {
-    background: #0f172a;
+    background: #ffffff;
     border: 1px solid #334155;
     border-radius: 12px;
     padding: 8px;
@@ -278,7 +265,7 @@ html, body {
     align-items: center;
     gap: 6px;
     cursor: pointer;
-    color: #f8fafc;
+    color: #0f172a;
     font-size: 0.65rem;
     font-weight: 700;
 }
@@ -287,10 +274,8 @@ html, body {
     width: 45px;
     height: 45px;
     object-fit: contain;
-    mix-blend-mode: multiply;
 }
 
-/* Modal de Pré-visualização Final */
 .modal {
     position: fixed;
     inset: 0;
@@ -365,87 +350,3 @@ html, body {
     align-items: center;
     gap: 12px;
 }
-
-.draggable-sticker {
-    position: absolute;
-    cursor: grab;
-    pointer-events: auto;
-    user-select: none;
-    touch-action: none;
-    padding: 12px;
-    transform-origin: center center;
-}
-
-.sticker-delete-btn {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 24px;
-    height: 24px;
-    background: #e11d48;
-    color: white;
-    border: 2px solid white;
-    border-radius: 50%;
-    font-size: 12px;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-    z-index: 15;
-}
-
-/* Gaveta de Adesivos */
-.modal-stickers-drawer {
-    position: fixed;
-    inset: 0;
-    background: rgba(15, 23, 42, 0.95); /* Fundo bem escuro opaco para destacar os adesivos */
-    z-index: 100;
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
-    backdrop-filter: blur(6px);
-}
-
-.drawer-content {
-    background: #1e293b;
-    border: 1px solid #334155;
-    border-radius: 20px 20px 0 0;
-    padding: 20px;
-    width: 100%;
-    max-width: 500px;
-    max-height: 65dvh;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-/* Gaveta de Adesivos */
-.modal-stickers-drawer {
-    position: fixed;
-    inset: 0;
-    background: rgba(15, 23, 42, 0.95);
-    z-index: 100;
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
-    backdrop-filter: blur(6px);
-}
-
-.drawer-content {
-    background: #1e293b;
-    border: 1px solid #334155;
-    border-radius: 20px 20px 0 0;
-    padding: 20px;
-    width: 100%;
-    max-width: 500px;
-    max-height: 65dvh;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-
