@@ -27,13 +27,11 @@ html, body {
     overflow: hidden;
 }
 
-/* Área exata da câmara entre o topo e a barra inferior */
 .camera-layer {
     position: absolute;
-    top: 0;
-    left: 0;
+    inset: 0;
     width: 100%;
-    height: calc(100dvh - 110px);
+    height: 100%;
     z-index: 1;
     background-color: #000000;
 }
@@ -54,24 +52,23 @@ html, body {
     z-index: 5;
 }
 
-/* Cabeçalho correspondente a exatamente 180px na proporção 1920 do canvas */
 .polaroid-header {
     background: #ffffff;
-    height: 120px;
-    padding: 12px 10px;
+    padding: 18px 12px 10px 12px;
     text-align: center;
     box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    pointer-events: auto;
 }
 
 .ifpr-title {
-    font-size: 1.1rem;
+    font-size: 1.3rem;
     font-weight: 900;
     color: #16a34a;
     letter-spacing: 2px;
 }
 
 .ifpr-sub {
-    font-size: 0.55rem;
+    font-size: 0.65rem;
     font-weight: 700;
     color: #475569;
     letter-spacing: 1px;
@@ -80,38 +77,37 @@ html, body {
 .polaroid-window {
     flex: 1;
     background: transparent;
-    border-top: 2px solid #e2e8f0;
-    border-bottom: 2px solid #e2e8f0;
+    border-top: 3px solid #e2e8f0;
+    border-bottom: 3px solid #e2e8f0;
 }
 
-/* Rodapé correspondente a exatamente 240px na proporção 1920 do canvas */
 .polaroid-footer {
     background: #ffffff;
-    height: 160px;
-    padding: 10px;
+    padding: 16px 12px 140px 12px;
     text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2px;
+    gap: 3px;
     box-shadow: 0 -4px 10px rgba(0,0,0,0.15);
+    pointer-events: auto;
 }
 
 .wipex-title {
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     font-weight: 900;
     color: #16a34a;
     letter-spacing: 1px;
 }
 
 .wipex-sub {
-    font-size: 0.7rem;
+    font-size: 0.8rem;
     font-weight: 700;
     color: #334155;
 }
 
 .wipex-hash {
-    font-size: 0.55rem;
+    font-size: 0.65rem;
     font-weight: 700;
     color: #e11d48;
 }
@@ -129,13 +125,13 @@ html, body {
     pointer-events: auto;
     user-select: none;
     touch-action: none;
-    padding: 10px;
+    padding: 14px;
     transform-origin: center center;
 }
 
 .draggable-sticker img {
-    width: 110px;
-    height: 110px;
+    width: 120px;
+    height: 120px;
     object-fit: contain;
     filter: drop-shadow(0 4px 8px rgba(0,0,0,0.25));
     display: block;
@@ -164,27 +160,26 @@ html, body {
 .bottom-ui {
     position: relative;
     z-index: 20;
-    height: 110px;
-    padding: 8px 12px;
-    padding-bottom: max(10px, env(safe-area-inset-bottom));
-    background: linear-gradient(0deg, rgba(9, 13, 22, 0.98) 0%, rgba(9, 13, 22, 0.9) 100%);
+    padding: 12px;
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+    background: linear-gradient(0deg, rgba(9, 13, 22, 0.98) 0%, rgba(9, 13, 22, 0.85) 100%);
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
     border-radius: 16px 16px 0 0;
 }
 
 .button-group {
     display: flex;
-    gap: 6px;
+    gap: 8px;
 }
 
 .btn {
     flex: 1;
-    padding: 10px 6px;
+    padding: 12px 8px;
     border: none;
-    border-radius: 8px;
-    font-size: 0.75rem;
+    border-radius: 10px;
+    font-size: 0.8rem;
     font-weight: 700;
     cursor: pointer;
     text-align: center;
@@ -220,8 +215,8 @@ html, body {
 }
 
 .btn-small {
-    padding: 8px !important;
-    font-size: 0.75rem !important;
+    padding: 10px !important;
+    font-size: 0.8rem !important;
 }
 
 .file-input {
@@ -377,4 +372,128 @@ html, body {
     flex-direction: column;
     align-items: center;
     gap: 12px;
+}
+
+
+/* Garante que o viewport principal gerencia o espaço sem cortar a moldura */
+.app-viewport {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: hidden;
+}
+
+.camera-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    /* Deixa espaço exato na altura para a barra inferior não encobrir a moldura */
+    height: calc(100dvh - 110px); 
+    z-index: 1;
+    background-color: #000000;
+}
+
+/* Moldura Polaroid adaptada para aparecer inteira no ecrã */
+.polaroid-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.polaroid-header {
+    background: #ffffff;
+    padding: 12px 10px 6px 10px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.ifpr-title {
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: #16a34a;
+    letter-spacing: 2px;
+}
+
+.ifpr-sub {
+    font-size: 0.55rem;
+    font-weight: 700;
+    color: #475569;
+    letter-spacing: 1px;
+}
+
+.polaroid-window {
+    flex: 1;
+    background: transparent;
+    border-top: 2px solid #e2e8f0;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+/* Rodapé agora mais compacto para caber totalmente visível acima dos botões */
+.polaroid-footer {
+    background: #ffffff;
+    padding: 10px 10px 12px 10px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    box-shadow: 0 -4px 10px rgba(0,0,0,0.15);
+}
+
+.wipex-title {
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: #16a34a;
+    letter-spacing: 1px;
+}
+
+.wipex-sub {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #334155;
+}
+
+.wipex-hash {
+    font-size: 0.55rem;
+    font-weight: 700;
+    color: #e11d48;
+}
+
+/* Barra de Ações Inferior mais compacta e elegante */
+.bottom-ui {
+    position: relative;
+    z-index: 20;
+    height: 110px;
+    padding: 8px 12px;
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+    background: linear-gradient(0deg, rgba(9, 13, 22, 0.98) 0%, rgba(9, 13, 22, 0.9) 100%);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    border-radius: 16px 16px 0 0;
+}
+
+.button-group {
+    display: flex;
+    gap: 6px;
+}
+
+.btn {
+    flex: 1;
+    padding: 10px 6px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
 }
