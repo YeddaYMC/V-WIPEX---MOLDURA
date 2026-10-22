@@ -1,415 +1,307 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const video = document.getElementById('webcam');
-    const userImage = document.getElementById('user-image');
-    const permissionScreen = document.getElementById('permission-screen');
-    const btnGrantPermission = document.getElementById('btn-grant-permission');
-    const btnCapture = document.getElementById('btn-capture');
-    const btnSwitch = document.getElementById('btn-switch');
-    const uploadPhoto = document.getElementById('upload-photo');
-    const btnCustomize = document.getElementById('btn-customize');
-    const stickersModal = document.getElementById('stickers-modal');
-    const btnCloseDrawer = document.getElementById('btn-close-drawer');
-    const btnClearStickers = document.getElementById('btn-clear-stickers');
-    const stickersContainer = document.getElementById('stickers-container');
-    const canvas = document.getElementById('export-canvas');
-    const previewModal = document.getElementById('preview-modal');
-    const previewImage = document.getElementById('preview-image');
-    const btnDownload = document.getElementById('btn-download');
-    const btnEditPhoto = document.getElementById('btn-edit-photo');
-    const btnCloseModal = document.getElementById('btn-close-modal');
+// Variáveis Globais daAplicação
+let webcamStream = null;
+let useFrontCamera = true;
+let isUserImageLoaded = false;
+let userImage = new Image();
 
-    let currentStream = null;
-    let facingMode = 'user';
-    let isUsingUserImage = false;
+const webcam = document.getElementById('webcam');
+const userImageElement = document.getElementById('user-image');
+const permissionScreen = document.getElementById('permission-screen');
+const btnGrantPermission = document.getElementById('btn-grant-permission');
+const btnCapture = document.getElementById('btn-capture');
+const btnSwitch = document.getElementById('btn-switch');
+const uploadPhoto = document.getElementById('upload-photo');
+const btnCustomize = document.getElementById('btn-customize');
+const stickersModal = document.getElementById('stickers-modal');
+const btnCloseDrawer = document.getElementById('btn-close-drawer');
+const btnClearStickers = document.getElementById('btn-clear-stickers');
+const previewModal = document.getElementById('preview-modal');
+const previewImage = document.getElementById('preview-image');
+const btnDownload = document.getElementById('btn-download');
+const btnEditPhoto = document.getElementById('btn-edit-photo');
+const btnCloseModal = document.getElementById('btn-close-modal');
+const stickersContainer = document.getElementById('stickers-container');
 
-    // Mapeamento dos caminhos dos adesivos
-    const stickerPaths = {
-        atomo: 'adesivos/atomo.png',
-        audio: 'adesivos/audio1.png',
-        caderno: 'adesivos/caderno1.png',
-        calend1: 'adesivos/calend1.png',
-        capelo1: 'adesivos/capelo 1.png',
-        capelo2: 'adesivos/capelo 2.png',
-        capelo3: 'adesivos/capelo3.png',
-        confetes: 'adesivos/confetes.1.png',
-        coracao1: 'adesivos/coracao1.png',
-        coracoes: 'adesivos/coracoes.png',
-        emoji: 'adesivos/emoji1.png',
-        fflor: 'adesivos/fflor1.png',
-        fogos: 'adesivos/fogos_1.png',
-        foguete2: 'adesivos/foguete 2.png',
-        foguete1: 'adesivos/foguete.1.png',
-        game1: 'adesivos/game1.png',
-        ideias: 'adesivos/ideias1.png',
-        ifpr: 'adesivos/ifpr.png',
-        lamp: 'adesivos/lamp.png',
-        lampflor: 'adesivos/lamp.flor1.png',
-        lapiseira: 'adesivos/lapiseira1.png',
-        llivro: 'adesivos/llivro 1.png',
-        livros: 'adesivos/livros.png',
-        lupa: 'adesivos/lupa1.png',
-        mold1: 'adesivos/mold1.png',
-        ok: 'adesivos/ok.png',
-        pc1: 'adesivos/pc1.png',
-        pc2: 'adesivos/pc2.png',
-        relogio: 'adesivos/relogio.png',
-        robo: 'adesivos/robo1.png',
-        robo2: 'adesivos/robo2.png',
-        robo3: 'adesivos/robo3.png',
-        seta: 'adesivos/seta1.png',
-        wifi: 'adesivos/wifi1.png'
-    };
-
-    // Inicialização do evento do botão de permissão
-    if (btnGrantPermission) {
-        btnGrantPermission.addEventListener('click', () => {
-            initCamera();
-        });
-    }
-
-    async function initCamera() {
-        if (currentStream) {
-            currentStream.getTracks().forEach(track => track.stop());
+// 1. Gestão de Permissão e Inicialização da Câmara
+btnGrantPermission.addEventListener('click', async () => {
+    try {
+        if (webcamStream) {
+            webcamStream.getTracks().forEach(track => track.stop());
         }
 
-        try {
-            const constraints = {
-                video: {
-                    facingMode: facingMode,
-                    width: { ideal: 1080 },
-                    height: { ideal: 1920 }
-                },
-                audio: false
-            };
+        const constraints = {
+            video: {
+                facingMode: useFrontCamera ? 'user' : 'environment',
+                width: { ideal: 1280 },
+                height: { ideal: 720 }
+            },
+            audio: false
+        };
 
-            currentStream = await navigator.mediaDevices.getUserMedia(constraints);
-            video.srcObject = currentStream;
-            await video.play();
-            
-            userImage.style.display = 'none';
-            video.style.display = 'block';
-            isUsingUserImage = false;
+        webcamStream = await navigator.mediaDevices.getUserMedia(constraints);
+        webcam.srcObject = webcamStream;
+        await webcam.play();
 
-            if (permissionScreen) {
-                permissionScreen.style.display = 'none';
-            }
-        } catch (err) {
-            console.error('Erro ao aceder à câmara:', err);
-            alert('Não foi possível aceder à câmara. Pode usar a Galeria para carregar uma foto!');
-            if (permissionScreen) {
-                permissionScreen.style.display = 'none';
+        // Esconde o ecrã de permissão inicial com suavidade
+        permissionScreen.style.opacity = '0';
+        setTimeout(() => {
+            permissionScreen.style.display = 'none';
+        }, 300);
+
+    } catch (err) {
+        console.error("Erro ao aceder à câmara:", err);
+        alert("Não foi possível aceder à câmara. Verifique as permissões do navegador.");
+    }
+});
+
+// 2. Inverter Câmara (Frontal / Traseira)
+btnSwitch.addEventListener('click', async () => {
+    useFrontCamera = !useFrontCamera;
+    if (permissionScreen.style.display === 'none') {
+        btnGrantPermission.click();
+    }
+});
+
+// 3. Upload de Foto da Galeria
+uploadPhoto.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            userImage.src = event.target.result;
+            userImage.onload = function() {
+                userImageElement.src = userImage.src;
+                userImageElement.style.display = 'block';
+                webcam.style.display = 'none';
+                isUserImageLoaded = true;
             }
         }
+        reader.readAsDataURL(file);
     }
+});
 
-    if (btnSwitch) {
-        btnSwitch.addEventListener('click', () => {
-            facingMode = (facingMode === 'user') ? 'environment' : 'user';
-            initCamera();
-        });
-    }
+// 4. Gaveta de Adesivos (Modal)
+btnCustomize.addEventListener('click', () => {
+    stickersModal.style.display = 'flex';
+});
 
-    if (uploadPhoto) {
-        uploadPhoto.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    userImage.src = event.target.result;
-                    userImage.style.display = 'block';
-                    video.style.display = 'none';
-                    isUsingUserImage = true;
-                    if (permissionScreen) {
-                        permissionScreen.style.display = 'none';
-                    }
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-    }
+btnCloseDrawer.addEventListener('click', () => {
+    stickersModal.style.display = 'none';
+});
 
-    // Modal da Gaveta de Adesivos
-    if (btnCustomize) {
-        btnCustomize.addEventListener('click', () => {
-            stickersModal.style.display = 'flex';
-        });
-    }
+// Adicionar Adesivo ao Ecrã
+document.querySelectorAll('.sticker-card').forEach(card => {
+    card.addEventListener('click', () => {
+        const stickerName = card.getAttribute('data-sticker');
+        const imgPath = card.querySelector('img').getAttribute('src');
+        createStickerElement(imgPath);
+        stickersModal.style.display = 'none';
+    });
+});
 
-    if (btnCloseDrawer) {
-        btnCloseDrawer.addEventListener('click', () => {
-            stickersModal.style.display = 'none';
-        });
-    }
+function createStickerElement(src) {
+    const stickerDiv = document.createElement('div');
+    stickerDiv.className = 'draggable-sticker';
+    stickerDiv.style.left = '50%';
+    stickerDiv.style.top = '50%';
+    stickerDiv.style.transform = 'translate(-50%, -50%) scale(1) rotate(0deg)';
 
-    // Adicionar Adesivo ao Ecrã
-    const stickerCards = document.querySelectorAll('.sticker-card');
-    stickerCards.forEach(card => {
-        card.addEventListener('click', () => {
-            const stickerKey = card.getAttribute('data-sticker');
-            if (stickerPaths[stickerKey]) {
-                addStickerToCanvas(stickerPaths[stickerKey]);
-                stickersModal.style.display = 'none';
-            }
-        });
+    const img = document.createElement('img');
+    img.src = src;
+    img.alt = 'Adesivo';
+
+    const deleteBtn = document.createElement('div');
+    deleteBtn.className = 'sticker-delete-btn';
+    deleteBtn.innerHTML = '✕';
+    deleteBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        stickerDiv.remove();
     });
 
-    function addStickerToCanvas(src) {
-        const wrapper = document.createElement('div');
-        wrapper.className = 'draggable-sticker';
+    stickerDiv.appendChild(img);
+    stickerDiv.appendChild(deleteBtn);
+    stickersContainer.appendChild(stickerDiv);
+
+    initStickerInteractions(stickerDiv);
+}
+
+// Limpar Todos os Adesivos
+btnClearStickers.addEventListener('click', () => {
+    stickersContainer.innerHTML = '';
+    stickersModal.style.display = 'none';
+});
+
+// 5. Interatividade Tátil (Arrastar, Zoom com Pinça e Rotação)
+function initStickerInteractions(el) {
+    let initialX = 0;
+    let initialY = 0;
+    let currentX = 0;
+    let currentY = 0;
+    let xOffset = 0;
+    let yOffset = 0;
+    let scale = 1;
+    let rotation = 0;
+
+    let initialDistance = 0;
+    let initialAngle = 0;
+
+    el.addEventListener('pointerdown', dragStart, { passive: false });
+
+    function dragStart(e) {
+        if (e.target.classList.contains('sticker-delete-btn')) return;
         
-        const img = document.createElement('img');
-        img.src = src;
-        
-        const deleteBtn = document.createElement('button');
-        deleteBtn.className = 'sticker-delete-btn';
-        deleteBtn.innerText = '✕';
-        deleteBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            wrapper.remove();
-        });
+        initialX = e.clientX - xOffset;
+        initialY = e.clientY - yOffset;
 
-        wrapper.appendChild(img);
-        wrapper.appendChild(deleteBtn);
-        stickersContainer.appendChild(wrapper);
-
-        // Posiciona no centro
-        wrapper.style.left = '50%';
-        wrapper.style.top = '50%';
-        wrapper.style.transform = 'translate(-50%, -50%) scale(1)';
-
-        makeElementDraggableAndScalable(wrapper);
-    }
-
-    if (btnClearStickers) {
-        btnClearStickers.addEventListener('click', () => {
-            stickersContainer.innerHTML = '';
-            stickersModal.style.display = 'none';
-        });
-    }
-
-    // Gestos de Arrastar e Zoom/Pinça em Touch
-    function makeElementDraggableAndScalable(el) {
-        let isDragging = false;
-        let startX, startY;
-        let initialLeft, initialTop;
-        let currentScale = 1;
-        let initialPinchDistance = null;
-
-        el.addEventListener('touchstart', handleTouchStart, { passive: false });
-        el.addEventListener('touchmove', handleTouchMove, { passive: false });
-        el.addEventListener('touchend', handleTouchEnd);
-
-        function handleTouchStart(e) {
-            if (e.touches.length === 1) {
-                isDragging = true;
-                startX = e.touches[0].clientX;
-                startY = e.touches[0].clientY;
-                const rect = el.getBoundingClientRect();
-                initialLeft = rect.left;
-                initialTop = rect.top;
-            } else if (e.touches.length === 2) {
-                isDragging = false;
-                initialPinchDistance = Math.hypot(
-                    e.touches[0].clientX - e.touches[1].clientX,
-                    e.touches[0].clientY - e.touches[1].clientY
-                );
-            }
-        }
-
-        function handleTouchMove(e) {
-            e.preventDefault();
-            if (isDragging && e.touches.length === 1) {
-                const dx = e.touches[0].clientX - startX;
-                const dy = e.touches[0].clientY - startY;
-                const viewportRect = document.getElementById('viewport').getBoundingClientRect();
-                
-                let newLeft = initialLeft + dx - viewportRect.left;
-                let newTop = initialTop + dy - viewportRect.top;
-
-                el.style.left = `${newLeft}px`;
-                el.style.top = `${newTop}px`;
-                el.style.transform = `scale(${currentScale})`;
-            } else if (e.touches.length === 2 && initialPinchDistance) {
-                const currentDistance = Math.hypot(
-                    e.touches[0].clientX - e.touches[1].clientX,
-                    e.touches[0].clientY - e.touches[1].clientY
-                );
-                const scaleFactor = currentDistance / initialPinchDistance;
-                currentScale = Math.min(Math.max(0.5, currentScale * scaleFactor), 3.0);
-                initialPinchDistance = currentDistance;
-                el.style.transform = `scale(${currentScale})`;
-            }
-        }
-
-        function handleTouchEnd(e) {
-            if (e.touches.length < 2) {
-                initialPinchDistance = null;
-            }
-            if (e.touches.length === 0) {
-                isDragging = false;
-            }
-        }
-    }
-
-    // Desenhar Imagem com Proporção "Cover"
-    function drawCover(ctx, img, targetWidth, targetHeight) {
-        let nw = img.naturalWidth || img.videoWidth;
-        let nh = img.naturalHeight || img.videoHeight;
-        if (!nw || !nh) return;
-
-        let aspect = nw / nh;
-        let targetAspect = targetWidth / targetHeight;
-
-        let dw, dh, dx, dy;
-        if (aspect > targetAspect) {
-            dh = targetHeight;
-            dw = targetHeight * aspect;
-            dx = (targetWidth - dw) / 2;
-            dy = 0;
+        if (e.pointerType === 'touch') {
+            // Registo para multi-touch (pinça/rotação)
+            document.addEventListener('pointermove', pointerMove, { passive: false });
+            document.addEventListener('pointerup', dragEnd);
         } else {
-            dw = targetWidth;
-            dh = targetWidth / aspect;
-            dx = 0;
-            dy = (targetHeight - dh) / 2;
+            window.addEventListener('pointermove', pointerMove);
+            window.addEventListener('pointerup', dragEnd);
         }
-
-        ctx.drawImage(img, dx, dy, dw, dh);
     }
 
-    // Filtro Suave de Pele
-    function applySnapchatSkinFilter(ctx, width, height) {
-        ctx.save();
-        ctx.globalCompositeOperation = 'soft-light';
-        ctx.fillStyle = 'rgba(255, 235, 220, 0.15)';
-        ctx.fillRect(0, 0, width, height);
-        ctx.restore();
+    function pointerMove(e) {
+        e.preventDefault();
+        currentX = e.clientX - initialX;
+        currentY = e.clientY - initialY;
+        xOffset = currentX;
+        yOffset = currentY;
+
+        setTransform();
     }
 
-    // Tirar Foto e Renderizar no Canvas mantendo a posição e tamanho 100% idênticos
-    if (btnCapture) {
-        btnCapture.addEventListener('click', async () => {
-            const ctx = canvas.getContext('2d', { willReadFrequently: true });
-            canvas.width = 1080;
-            canvas.height = 1920;
-
-            const sourceEl = isUsingUserImage ? userImage : video;
-            
-            drawCover(ctx, sourceEl, 1080, 1920);
-            applySnapchatSkinFilter(ctx, 1080, 1920);
-
-            // Moldura Superior (Branco Opaco Perfeito)
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(0, 0, 1080, 180);
-
-            ctx.fillStyle = '#16a34a';
-            ctx.font = '900 62px Inter, sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText('IFPR PINHAIS', 540, 110);
-
-            ctx.fillStyle = '#475569';
-            ctx.font = '700 28px Inter, sans-serif';
-            ctx.fillText('CAMPUS PINHAIS', 540, 155);
-
-            // Moldura Inferior (Garantindo o Branco Sólido e Opaco)
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(0, 1520, 1080, 400);
-
-            ctx.fillStyle = '#16a34a';
-            ctx.font = '900 72px Inter, sans-serif';
-            ctx.fillText('V_WIPEX! 💚', 540, 1630);
-
-            ctx.fillStyle = '#334155';
-            ctx.font = '700 36px Inter, sans-serif';
-            ctx.fillText('Ensino • Pesquisa • Extensão', 540, 1700);
-
-            ctx.fillStyle = '#e11d48';
-            ctx.font = '700 28px Inter, sans-serif';
-            ctx.fillText('#ifpr.oficial #ifprpinhaisoficial #V_WIPEX', 540, 1760);
-
-            ctx.strokeStyle = '#e2e8f0';
-            ctx.lineWidth = 6;
-            ctx.strokeRect(0, 180, 1080, 1340);
-
-            // MAPEAMENTO EXATO DE POSIÇÃO E TAMANHO DOS ADESIVOS
-            const activeStickers = stickersContainer.querySelectorAll('.draggable-sticker');
-            const viewportEl = document.getElementById('viewport');
-            const viewRect = viewportEl.getBoundingClientRect();
-            
-            const scaleX = 1080 / viewRect.width;
-            const scaleY = 1920 / viewRect.height;
-            
-            for (const stickerEl of activeStickers) {
-                const imgEl = stickerEl.querySelector('img');
-                const rect = stickerEl.getBoundingClientRect();
-                
-                if (imgEl && imgEl.complete && imgEl.naturalWidth !== 0) {
-                    const centerX = (rect.left - viewRect.left + rect.width / 2) * scaleX;
-                    const centerY = (rect.top - viewRect.top + rect.height / 2) * scaleY;
-                    
-                    ctx.save();
-                    ctx.translate(centerX, centerY);
-                    
-                    const transformMatrix = window.getComputedStyle(stickerEl).transform;
-                    let userScale = 1;
-                    if (transformMatrix && transformMatrix !== 'none') {
-                        const values = transformMatrix.split('(')[1].split(')')[0].split(',');
-                        const a = parseFloat(values[0]);
-                        const b = parseFloat(values[1]);
-                        userScale = Math.sqrt(a * a + b * b);
-                    }
-                    
-                    const baseDisplaySize = 120; 
-                    const finalSize = baseDisplaySize * userScale * scaleX;
-                    
-                    ctx.drawImage(imgEl, -finalSize / 2, -finalSize / 2, finalSize, finalSize);
-                    ctx.restore();
-                }
-            }
-
-            showPreview();
-        });
+    function dragEnd() {
+        window.removeEventListener('pointermove', pointerMove);
+        window.removeEventListener('pointerup', dragEnd);
+        document.removeEventListener('pointermove', pointerMove);
+        document.removeEventListener('pointerup', dragEnd);
     }
 
-    function showPreview() {
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
-        previewImage.src = dataUrl;
-        previewModal.style.display = 'flex';
+    function setTransform() {
+        el.style.transform = `translate(calc(-50% + ${currentX}px), calc(-50% + ${currentY}px)) scale(${scale}) rotate(${rotation}deg)`;
     }
 
-    if (btnEditPhoto) {
-        btnEditPhoto.addEventListener('click', () => {
-            previewModal.style.display = 'none';
-        });
+    // Suporte a Pinch-to-Zoom e Rotação por toque duplo / gestos
+    el.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 2) {
+            initialDistance = Math.hypot(
+                e.touches[0].clientX - e.touches[1].clientX,
+                e.touches[0].clientY - e.touches[1].clientY
+            );
+            initialAngle = Math.atan2(
+                e.touches[1].clientY - e.touches[0].clientY,
+                e.touches[1].clientX - e.touches[0].clientX
+            ) * (180 / Math.PI);
+        }
+    }, { passive: true });
+
+    el.addEventListener('touchmove', (e) => {
+        if (e.touches.length === 2) {
+            const currentDistance = Math.hypot(
+                e.touches[0].clientX - e.touches[1].clientX,
+                e.touches[0].clientY - e.touches[1].clientY
+            );
+            const currentAngle = Math.atan2(
+                e.touches[1].clientY - e.touches[0].clientY,
+                e.touches[1].clientX - e.touches[0].clientX
+            ) * (180 / Math.PI);
+
+            scale = Math.max(0.5, Math.min(3, scale * (currentDistance / initialDistance)));
+            rotation += currentAngle - initialAngle;
+
+            initialDistance = currentDistance;
+            initialAngle = currentAngle;
+
+            setTransform();
+        }
+    }, { passive: true });
+}
+
+// 6. Captura e Renderização Final no Canvas (1080x1920)
+btnCapture.addEventListener('click', () => {
+    const canvas = document.getElementById('export-canvas');
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+
+    // Limpar e pintar o fundo de branco opaco total
+    ctx.clearRect(0, 0, 1080, 1920);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, 1080, 1920);
+
+    const headerHeight = 140;
+    const footerHeight = 240;
+    const windowHeight = 1920 - headerHeight - footerHeight;
+
+    // Desenhar feed da câmara ou imagem carregada na janela central
+    const source = isUserImageLoaded ? userImage : webcam;
+    if (source && (source.videoWidth || isUserImageLoaded)) {
+        ctx.drawImage(source, 0, headerHeight, 1080, windowHeight);
     }
 
-    if (btnCloseModal) {
-        btnCloseModal.addEventListener('click', () => {
-            stickersContainer.innerHTML = '';
-            previewModal.style.display = 'none';
-        });
-    }
+    // Desenhar Cabeçalho Polaroid
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, 1080, headerHeight);
+    ctx.fillStyle = '#16a34a';
+    ctx.font = 'bold 42px Inter, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('IFPR PINHAIS', 540, 75);
+    ctx.fillStyle = '#475569';
+    ctx.font = 'bold 22px Inter, sans-serif';
+    ctx.fillText('CAMPUS PINHAIS', 540, 110);
 
-    if (btnDownload) {
-        btnDownload.addEventListener('click', async () => {
-            canvas.toBlob(async (blob) => {
-                const file = new File([blob], 'polaroid-v-wipex.jpg', { type: 'image/jpeg' });
-                if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-                    try {
-                        await navigator.share({
-                            files: [file],
-                            title: 'Foto V_WIPEX IFPR',
-                            text: 'Minha foto na V_WIPEX IFPR Pinhais! 💚 #ifpr.oficial #ifprpinhaisoficial #V_WIPEX'
-                        });
-                    } catch (err) {
-                        console.log('Partilha cancelada.');
-                    }
-                } else {
-                    const a = document.createElement('a');
-                    a.href = canvas.toDataURL('image/jpeg', 0.95);
-                    a.download = 'polaroid-v-wipex.jpg';
-                    a.click();
-                }
-            }, 'image/jpeg', 0.95);
-        });
-    }
+    // Desenhar Rodapé Polaroid
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 1920 - footerHeight, 1080, footerHeight);
+    ctx.fillStyle = '#16a34a';
+    ctx.font = '900 52px Inter, sans-serif';
+    ctx.fillText('V_WIPEX! 💚', 540, 1920 - footerHeight + 80);
+    ctx.fillStyle = '#334155';
+    ctx.font = 'bold 28px Inter, sans-serif';
+    ctx.fillText('Ensino • Pesquisa • Extensão', 540, 1920 - footerHeight + 130);
+    ctx.fillStyle = '#e11d48';
+    ctx.font = 'bold 24px Inter, sans-serif';
+    ctx.fillText('#ifpr.oficial  #ifprpinhaisoficial  #V_WIPEX', 540, 1920 - footerHeight + 180);
+
+    // Desenhar Adesivos no Canvas com proporção exata
+    const viewportRect = document.getElementById('viewport').getBoundingClientRect();
+    const scaleX = 1080 / viewportRect.width;
+    const scaleY = 1920 / viewportRect.height;
+
+    document.querySelectorAll('.draggable-sticker').forEach(stickerEl => {
+        const img = stickerEl.querySelector('img');
+        if (!img) return;
+
+        const rect = stickerEl.getBoundingClientRect();
+        const x = (rect.left - viewportRect.left) * scaleX;
+        const y = (rect.top - viewportRect.top) * scaleY;
+        const width = rect.width * scaleX;
+        const height = rect.height * scaleY;
+
+        ctx.drawImage(img, x, y, width, height);
+    });
+
+    // Exibir Pré-visualização
+    previewImage.src = canvas.toDataURL('image/png');
+    previewModal.style.display = 'flex';
+});
+
+// 7. Ações do Modal de Pré-visualização
+btnDownload.addEventListener('click', () => {
+    const link = document.createElement('a');
+    link.download = 'V_WIPEX_IFPR.png';
+    link.href = document.getElementById('export-canvas').toDataURL('image/png');
+    link.click();
+});
+
+btnEditPhoto.addEventListener('click', () => {
+    previewModal.style.display = 'none'; // Fecha o modal mantendo todos os adesivos intactos
+});
+
+btnCloseModal.addEventListener('click', () => {
+    previewModal.style.display = 'none';
+    isUserImageLoaded = false;
+    userImageElement.style.display = 'none';
+    webcam.style.display = 'block';
 });
