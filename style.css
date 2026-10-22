@@ -49,9 +49,27 @@ html, body {
     inset: 0;
     display: flex;
     flex-direction: column;
-    background: #ffffff;
+    background: transparent;
     pointer-events: none;
     z-index: 5;
+}
+
+.polaroid-overlay::before,
+.polaroid-overlay::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 22px;
+    background: #ffffff;
+}
+
+.polaroid-overlay::before {
+    left: 0;
+}
+
+.polaroid-overlay::after {
+    right: 0;
 }
 
 .polaroid-header {
