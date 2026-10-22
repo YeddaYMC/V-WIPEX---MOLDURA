@@ -73,11 +73,12 @@ html, body {
 }
 
 .polaroid-header {
-    background: #ffffff;
+    background-color: #ffffff;
+    opacity: 1;
     padding: 12px 10px 6px 10px;
     text-align: center;
     box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-    pointer-events: auto;
+    pointer-events: none;
 }
 
 .ifpr-title {
@@ -96,13 +97,14 @@ html, body {
 
 .polaroid-window {
     flex: 1;
-    background: transparent;
+    background: transparent !important;
     margin: 0 22px;
     border: 2px solid #e2e8f0;
 }
 
 .polaroid-footer {
-    background: #ffffff;
+    background-color: #ffffff;
+    opacity: 1;
     padding: 10px 10px 12px 10px;
     text-align: center;
     display: flex;
@@ -110,7 +112,7 @@ html, body {
     align-items: center;
     gap: 2px;
     box-shadow: 0 -4px 10px rgba(0,0,0,0.15);
-    pointer-events: auto;
+    pointer-events: none;
 }
 
 .wipex-title {
