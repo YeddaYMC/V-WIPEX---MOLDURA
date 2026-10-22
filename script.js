@@ -21,6 +21,8 @@ const btnDownload = document.getElementById('btn-download');
 const btnEditPhoto = document.getElementById('btn-edit-photo');
 const btnCloseModal = document.getElementById('btn-close-modal');
 const stickersContainer = document.getElementById('stickers-container');
+const viewport = document.getElementById('viewport');
+const polaroidFrame = document.getElementById('polaroid-frame');
 
 // 1. Gestão de Permissão e Inicialização da Câmara
 btnGrantPermission.addEventListener('click', async () => {
@@ -145,6 +147,11 @@ function initStickerInteractions(el) {
     let initialDistance = 0;
     let initialAngle = 0;
 
+    el.dataset.offsetX = '0';
+    el.dataset.offsetY = '0';
+    el.dataset.scale = '1';
+    el.dataset.rotation = '0';
+
     el.addEventListener('pointerdown', dragStart, { passive: false });
 
     function dragStart(e) {
@@ -182,6 +189,10 @@ function initStickerInteractions(el) {
 
     function setTransform() {
         el.style.transform = `translate(calc(-50% + ${currentX}px), calc(-50% + ${currentY}px)) scale(${scale}) rotate(${rotation}deg)`;
+        el.dataset.offsetX = String(currentX);
+        el.dataset.offsetY = String(currentY);
+        el.dataset.scale = String(scale);
+        el.dataset.rotation = String(rotation);
     }
 
     // Suporte a Pinch-to-Zoom e Rotação por toque duplo / gestos
@@ -220,66 +231,137 @@ function initStickerInteractions(el) {
     }, { passive: true });
 }
 
+function getPolaroidMetrics(canvasWidth, canvasHeight) {
+    const viewportRect = viewport.getBoundingClientRect();
+    const header = polaroidFrame.querySelector('.polaroid-header');
+    const windowEl = polaroidFrame.querySelector('.polaroid-window');
+    const footer = polaroidFrame.querySelector('.polaroid-footer');
+
+    if (!viewportRect.width || !viewportRect.height || !header || !windowEl || !footer) {
+        return {
+            windowX: 0,
+            windowY: 140,
+            windowWidth: canvasWidth,
+            windowHeight: canvasHeight - 380,
+            headerHeight: 140,
+            footerTop: canvasHeight - 240,
+            footerHeight: 240
+        };
+    }
+
+    const headerRect = header.getBoundingClientRect();
+    const windowRect = windowEl.getBoundingClientRect();
+    const footerRect = footer.getBoundingClientRect();
+
+    const mapX = value => ((value - viewportRect.left) / viewportRect.width) * canvasWidth;
+    const mapY = value => ((value - viewportRect.top) / viewportRect.height) * canvasHeight;
+
+    const windowX = mapX(windowRect.left);
+    const windowY = mapY(windowRect.top);
+    const windowWidth = mapX(windowRect.right) - windowX;
+    const windowHeight = mapY(windowRect.bottom) - windowY;
+    const headerHeight = mapY(headerRect.bottom) - mapY(headerRect.top);
+    const footerTop = mapY(footerRect.top);
+    const footerHeight = mapY(footerRect.bottom) - footerTop;
+
+    return { windowX, windowY, windowWidth, windowHeight, headerHeight, footerTop, footerHeight };
+}
+
+function drawSourceContain(ctx, source, x, y, width, height) {
+    const sourceWidth = source.videoWidth || source.naturalWidth || source.width;
+    const sourceHeight = source.videoHeight || source.naturalHeight || source.height;
+
+    if (!sourceWidth || !sourceHeight) return;
+
+    ctx.fillStyle = '#000000';
+    ctx.fillRect(x, y, width, height);
+
+    const scale = Math.min(width / sourceWidth, height / sourceHeight);
+    const drawWidth = sourceWidth * scale;
+    const drawHeight = sourceHeight * scale;
+    const drawX = x + (width - drawWidth) / 2;
+    const drawY = y + (height - drawHeight) / 2;
+
+    ctx.drawImage(source, drawX, drawY, drawWidth, drawHeight);
+}
+
 // 6. Captura e Renderização Final no Canvas (1080x1920)
 btnCapture.addEventListener('click', () => {
     const canvas = document.getElementById('export-canvas');
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    const canvasWidth = canvas.width;
+    const canvasHeight = canvas.height;
+    const viewportRect = viewport.getBoundingClientRect();
+    const metrics = getPolaroidMetrics(canvasWidth, canvasHeight);
 
     // Limpar e pintar o fundo de branco opaco total
-    ctx.clearRect(0, 0, 1080, 1920);
+    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
     ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, 1080, 1920);
-
-    const headerHeight = 140;
-    const footerHeight = 240;
-    const windowHeight = 1920 - headerHeight - footerHeight;
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
     // Desenhar feed da câmara ou imagem carregada na janela central
     const source = isUserImageLoaded ? userImage : webcam;
     if (source && (source.videoWidth || isUserImageLoaded)) {
-        ctx.drawImage(source, 0, headerHeight, 1080, windowHeight);
+        drawSourceContain(ctx, source, metrics.windowX, metrics.windowY, metrics.windowWidth, metrics.windowHeight);
     }
 
+    // Contorno da janela da polaroid (igual à edição)
+    const borderSize = Math.max(2, Math.round(canvasWidth * 0.0018));
+    ctx.strokeStyle = '#e2e8f0';
+    ctx.lineWidth = borderSize;
+    ctx.strokeRect(
+        metrics.windowX + borderSize / 2,
+        metrics.windowY + borderSize / 2,
+        metrics.windowWidth - borderSize,
+        metrics.windowHeight - borderSize
+    );
+
     // Desenhar Cabeçalho Polaroid
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, 1080, headerHeight);
     ctx.fillStyle = '#16a34a';
-    ctx.font = 'bold 42px Inter, sans-serif';
+    ctx.font = `900 ${Math.max(24, Math.round(metrics.headerHeight * 0.3))}px Inter, sans-serif`;
     ctx.textAlign = 'center';
-    ctx.fillText('IFPR PINHAIS', 540, 75);
+    ctx.fillText('IFPR PINHAIS', canvasWidth / 2, Math.max(30, metrics.headerHeight * 0.55));
     ctx.fillStyle = '#475569';
-    ctx.font = 'bold 22px Inter, sans-serif';
-    ctx.fillText('CAMPUS PINHAIS', 540, 110);
+    ctx.font = `700 ${Math.max(14, Math.round(metrics.headerHeight * 0.16))}px Inter, sans-serif`;
+    ctx.fillText('CAMPUS PINHAIS', canvasWidth / 2, Math.max(54, metrics.headerHeight * 0.8));
 
     // Desenhar Rodapé Polaroid
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 1920 - footerHeight, 1080, footerHeight);
+    const footerTop = metrics.footerTop;
+    const footerHeight = metrics.footerHeight;
     ctx.fillStyle = '#16a34a';
-    ctx.font = '900 52px Inter, sans-serif';
-    ctx.fillText('V_WIPEX! 💚', 540, 1920 - footerHeight + 80);
+    ctx.font = `900 ${Math.max(30, Math.round(footerHeight * 0.22))}px Inter, sans-serif`;
+    ctx.fillText('V_WIPEX! 💚', canvasWidth / 2, footerTop + footerHeight * 0.33);
     ctx.fillStyle = '#334155';
-    ctx.font = 'bold 28px Inter, sans-serif';
-    ctx.fillText('Ensino • Pesquisa • Extensão', 540, 1920 - footerHeight + 130);
+    ctx.font = `700 ${Math.max(18, Math.round(footerHeight * 0.12))}px Inter, sans-serif`;
+    ctx.fillText('Ensino • Pesquisa • Extensão', canvasWidth / 2, footerTop + footerHeight * 0.54);
     ctx.fillStyle = '#e11d48';
-    ctx.font = 'bold 24px Inter, sans-serif';
-    ctx.fillText('#ifpr.oficial  #ifprpinhaisoficial  #V_WIPEX', 540, 1920 - footerHeight + 180);
+    ctx.font = `700 ${Math.max(14, Math.round(footerHeight * 0.1))}px Inter, sans-serif`;
+    ctx.fillText('#ifpr.oficial  #ifprpinhaisoficial  #V_WIPEX', canvasWidth / 2, footerTop + footerHeight * 0.75);
 
-    // Desenhar Adesivos no Canvas com proporção exata
-    const viewportRect = document.getElementById('viewport').getBoundingClientRect();
-    const scaleX = 1080 / viewportRect.width;
-    const scaleY = 1920 / viewportRect.height;
+    // Desenhar Adesivos no Canvas mantendo posição, escala e rotação da edição
+    const scaleX = canvasWidth / viewportRect.width;
+    const scaleY = canvasHeight / viewportRect.height;
 
     document.querySelectorAll('.draggable-sticker').forEach(stickerEl => {
         const img = stickerEl.querySelector('img');
         if (!img) return;
 
-        const rect = stickerEl.getBoundingClientRect();
-        const x = (rect.left - viewportRect.left) * scaleX;
-        const y = (rect.top - viewportRect.top) * scaleY;
-        const width = rect.width * scaleX;
-        const height = rect.height * scaleY;
+        const offsetX = Number.parseFloat(stickerEl.dataset.offsetX || '0');
+        const offsetY = Number.parseFloat(stickerEl.dataset.offsetY || '0');
+        const stickerScale = Number.parseFloat(stickerEl.dataset.scale || '1');
+        const stickerRotation = Number.parseFloat(stickerEl.dataset.rotation || '0') * (Math.PI / 180);
 
-        ctx.drawImage(img, x, y, width, height);
+        const centerX = canvasWidth / 2 + (offsetX * scaleX);
+        const centerY = canvasHeight / 2 + (offsetY * scaleY);
+        const baseWidth = img.clientWidth * scaleX;
+        const baseHeight = img.clientHeight * scaleY;
+
+        ctx.save();
+        ctx.translate(centerX, centerY);
+        ctx.rotate(stickerRotation);
+        ctx.scale(stickerScale, stickerScale);
+        ctx.drawImage(img, -baseWidth / 2, -baseHeight / 2, baseWidth, baseHeight);
+        ctx.restore();
     });
 
     // Exibir Pré-visualização
