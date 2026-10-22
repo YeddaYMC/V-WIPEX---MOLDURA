@@ -3,6 +3,7 @@ let webcamStream = null;
 let useFrontCamera = true;
 let isUserImageLoaded = false;
 let userImage = new Image();
+let placedStickers = [];
 
 const webcam = document.getElementById('webcam');
 const userImageElement = document.getElementById('user-image');
@@ -117,19 +118,26 @@ function createStickerElement(src) {
     deleteBtn.innerHTML = '✕';
     deleteBtn.addEventListener('click', (e) => {
         e.stopPropagation();
+        placedStickers = placedStickers.filter(sticker => sticker !== stickerDiv);
         stickerDiv.remove();
     });
 
     stickerDiv.appendChild(img);
     stickerDiv.appendChild(deleteBtn);
     stickersContainer.appendChild(stickerDiv);
+    placedStickers.push(stickerDiv);
 
     initStickerInteractions(stickerDiv);
 }
 
+function clearPlacedStickers() {
+    stickersContainer.innerHTML = '';
+    placedStickers = [];
+}
+
 // Limpar Todos os Adesivos
 btnClearStickers.addEventListener('click', () => {
-    stickersContainer.innerHTML = '';
+    clearPlacedStickers();
     stickersModal.style.display = 'none';
 });
 
@@ -293,6 +301,8 @@ btnCapture.addEventListener('click', () => {
     const canvasHeight = canvas.height;
     const viewportRect = viewport.getBoundingClientRect();
     const metrics = getPolaroidMetrics(canvasWidth, canvasHeight);
+    const footerTop = metrics.footerTop;
+    const footerHeight = metrics.footerHeight;
 
     // Limpar e pintar o fundo de branco opaco total
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
@@ -304,6 +314,11 @@ btnCapture.addEventListener('click', () => {
     if (source && (source.videoWidth || isUserImageLoaded)) {
         drawSourceContain(ctx, source, metrics.windowX, metrics.windowY, metrics.windowWidth, metrics.windowHeight);
     }
+
+    // Reforçar áreas brancas sólidas da moldura (topo e base)
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvasWidth, metrics.windowY);
+    ctx.fillRect(0, footerTop, canvasWidth, canvasHeight - footerTop);
 
     // Contorno da janela da polaroid (igual à edição)
     const borderSize = Math.max(2, Math.round(canvasWidth * 0.0018));
@@ -326,8 +341,6 @@ btnCapture.addEventListener('click', () => {
     ctx.fillText('CAMPUS PINHAIS', canvasWidth / 2, Math.max(54, metrics.headerHeight * 0.8));
 
     // Desenhar Rodapé Polaroid
-    const footerTop = metrics.footerTop;
-    const footerHeight = metrics.footerHeight;
     ctx.fillStyle = '#16a34a';
     ctx.font = `900 ${Math.max(30, Math.round(footerHeight * 0.22))}px Inter, sans-serif`;
     ctx.fillText('V_WIPEX! 💚', canvasWidth / 2, footerTop + footerHeight * 0.33);
@@ -342,7 +355,8 @@ btnCapture.addEventListener('click', () => {
     const scaleX = canvasWidth / viewportRect.width;
     const scaleY = canvasHeight / viewportRect.height;
 
-    document.querySelectorAll('.draggable-sticker').forEach(stickerEl => {
+    placedStickers = placedStickers.filter(stickerEl => stickerEl.isConnected);
+    placedStickers.forEach(stickerEl => {
         const img = stickerEl.querySelector('img');
         if (!img) return;
 
@@ -386,4 +400,5 @@ btnCloseModal.addEventListener('click', () => {
     isUserImageLoaded = false;
     userImageElement.style.display = 'none';
     webcam.style.display = 'block';
+    clearPlacedStickers();
 });
