@@ -32,7 +32,7 @@ html, body {
     top: 0;
     left: 0;
     width: 100%;
-    height: calc(100dvh - 110px);
+    height: calc(100dvh - 110px); 
     z-index: 1;
     background-color: #000000;
 }
@@ -55,20 +55,21 @@ html, body {
 
 .polaroid-header {
     background: #ffffff;
-    padding: 18px 12px 10px 12px;
+    padding: 12px 10px 6px 10px;
     text-align: center;
     box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    pointer-events: auto;
 }
 
 .ifpr-title {
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     font-weight: 900;
     color: #16a34a;
     letter-spacing: 2px;
 }
 
 .ifpr-sub {
-    font-size: 0.65rem;
+    font-size: 0.55rem;
     font-weight: 700;
     color: #475569;
     letter-spacing: 1px;
@@ -77,36 +78,37 @@ html, body {
 .polaroid-window {
     flex: 1;
     background: transparent;
-    border-top: 3px solid #e2e8f0;
-    border-bottom: 3px solid #e2e8f0;
+    border-top: 2px solid #e2e8f0;
+    border-bottom: 2px solid #e2e8f0;
 }
 
 .polaroid-footer {
     background: #ffffff;
-    padding: 16px 12px;
+    padding: 10px 10px 12px 10px;
     text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 3px;
+    gap: 2px;
     box-shadow: 0 -4px 10px rgba(0,0,0,0.15);
+    pointer-events: auto;
 }
 
 .wipex-title {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     font-weight: 900;
     color: #16a34a;
     letter-spacing: 1px;
 }
 
 .wipex-sub {
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     font-weight: 700;
     color: #334155;
 }
 
 .wipex-hash {
-    font-size: 0.65rem;
+    font-size: 0.55rem;
     font-weight: 700;
     color: #e11d48;
 }
@@ -161,7 +163,7 @@ html, body {
     z-index: 20;
     height: 110px;
     padding: 8px 12px;
-    padding-bottom: max(10px, env(safe-area-inset-bottom));
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
     background: linear-gradient(0deg, rgba(9, 13, 22, 0.98) 0%, rgba(9, 13, 22, 0.9) 100%);
     display: flex;
     flex-direction: column;
@@ -215,8 +217,8 @@ html, body {
 }
 
 .btn-small {
-    padding: 8px !important;
-    font-size: 0.75rem !important;
+    padding: 10px !important;
+    font-size: 0.8rem !important;
 }
 
 .file-input {
