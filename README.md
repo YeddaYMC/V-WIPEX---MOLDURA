@@ -7,6 +7,7 @@ Clique na câmera
 
 # 📸 [Moldura Digital — V_WIPEX! IFPR](https://yeddaymc.github.io/V-WIPEX---MOLDURA/)
 
+##  V_WIPEX.  IFPR - Campus Pinhais. Dias 11, 12 e 13 de outubro/2026 
 
 ### Sobre o projeto
 
