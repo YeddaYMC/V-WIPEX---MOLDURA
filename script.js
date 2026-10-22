@@ -2,6 +2,7 @@ const video = document.getElementById('webcam');
 const userImage = document.getElementById('user-image');
 const stickersContainer = document.getElementById('stickers-container');
 const canvas = document.getElementById('export-canvas');
+const viewport = document.getElementById('viewport');
 
 const permissionScreen = document.getElementById('permission-screen');
 const btnGrantPermission = document.getElementById('btn-grant-permission');
@@ -19,7 +20,7 @@ const stickerCards = document.querySelectorAll('.sticker-card');
 const previewModal = document.getElementById('preview-modal');
 const previewImage = document.getElementById('preview-image');
 const btnDownload = document.getElementById('btn-download');
-const btnEditPhoto = document.getElementById('btn-edit-photo');
+const btnCopyCaption = document.getElementById('btn-copy-caption');
 const bntCloseModal = document.getElementById('btn-close-modal');
 
 let currentStream = null;
@@ -209,7 +210,7 @@ if (uploadPhoto) {
     });
 }
 
-// Tirar Foto e Renderizar no Canvas com proporção rigorosa de cabeçalho e rodapé
+// Tirar Foto e Renderizar Perfeitamente na Moldura Branca e na Janela Central
 if (btnCapture) {
     btnCapture.addEventListener('click', async () => {
         const ctx = canvas.getContext('2d');
@@ -218,44 +219,46 @@ if (btnCapture) {
 
         const sourceEl = isUsingUserImage ? userImage : video;
         
+        // 1. Desenhar a foto de fundo cobrindo toda a área central transparente
         drawCover(ctx, sourceEl, 1080, 1920);
         applySnapchatSkinFilter(ctx, 1080, 1920);
 
-        // Cabeçalho Branco Polaroid exato (180px no canvas)
+        // 2. Moldura Superior Branca (IFPR PINHAIS) - SEMPRE BRANCA
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, 1080, 180);
 
         ctx.fillStyle = '#16a34a';
         ctx.font = '900 62px Inter, sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText('IFPR PINHAIS', 540, 105);
+        ctx.fillText('IFPR PINHAIS', 540, 110);
 
         ctx.fillStyle = '#475569';
         ctx.font = '700 28px Inter, sans-serif';
-        ctx.fillText('CAMPUS PINHAIS', 540, 150);
+        ctx.fillText('CAMPUS PINHAIS', 540, 155);
 
-        // Rodapé Branco Polaroid exato (240px no canvas, alinhado com o rodapé visual)
-        ctx.fillRect(0, 1680, 1080, 240);
+        // 3. Moldura Inferior Branca Polaroid (V_WIPEX) - SEMPRE BRANCA
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 1520, 1080, 400);
 
         ctx.fillStyle = '#16a34a';
         ctx.font = '900 72px Inter, sans-serif';
-        ctx.fillText('V_WIPEX! 💚', 540, 1760);
+        ctx.fillText('V_WIPEX! 💚', 540, 1630);
 
         ctx.fillStyle = '#334155';
-        ctx.font = '700 34px Inter, sans-serif';
-        ctx.fillText('Ensino • Pesquisa • Extensão', 540, 1815);
+        ctx.font = '700 36px Inter, sans-serif';
+        ctx.fillText('Ensino • Pesquisa • Extensão', 540, 1700);
 
         ctx.fillStyle = '#e11d48';
-        ctx.font = '700 26px Inter, sans-serif';
-        ctx.fillText('#ifpr.oficial #ifprpinhaisoficial #V_WIPEX', 540, 1865);
+        ctx.font = '700 28px Inter, sans-serif';
+        ctx.fillText('#ifpr.oficial #ifprpinhaisoficial #V_WIPEX', 540, 1760);
 
         ctx.strokeStyle = '#e2e8f0';
         ctx.lineWidth = 6;
-        ctx.strokeRect(0, 180, 1080, 1500);
+        ctx.strokeRect(0, 180, 1080, 1340);
 
-        // Desenhar Adesivos no Canvas exatamente na posição correspondente
+        // 4. Desenhar Todos os Adesivos (tanto na barra branca quanto na foto) com escala exata
         const activeStickers = stickersContainer.querySelectorAll('.draggable-sticker');
-        const viewRect = document.getElementById('viewport').getBoundingClientRect();
+        const viewRect = viewport.getBoundingClientRect();
         
         for (const stickerEl of activeStickers) {
             const imgEl = stickerEl.querySelector('img');
@@ -279,8 +282,7 @@ if (btnCapture) {
                     const b = parseFloat(values[1]);
                     userScale = Math.sqrt(a * a + b * b);
                 }
-                
-                const drawSize = 110 * userScale;
+                const drawSize = 140 * userScale;
                 ctx.drawImage(imgEl, -drawSize / 2, -drawSize / 2, drawSize, drawSize);
                 ctx.restore();
             }
@@ -356,14 +358,16 @@ function showPreview() {
     }, 'image/png');
 }
 
-// Botão "Editar Foto" fecha o pré-visualizador mantendo os adesivos intactos para ajuste
-if (btnEditPhoto) {
-    btnEditPhoto.addEventListener('click', () => {
-        previewModal.style.display = 'none';
+if (btnCopyCaption) {
+    btnCopyCaption.addEventListener('click', () => {
+        const captionText = "V_WIPEX! 💚 Ensino • Pesquisa • Extensão\n#ifpr.oficial #ifprpinhaisoficial #V_WIPEX";
+        navigator.clipboard.writeText(captionText).then(() => {
+            btnCopyCaption.textContent = '✅ Legenda Copiada!';
+            setTimeout(() => btnCopyCaption.textContent = '📋 Copiar Legenda', 2000);
+        });
     });
 }
 
-// Botão "Tirar Outra" limpa a tela e fecha o modal
 if (bntCloseModal) {
     bntCloseModal.addEventListener('click', () => {
         previewModal.style.display = 'none';
