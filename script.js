@@ -209,7 +209,7 @@ if (uploadPhoto) {
     });
 }
 
-// Tirar Foto e Renderizar no Canvas com mapeamento rigoroso 1:1
+// Tirar Foto e Renderizar no Canvas com proporção rigorosa de cabeçalho e rodapé
 if (btnCapture) {
     btnCapture.addEventListener('click', async () => {
         const ctx = canvas.getContext('2d');
@@ -221,39 +221,39 @@ if (btnCapture) {
         drawCover(ctx, sourceEl, 1080, 1920);
         applySnapchatSkinFilter(ctx, 1080, 1920);
 
-        // Moldura Superior IFPR Pinhais (altura exata de 140px no canvas)
+        // Cabeçalho Branco Polaroid exato (180px no canvas)
         ctx.fillStyle = '#ffffff';
-        ctx.fillRect(0, 0, 1080, 140);
-
-        ctx.fillStyle = '#16a34a';
-        ctx.font = '900 52px Inter, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText('IFPR PINHAIS', 540, 85);
-
-        ctx.fillStyle = '#475569';
-        ctx.font = '700 24px Inter, sans-serif';
-        ctx.fillText('CAMPUS PINHAIS', 540, 120);
-
-        // Moldura Inferior V_WIPEX (altura exata de 180px no canvas)
-        ctx.fillRect(0, 1740, 1080, 180);
+        ctx.fillRect(0, 0, 1080, 180);
 
         ctx.fillStyle = '#16a34a';
         ctx.font = '900 62px Inter, sans-serif';
-        ctx.fillText('V_WIPEX! 💚', 540, 1810);
+        ctx.textAlign = 'center';
+        ctx.fillText('IFPR PINHAIS', 540, 105);
+
+        ctx.fillStyle = '#475569';
+        ctx.font = '700 28px Inter, sans-serif';
+        ctx.fillText('CAMPUS PINHAIS', 540, 150);
+
+        // Rodapé Branco Polaroid exato (240px no canvas, alinhado com o rodapé visual)
+        ctx.fillRect(0, 1680, 1080, 240);
+
+        ctx.fillStyle = '#16a34a';
+        ctx.font = '900 72px Inter, sans-serif';
+        ctx.fillText('V_WIPEX! 💚', 540, 1760);
 
         ctx.fillStyle = '#334155';
-        ctx.font = '700 30px Inter, sans-serif';
-        ctx.fillText('Ensino • Pesquisa • Extensão', 540, 1855);
+        ctx.font = '700 34px Inter, sans-serif';
+        ctx.fillText('Ensino • Pesquisa • Extensão', 540, 1815);
 
         ctx.fillStyle = '#e11d48';
-        ctx.font = '700 24px Inter, sans-serif';
-        ctx.fillText('#ifpr.oficial #ifprpinhaisoficial #V_WIPEX', 540, 1895);
+        ctx.font = '700 26px Inter, sans-serif';
+        ctx.fillText('#ifpr.oficial #ifprpinhaisoficial #V_WIPEX', 540, 1865);
 
         ctx.strokeStyle = '#e2e8f0';
         ctx.lineWidth = 6;
-        ctx.strokeRect(0, 140, 1080, 1600);
+        ctx.strokeRect(0, 180, 1080, 1500);
 
-        // Desenhar Adesivos no Canvas com alinhamento perfeito
+        // Desenhar Adesivos no Canvas exatamente na posição correspondente
         const activeStickers = stickersContainer.querySelectorAll('.draggable-sticker');
         const viewRect = document.getElementById('viewport').getBoundingClientRect();
         
@@ -356,7 +356,7 @@ function showPreview() {
     }, 'image/png');
 }
 
-// Botão "Editar Foto" fecha o modal e MANTÉM os adesivos na tela para ajustes
+// Botão "Editar Foto" fecha o pré-visualizador mantendo os adesivos intactos para ajuste
 if (btnEditPhoto) {
     btnEditPhoto.addEventListener('click', () => {
         previewModal.style.display = 'none';
