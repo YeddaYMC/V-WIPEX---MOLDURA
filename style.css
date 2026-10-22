@@ -375,3 +375,21 @@ html, body {
     align-items: center;
     gap: 12px;
 }
+
+
+.camera-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    background-color: #000000;
+}
+
+.video-feed,
+.user-image-feed {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Evita o zoom excessivo e preserva o ângulo total da câmara */
+}
