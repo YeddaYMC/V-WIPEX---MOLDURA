@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=26">
+    <link rel="stylesheet" href="style.css?v=25">
 </head>
 <body>
 
@@ -32,7 +32,7 @@
             <img id="user-image" class="user-image-feed" alt="Foto importada" style="display: none;">
             
             <!-- Moldura Polaroid Totalmente Integrada (Centro Transparente) -->
-            <div class="polaroid-overlay">
+            <div class="polaroid-overlay" id="polaroid-frame">
                 <!-- Borda Superior Branca da Polaroid com IFPR PINHAIS -->
                 <div class="polaroid-header">
                     <h1 class="ifpr-title">IFPR PINHAIS</h1>
@@ -50,7 +50,7 @@
                 </div>
             </div>
             
-            <!-- Container dos Adesivos Arrastáveis -->
+            <!-- Container dos Adesivos Arrastáveis (Cobre todo o ecrã para aceitar adesivos na parte branca e na foto) -->
             <div id="stickers-container" class="stickers-container"></div>
         </div>
 
@@ -80,7 +80,7 @@
                     <h3>🎨 Adicionar Adesivos</h3>
                     <button id="btn-close-drawer" class="btn-close-x">✕</button>
                 </div>
-                <p class="drawer-desc">Toque num adesivo para adicionar. Arraste e use a pinça para redimensionar!</p>
+                <p class="drawer-desc">Toque num adesivo para adicionar. Arraste para qualquer sítio (inclusive nas barras brancas) e use a pinça para redimensionar!</p>
                 
                 <div class="stickers-grid">
                     <button class="sticker-card" data-sticker="audio"><img src="adesivos/audio1.png" alt="Áudio"><span>Áudio</span></button>
@@ -113,7 +113,7 @@
 
         <canvas id="export-canvas" width="1080" height="1920" style="display: none;"></canvas>
 
-        <!-- Modal de Pré-visualização Final com o botão "Editar Foto" -->
+        <!-- Modal de Pré-visualização Final -->
         <div id="preview-modal" class="modal" style="display: none;">
             <div class="modal-content">
                 <h2 class="modal-title">Foto Pronta! 🎉</h2>
@@ -122,7 +122,7 @@
                 </div>
                 <div class="modal-actions">
                     <button id="btn-download" class="btn btn-primary">📤 Compartilhar Foto</button>
-                    <button id="btn-edit-photo" class="btn btn-secondary">✏️ Editar Foto</button>
+                    <button id="btn-copy-caption" class="btn btn-secondary">📋 Copiar Legenda</button>
                 </div>
                 <button id="btn-close-modal" class="btn btn-outline btn-small">🔄 Tirar Outra</button>
             </div>
@@ -130,6 +130,6 @@
 
     </div>
 
-    <script src="script.js?v=26"></script>
+    <script src="script.js?v=25"></script>
 </body>
 </html>
