@@ -384,21 +384,40 @@ btnCapture.addEventListener('click', () => {
 });
 
 // 7. Ações do Modal de Pré-visualização
-btnDownload.addEventListener('click', () => {
-    const link = document.createElement('a');
-    link.download = 'V_WIPEX_IFPR.png';
-    link.href = document.getElementById('export-canvas').toDataURL('image/png');
-    link.click();
-});
 
-btnEditPhoto.addEventListener('click', () => {
-    previewModal.style.display = 'none'; // Fecha o modal mantendo todos os adesivos intactos
-});
+// 7. Ações do Modal de Pré-visualização (Com Hashtags no Compartilhamento)
+btnDownload.addEventListener('click', async () => {
+    const canvas = document.getElementById('export-canvas');
+    
+    canvas.toBlob(async (blob) => {
+        if (!blob) {
+            alert("Erro ao processar a imagem.");
+            return;
+        }
 
-btnCloseModal.addEventListener('click', () => {
-    previewModal.style.display = 'none';
-    isUserImageLoaded = false;
-    userImageElement.style.display = 'none';
-    webcam.style.display = 'block';
-    clearPlacedStickers();
+        const file = new File([blob], 'V_WIPEX_IFPR.png', { type: 'image/png' });
+
+        // Texto e Hashtags que serão enviados junto com a imagem
+        const shareData = {
+            title: 'Câmera #V_WIPEX',
+            text: ' V_WIPEX! 💚\n\n#ifpr.oficial #ifprpinhaisoficial #V_WIPEX #IFPRPinhais',
+            files: [file]
+        };
+
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            try {
+                await navigator.share(shareData);
+            } catch (err) {
+                if (err.name !== 'AbortError') {
+                    console.error("Erro ao compartilhar:", err);
+                }
+            }
+        } else {
+            // Fallback para download simples caso a API não seja suportada
+            const link = document.createElement('a');
+            link.download = 'V_WIPEX_IFPR.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+    }, 'image/png');
 });
